@@ -169,7 +169,7 @@ export class ProgressService {
             { section: 'Phase 3: Distributed Sharding & Testing', percentage: 40, completedTasks: 4, totalTasks: 10, status: 'in-progress' }
           ],
           peers: [
-            { userId: 'u1', name: 'Haneen Al-Sayed', avatar: 'H', percentage: 78, completedTasks: 18, rank: 1 },
+            { userId: 'u1', name: 'Haneen Mohamed', avatar: 'H', percentage: 78, completedTasks: 18, rank: 1 },
             { userId: 'u2', name: 'Zeyad Tarek', avatar: 'Z', percentage: 72, completedTasks: 16, rank: 2 },
             { userId: 'u3', name: 'Omar Khaled', avatar: 'O', percentage: 65, completedTasks: 15, rank: 3 },
             { userId: 'u4', name: 'Sara Mostafa', avatar: 'S', percentage: 55, completedTasks: 12, rank: 4 },
@@ -186,7 +186,7 @@ export class ProgressService {
    */
   getPeerProgress(roomId?: string): Observable<PeerProgressItem[]> {
     return of([
-      { userId: 'u1', name: 'Haneen Al-Sayed', avatar: 'H', percentage: 78, completedTasks: 18, rank: 1 },
+      { userId: 'u1', name: 'Haneen Mohamed', avatar: 'H', percentage: 78, completedTasks: 18, rank: 1 },
       { userId: 'u2', name: 'Zeyad Tarek', avatar: 'Z', percentage: 72, completedTasks: 16, rank: 2 },
       { userId: 'u3', name: 'Omar Khaled', avatar: 'O', percentage: 65, completedTasks: 15, rank: 3 },
       { userId: 'u4', name: 'Sara Mostafa', avatar: 'S', percentage: 55, completedTasks: 12, rank: 4 },
