@@ -1,0 +1,49 @@
+<div class="card section-card" [class.loading-state]="loading">
+  <div class="card-head">
+    <div>
+      <h2>{{ title }}</h2>
+      <p>Continuous stage tracking across your curriculum milestones.</p>
+    </div>
+    <span class="badge phase-count">{{ sections.length }} Phases</span>
+  </div>
+
+  <div class="section-list">
+    <div class="section-item" *ngFor="let item of sections; let i = index">
+      <div class="section-header">
+        <div class="section-name-wrap">
+          <span class="phase-number">0{{ i + 1 }}</span>
+          <div>
+            <strong class="section-name">{{ item.section }}</strong>
+            <span class="tasks-counter" *ngIf="item.totalTasks">
+              {{ item.completedTasks || 0 }}/{{ item.totalTasks }} tasks completed
+            </span>
+          </div>
+        </div>
+
+        <div class="section-status-wrap">
+          <span
+            class="status-pill"
+            [class.status-done]="item.percentage === 100"
+            [class.status-active]="item.percentage > 0 && item.percentage < 100"
+            [class.status-pending]="item.percentage === 0"
+          >
+            {{ item.percentage === 100 ? 'Completed' : (item.percentage > 0 ? 'In Progress' : 'Pending') }}
+          </span>
+          <strong class="section-percentage">{{ item.percentage }}%</strong>
+        </div>
+      </div>
+
+      <!-- Reusable ProgressBarComponent -->
+      <app-progress-bar
+        [percentage]="item.percentage"
+        [showLabel]="false"
+        [color]="getProgressBarColor(item.percentage)"
+        height="8px"
+      ></app-progress-bar>
+    </div>
+  </div>
+
+  <div *ngIf="sections.length === 0 && !loading" class="empty-state">
+    <p>No section records available yet.</p>
+  </div>
+</div>

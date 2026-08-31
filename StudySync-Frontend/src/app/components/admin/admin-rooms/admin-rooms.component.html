@@ -1,0 +1,155 @@
+<div class="rooms-container">
+  <!-- Header -->
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">Study Rooms Management</h1>
+      <p class="page-subtitle">Inspect active rooms, monitor membership limits, and manage room settings.</p>
+    </div>
+    <div class="room-stats-pill">
+      <span>Total: <strong>{{ rooms.length }}</strong> rooms</span>
+    </div>
+  </div>
+
+  <!-- Search & Filter Bar -->
+  <div class="filter-card">
+    <div class="search-box">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input
+        type="text"
+        placeholder="Search rooms by title or description..."
+        [(ngModel)]="searchTerm"
+        class="search-input"
+      />
+    </div>
+
+    <div class="select-group">
+      <select class="filter-select" [(ngModel)]="categoryFilter">
+        <option value="">All Categories</option>
+        <option value="Computer Science">Computer Science</option>
+        <option value="Software Engineering">Software Engineering</option>
+        <option value="AI / Data Science">AI / Data Science</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Rooms Table -->
+  <div class="table-card">
+    <div *ngIf="loading" class="loading-state">
+      <div class="spinner"></div>
+      <span>Loading study rooms...</span>
+    </div>
+
+    <div *ngIf="!loading && filteredRooms.length === 0" class="empty-state">
+      <p>No study rooms found matching criteria.</p>
+    </div>
+
+    <table *ngIf="!loading && filteredRooms.length > 0" class="rooms-table">
+      <thead>
+        <tr>
+          <th>ROOM TITLE</th>
+          <th>CATEGORY</th>
+          <th>TARGET LEVEL</th>
+          <th>MEMBERS</th>
+          <th>PROGRESS</th>
+          <th class="text-right">ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let room of filteredRooms">
+          <td class="room-main">
+            <div class="room-icon-box">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+              </svg>
+            </div>
+            <div>
+              <span class="room-title-text">{{ room.title }}</span>
+              <small class="room-desc-snippet">{{ room.description | slice:0:60 }}...</small>
+            </div>
+          </td>
+          <td>
+            <span class="cat-badge">{{ room.category }}</span>
+          </td>
+          <td class="level-text">{{ room.level }}</td>
+          <td>
+            <strong>{{ room.members || room.memberCount || 0 }}</strong> / {{ room.maxMembers || 15 }}
+          </td>
+          <td>
+            <div class="prog-cell">
+              <span>{{ room.progress || 0 }}%</span>
+              <div class="mini-bar">
+                <div class="mini-fill" [style.width.%]="room.progress || 0"></div>
+              </div>
+            </div>
+          </td>
+          <td class="actions-cell">
+            <button class="btn-action view" (click)="viewRoom(room)" title="View Room Details">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+            <button class="btn-action edit" (click)="openEditModal(room)" title="Edit Room">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+            </button>
+            <button class="btn-action delete" (click)="deleteRoom(room)" title="Delete Room">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Quick Edit Modal -->
+  <div class="modal-backdrop" *ngIf="isEditModalOpen && editingRoom">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Study Room</h2>
+        <button class="btn-close" (click)="closeEditModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Room Title</label>
+          <input type="text" class="modal-input" [(ngModel)]="editingRoom.title" />
+        </div>
+
+        <div class="form-group">
+          <label>Category</label>
+          <input type="text" class="modal-input" [(ngModel)]="editingRoom.category" />
+        </div>
+
+        <div class="form-group">
+          <label>Target Level</label>
+          <input type="text" class="modal-input" [(ngModel)]="editingRoom.level" />
+        </div>
+
+        <div class="form-group">
+          <label>Max Members</label>
+          <input type="number" class="modal-input" [(ngModel)]="editingRoom.maxMembers" />
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea class="modal-textarea" [(ngModel)]="editingRoom.description"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeEditModal()">Cancel</button>
+        <button class="btn-primary" (click)="saveRoomEdit()">Save Room</button>
+      </div>
+    </div>
+  </div>
+</div>

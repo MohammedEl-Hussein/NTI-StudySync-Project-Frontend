@@ -1,0 +1,16 @@
+<app-navbar></app-navbar><app-sidebar></app-sidebar>
+<main class="page">
+  <div class="breadcrumbs"><a routerLink="/my-rooms">My Rooms</a><span>›</span><strong>{{ room?.title }}</strong></div>
+  <section class="room-hero card"><div><div><span class="badge">{{ room?.level }}</span></div><h1>{{ room?.title }}</h1><p>{{ room?.description }}</p><small>Host: {{ room?.ownerId?.name || 'Room owner' }} · {{ memberCount }}/{{ room?.maxMembers }} Members · {{ room?.startDate | date:'MMM d' }} – {{ room?.endDate | date:'MMM d, y' }}</small></div><a class="btn primary" *ngIf="room?.meetingURL" [href]="room.meetingURL" target="_blank">Join Meeting</a></section>
+  <nav class="tabs"><a [class.active]="tab==='overview'" (click)="tab='overview'">Overview</a><a [class.active]="tab==='plan'" (click)="tab='plan'">Study Plan</a><a [class.active]="tab==='members'" (click)="tab='members'">Members</a><a [class.active]="tab==='chat'" (click)="tab='chat'">Chat</a></nav>
+
+  <section *ngIf="tab==='overview'" class="overview-grid">
+    <div class="card"><h2>Room Overview</h2><p>{{ room?.description }}</p><div class="overview-stats"><span><strong>{{ memberCount }}</strong>Members</span><span><strong>{{ taskCount }}</strong>Tasks</span><span><strong>{{ progress }}%</strong>Progress</span></div></div>
+    <div class="card"><h2>Room Dates</h2><p>Start: {{ room?.startDate | date:'mediumDate' }}</p><p>End: {{ room?.endDate | date:'mediumDate' }}</p></div>
+  </section>
+
+  <section *ngIf="tab==='plan'" class="plan-layout"><div><div class="phase card" *ngFor="let phase of phases"><div class="phase-head"><h2>{{ phase.section }}</h2><span>{{ phase.completed }}/{{ phase.total }} Completed</span></div><div class="task-row" *ngFor="let task of phase.tasks"><input type="checkbox" [checked]="task.completed" (change)="toggleTask(task)"><div><strong [class.done]="task.completed">{{ task.title }}</strong><small>{{ task.description }}</small></div><time>{{ task.dueDate | date:'MMM d' }}</time></div></div></div><aside class="card"><h2>Overall Progress</h2><strong class="big">{{ progress }}%</strong><div class="progress-track"><div class="progress-bar" [style.width.%]="progress"></div></div><p>Keep going! Complete your next task to move the room forward.</p><div *ngIf="isOwner" class="host-actions"><a class="btn primary full" [routerLink]="['/rooms',room?._id,'tasks','create']">+ Add Task</a><button class="btn secondary full" type="button" (click)="addPhase()">Add New Phase</button></div></aside></section>
+
+  <section *ngIf="tab==='members'"><app-room-members [roomId]="room?._id"></app-room-members></section>
+  <section *ngIf="tab==='chat'"><app-chat-room [roomId]="room?._id"></app-chat-room></section>
+</main>

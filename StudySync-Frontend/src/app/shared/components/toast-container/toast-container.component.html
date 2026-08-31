@@ -1,0 +1,5 @@
+<div class="toast-stack">
+  <div class="toast" *ngFor="let toast of toasts" [class.success]="toast.type==='success'" [class.error]="toast.type==='error'" [class.warning]="toast.type==='warning'" [class.info]="toast.type==='info'">
+    <span>{{ toast.icon || '●' }}</span><span>{{ toast.message }}</span><button type="button" (click)="dismiss(toast)">×</button>
+  </div>
+</div>

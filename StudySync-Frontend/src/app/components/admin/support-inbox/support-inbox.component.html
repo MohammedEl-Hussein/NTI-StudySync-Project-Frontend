@@ -1,0 +1,89 @@
+<div class="support-container">
+  <!-- Header -->
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">Support Inbox</h1>
+      <p class="page-subtitle">Manage student queries, technical assistance requests, and platform bug reports.</p>
+    </div>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="tabs-bar">
+    <button
+      class="tab-btn"
+      [class.active]="statusFilter === 'all'"
+      (click)="statusFilter = 'all'"
+    >
+      All Messages ({{ tickets.length }})
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="statusFilter === 'pending'"
+      (click)="statusFilter = 'pending'"
+    >
+      Pending
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="statusFilter === 'in_progress'"
+      (click)="statusFilter = 'in_progress'"
+    >
+      In Progress
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="statusFilter === 'resolved'"
+      (click)="statusFilter = 'resolved'"
+    >
+      Resolved
+    </button>
+  </div>
+
+  <!-- Messages List -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <span>Loading support inbox...</span>
+  </div>
+
+  <div *ngIf="!loading && filteredTickets.length === 0" class="empty-state">
+    <p>No support messages in this view.</p>
+  </div>
+
+  <div *ngIf="!loading && filteredTickets.length > 0" class="tickets-list">
+    <article
+      class="ticket-card"
+      *ngFor="let ticket of filteredTickets"
+      (click)="viewTicketDetails(ticket)"
+    >
+      <div class="ticket-top">
+        <div class="user-meta">
+          <span class="user-avatar">{{ getUserName(ticket).charAt(0) }}</span>
+          <div>
+            <strong class="user-name">{{ getUserName(ticket) }}</strong>
+            <small class="user-email">{{ getUserEmail(ticket) }}</small>
+          </div>
+        </div>
+
+        <div class="badge-group">
+          <span class="type-tag">{{ ticket.type }}</span>
+          <span
+            class="status-tag"
+            [class.status-pending]="ticket.status === 'pending'"
+            [class.status-progress]="ticket.status === 'in_progress'"
+            [class.status-resolved]="ticket.status === 'resolved'"
+          >
+            {{ ticket.status === 'in_progress' ? 'In Progress' : (ticket.status | titlecase) }}
+          </span>
+        </div>
+      </div>
+
+      <h3 class="ticket-subject">{{ ticket.subject }}</h3>
+      <p class="ticket-preview">{{ ticket.content }}</p>
+
+      <div class="ticket-footer">
+        <span class="date-chip">Received: {{ ticket.createdAt | date:'medium' }}</span>
+        <span class="link-action">View Ticket & Manage Status →</span>
+      </div>
+    </article>
+  </div>
+</div>

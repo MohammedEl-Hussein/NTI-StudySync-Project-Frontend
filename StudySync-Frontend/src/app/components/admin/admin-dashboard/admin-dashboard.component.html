@@ -1,0 +1,149 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <div class="dash-header">
+    <div>
+      <h1 class="page-title">Admin Dashboard</h1>
+      <p class="page-subtitle">Overview of platform metrics, active rooms, user base, and support tickets.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-refresh" (click)="loadDashboardData()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <polyline points="1 20 1 14 7 14"></polyline>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+        <span>Refresh</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Key Statistics Grid -->
+  <div class="stats-grid">
+    <div class="stat-card card-users">
+      <div class="stat-icon-wrapper">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Users</span>
+        <strong class="stat-value">{{ stats.totalUsers }}</strong>
+        <span class="stat-badge">Active Accounts</span>
+      </div>
+      <a routerLink="/admin/users" class="stat-link">Manage Users →</a>
+    </div>
+
+    <div class="stat-card card-rooms">
+      <div class="stat-icon-wrapper">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Rooms</span>
+        <strong class="stat-value">{{ stats.totalRooms }}</strong>
+        <span class="stat-badge">Study Groups</span>
+      </div>
+      <a routerLink="/admin/rooms" class="stat-link">View Rooms →</a>
+    </div>
+
+    <div class="stat-card card-cats">
+      <div class="stat-icon-wrapper">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Categories</span>
+        <strong class="stat-value">{{ stats.totalCategories }}</strong>
+        <span class="stat-badge">Study Subjects</span>
+      </div>
+      <a routerLink="/admin/categories" class="stat-link">Manage Categories →</a>
+    </div>
+
+    <div class="stat-card card-support">
+      <div class="stat-icon-wrapper">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Pending Support</span>
+        <strong class="stat-value text-amber">{{ stats.pendingSupport }}</strong>
+        <span class="stat-badge warning">Requires Action</span>
+      </div>
+      <a routerLink="/admin/support" class="stat-link">Open Inbox →</a>
+    </div>
+  </div>
+
+  <!-- Sections Grid -->
+  <div class="dashboard-grid">
+    <!-- Recent Users -->
+    <div class="panel">
+      <div class="panel-header">
+        <h2>Recent Registered Users</h2>
+        <a routerLink="/admin/users" class="panel-more">View All</a>
+      </div>
+      <div class="table-container">
+        <table class="dash-table">
+          <thead>
+            <tr>
+              <th>USER</th>
+              <th>ROLE</th>
+              <th>LEVEL</th>
+              <th>JOINED</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let u of recentUsers">
+              <td class="user-cell">
+                <span class="avatar-sm">{{ (u.name || 'U').charAt(0) }}</span>
+                <div>
+                  <strong>{{ u.name }}</strong>
+                  <small>{{ u.email }}</small>
+                </div>
+              </td>
+              <td>
+                <span class="badge" [class.admin-badge]="u.role === 'admin'" [class.user-badge]="u.role !== 'admin'">
+                  {{ u.role || 'user' }}
+                </span>
+              </td>
+              <td>{{ u.studyLevel || '-' }}</td>
+              <td>{{ u.createdAt | date:'MMM d, y' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Active Study Rooms -->
+    <div class="panel">
+      <div class="panel-header">
+        <h2>Active Study Rooms</h2>
+        <a routerLink="/admin/rooms" class="panel-more">View All</a>
+      </div>
+      <div class="rooms-list">
+        <div class="room-item" *ngFor="let r of recentRooms">
+          <div class="room-info">
+            <strong>{{ r.title }}</strong>
+            <div class="room-tags">
+              <span class="tag-category">{{ r.category }}</span>
+              <span class="tag-members">{{ r.members || r.memberCount || 0 }} members</span>
+            </div>
+          </div>
+          <div class="room-progress-box">
+            <span class="prog-pct">{{ r.progress || 0 }}%</span>
+            <div class="prog-bar">
+              <div class="prog-fill" [style.width.%]="r.progress || 0"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,197 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main class="page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <div class="breadcrumb">
+        <a routerLink="/profile">Profile</a>
+        <span class="crumb-sep">/</span>
+        <span>Edit Profile</span>
+      </div>
+      <h1>Edit Profile</h1>
+      <p>Update your personal, academic, and contact details.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn secondary" type="button" (click)="onCancel()" [disabled]="saving">Cancel</button>
+      <button class="btn primary" type="button" (click)="onSubmit()" [disabled]="saving || loading">
+        <span *ngIf="saving" class="spinner"></span>
+        <span>{{ saving ? 'Saving...' : 'Save Changes' }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Feedback Alerts -->
+  <div *ngIf="successMessage" class="alert success-alert">
+    <span class="alert-icon">✓</span>
+    <div>
+      <strong>Success!</strong> {{ successMessage }}
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert error-alert">
+    <span class="alert-icon">⚠</span>
+    <div>
+      <strong>Error:</strong> {{ errorMessage }}
+    </div>
+  </div>
+
+  <!-- Main Edit Form Card -->
+  <section class="card edit-card">
+    <div class="card-header">
+      <div class="user-avatar-preview">
+        <div class="big-avatar">{{ (profileForm.get('name')?.value?.charAt(0) || currentUser?.name?.charAt(0) || 'U') }}</div>
+        <div class="avatar-info">
+          <h2>{{ profileForm.get('name')?.value || 'Student Name' }}</h2>
+          <p>{{ currentUser?.email }}</p>
+          <span class="badge">{{ currentUser?.role === 'admin' ? 'Platform Admin' : 'Active Student' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="form-body">
+      <div class="form-section-title">
+        <h3>Personal & Academic Information</h3>
+        <p>This information helps study partners connect and collaborate effectively.</p>
+      </div>
+
+      <div class="form-grid">
+        <!-- Full Name -->
+        <div class="form-group" [class.has-error]="f['name'].invalid && f['name'].touched">
+          <label class="form-label" for="input-name">
+            Full Name <span class="required">*</span>
+          </label>
+          <input
+            id="input-name"
+            class="input"
+            type="text"
+            formControlName="name"
+            placeholder="e.g. Haneen Al-Sayed"
+          />
+          <span class="error-text" *ngIf="f['name'].errors?.['required'] && f['name'].touched">
+            Full Name is required.
+          </span>
+          <span class="error-text" *ngIf="f['name'].errors?.['minlength'] && f['name'].touched">
+            Name must be at least 2 characters.
+          </span>
+        </div>
+
+        <!-- Age -->
+        <div class="form-group" [class.has-error]="f['age'].invalid && f['age'].touched">
+          <label class="form-label" for="input-age">Age</label>
+          <input
+            id="input-age"
+            class="input"
+            type="number"
+            formControlName="age"
+            placeholder="e.g. 21"
+          />
+          <span class="error-text" *ngIf="f['age'].errors?.['min'] && f['age'].touched">
+            Please enter a valid age.
+          </span>
+        </div>
+
+        <!-- Study Level -->
+        <div class="form-group" [class.has-error]="f['studyLevel'].invalid && f['studyLevel'].touched">
+          <label class="form-label" for="input-studyLevel">
+            Study Level <span class="required">*</span>
+          </label>
+          <select id="input-studyLevel" class="select" formControlName="studyLevel">
+            <option value="" disabled>Select your academic level</option>
+            <option *ngFor="let level of studyLevelOptions" [value]="level">{{ level }}</option>
+          </select>
+          <span class="error-text" *ngIf="f['studyLevel'].errors?.['required'] && f['studyLevel'].touched">
+            Study Level is required.
+          </span>
+        </div>
+
+        <!-- Gender -->
+        <div class="form-group" [class.has-error]="f['gender'].invalid && f['gender'].touched">
+          <label class="form-label" for="input-gender">
+            Gender <span class="required">*</span>
+          </label>
+          <select id="input-gender" class="select" formControlName="gender">
+            <option *ngFor="let g of genderOptions" [value]="g">{{ g }}</option>
+          </select>
+        </div>
+
+        <!-- Organization / University -->
+        <div class="form-group" [class.has-error]="f['organization'].invalid && f['organization'].touched">
+          <label class="form-label" for="input-organization">Organization / University</label>
+          <input
+            id="input-organization"
+            class="input"
+            type="text"
+            formControlName="organization"
+            placeholder="e.g. Cairo University"
+          />
+        </div>
+
+        <!-- Department -->
+        <div class="form-group" [class.has-error]="f['department'].invalid && f['department'].touched">
+          <label class="form-label" for="input-department">Department / Major</label>
+          <input
+            id="input-department"
+            class="input"
+            type="text"
+            formControlName="department"
+            placeholder="e.g. Computer Science & AI"
+          />
+        </div>
+
+        <!-- Phone -->
+        <div class="form-group" [class.has-error]="f['phone'].invalid && f['phone'].touched">
+          <label class="form-label" for="input-phone">Phone Number</label>
+          <input
+            id="input-phone"
+            class="input"
+            type="tel"
+            formControlName="phone"
+            placeholder="e.g. +20 100 123 4567"
+          />
+          <span class="error-text" *ngIf="f['phone'].errors?.['pattern'] && f['phone'].touched">
+            Please enter a valid phone number.
+          </span>
+        </div>
+
+        <!-- Read-only Email Field -->
+        <div class="form-group">
+          <label class="form-label">Email Address (Managed by Auth)</label>
+          <input
+            class="input disabled"
+            type="email"
+            [value]="currentUser?.email || ''"
+            disabled
+            readonly
+          />
+          <span class="hint-text">Contact administrator to modify primary email.</span>
+        </div>
+      </div>
+
+      <!-- Bio / About -->
+      <div class="form-group full-width" [class.has-error]="f['bio'].invalid && f['bio'].touched">
+        <label class="form-label" for="input-bio">About / Academic Bio</label>
+        <textarea
+          id="input-bio"
+          class="textarea"
+          rows="3"
+          formControlName="bio"
+          placeholder="Write a brief overview of your academic focus and learning goals..."
+        ></textarea>
+        <span class="hint-text">Maximum 300 characters.</span>
+      </div>
+
+      <!-- Form Footer Controls -->
+      <div class="form-footer">
+        <button class="btn secondary" type="button" (click)="onCancel()" [disabled]="saving">
+          Cancel
+        </button>
+        <button class="btn primary" type="submit" [disabled]="saving || loading">
+          <span *ngIf="saving" class="spinner"></span>
+          <span>{{ saving ? 'Saving Changes...' : 'Save Profile Changes' }}</span>
+        </button>
+      </div>
+    </form>
+  </section>
+</main>
