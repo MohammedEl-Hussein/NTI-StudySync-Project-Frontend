@@ -1,0 +1,20 @@
+<aside class="sidebar" [class.collapsed]="collapsed">
+  <div class="side-nav">
+    <a routerLink="/dashboard" routerLinkActive="active"><span>▦</span><span>Dashboard</span></a>
+    <a routerLink="/rooms" routerLinkActive="active"><span>◯</span><span>Browse Rooms</span></a>
+    <a routerLink="/my-rooms" routerLinkActive="active"><span>□</span><span>My Rooms</span></a>
+    <a routerLink="/study-plan" routerLinkActive="active"><span>☷</span><span>Study Plan</span></a>
+    <a routerLink="/progress" routerLinkActive="active"><span>↗</span><span>Progress</span></a>
+    <a routerLink="/messages" routerLinkActive="active"><span>▢</span><span>Messages</span></a>
+    <a routerLink="/profile" routerLinkActive="active"><span>♙</span><span>Profile</span></a>
+  </div>
+
+  <div class="sidebar-bottom">
+    <a class="support-link" routerLink="/support"><span>?</span><span>Contact Admin</span></a>
+    <div class="user-mini">
+      <span class="avatar">{{ currentUser?.name?.charAt(0) || 'U' }}</span>
+      <div><strong>{{ currentUser?.name || 'Student' }}</strong><small>{{ currentUser?.role === 'admin' ? 'PLATFORM ADMIN' : 'STUDENT' }}</small></div>
+    </div>
+    <button class="logout" type="button" (click)="logout()">⇥</button>
+  </div>
+</aside>

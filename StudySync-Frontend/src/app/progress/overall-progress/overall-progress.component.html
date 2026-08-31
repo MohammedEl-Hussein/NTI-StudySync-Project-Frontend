@@ -1,0 +1,75 @@
+<section class="overall-container" [class.loading-state]="loading">
+  <!-- Main Overall Completion Card -->
+  <div class="card overall-hero-card">
+    <div class="ring-wrapper">
+      <div class="ring" [style.background]="'conic-gradient(#5146df 0% ' + data.percentage + '%, #e8ebf3 ' + data.percentage + '% 100%)'">
+        <div class="ring-inner">
+          <span class="ring-pct">{{ data.percentage }}%</span>
+          <small class="ring-label">Overall</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="overall-info">
+      <div class="info-header">
+        <span class="badge status-badge">Academic Milestone</span>
+        <h2>Overall Syllabus Completion</h2>
+      </div>
+      <p class="description">
+        You've successfully completed <strong>{{ data.completedTasks }} of {{ data.totalTasks }}</strong> assigned tasks mapped across all your active study rooms.
+      </p>
+
+      <div class="overall-progress-bar-wrap">
+        <app-progress-bar
+          [percentage]="data.percentage"
+          [showLabel]="false"
+          height="10px"
+          color="gradient"
+        ></app-progress-bar>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Metric Grid (Completed, Remaining, Total, Percentage) -->
+  <div class="stat-grid metrics-grid">
+    <!-- Completed Tasks -->
+    <div class="stat-card metric-card">
+      <div class="metric-icon success-bg">✓</div>
+      <div class="metric-content">
+        <small>Completed Tasks</small>
+        <strong>{{ data.completedTasks }}</strong>
+        <span class="sub-label">Milestones reached</span>
+      </div>
+    </div>
+
+    <!-- Remaining Tasks -->
+    <div class="stat-card metric-card">
+      <div class="metric-icon warning-bg">⏳</div>
+      <div class="metric-content">
+        <small>Remaining Tasks</small>
+        <strong>{{ data.remainingTasks }}</strong>
+        <span class="sub-label">Pending assignment</span>
+      </div>
+    </div>
+
+    <!-- Total Tasks -->
+    <div class="stat-card metric-card">
+      <div class="metric-icon primary-bg">🎯</div>
+      <div class="metric-content">
+        <small>Total Tasks</small>
+        <strong>{{ data.totalTasks }}</strong>
+        <span class="sub-label">Curriculum scope</span>
+      </div>
+    </div>
+
+    <!-- Completion Percentage -->
+    <div class="stat-card metric-card">
+      <div class="metric-icon info-bg">📊</div>
+      <div class="metric-content">
+        <small>Percentage</small>
+        <strong class="gradient-val">{{ data.percentage }}%</strong>
+        <span class="sub-label">Overall efficiency</span>
+      </div>
+    </div>
+  </div>
+</section>

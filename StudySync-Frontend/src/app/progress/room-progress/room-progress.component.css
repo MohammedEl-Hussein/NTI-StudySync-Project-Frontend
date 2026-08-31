@@ -1,0 +1,278 @@
+:host {
+  display: block;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid #e6e9ef;
+  border-radius: 14px;
+  padding: 24px;
+}
+
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eef0f4;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+  gap: 16px;
+}
+
+.head-left h2 {
+  font-size: 16px;
+  margin: 0 0 4px;
+  color: #172033;
+  font-weight: 800;
+}
+
+.head-left p {
+  margin: 0;
+  font-size: 12px;
+  color: #7d8594;
+}
+
+.head-left code {
+  background: #edf2f7;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #5146df;
+  font-family: monospace;
+}
+
+.head-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.select-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #4a5568;
+  white-space: nowrap;
+}
+
+.room-select {
+  border: 1px solid #dfe2e8;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  outline: none;
+  background: #fff;
+  color: #172033;
+  font-weight: 600;
+}
+
+.room-summary-banner {
+  background: linear-gradient(135deg, #f8faff 0%, #edf2fe 100%);
+  border: 1px solid #e2e8f8;
+  border-radius: 12px;
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 20px;
+}
+
+.banner-left h3 {
+  margin: 6px 0 4px;
+  font-size: 18px;
+  color: #172033;
+  font-weight: 800;
+}
+
+.banner-left p {
+  margin: 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.room-badge {
+  background: #e0e7ff;
+  color: #4338ca;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.banner-stats {
+  display: flex;
+  gap: 24px;
+}
+
+.mini-stat {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+.mini-stat small {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.mini-stat strong {
+  font-size: 22px;
+  font-weight: 800;
+  color: #5146df;
+  margin-top: 2px;
+}
+
+.room-details-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 20px;
+}
+
+.peers-card {
+  background: #ffffff;
+  border: 1px solid #e6e9ef;
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.peers-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eef0f4;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.peers-head h3 {
+  margin: 0;
+  font-size: 15px;
+  color: #172033;
+  font-weight: 800;
+}
+
+.peer-badge {
+  background: #ecfdf5;
+  color: #059669;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.peers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.peer-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #fbfcfe;
+  border: 1px solid #f0f2f7;
+  border-radius: 10px;
+}
+
+.peer-rank {
+  font-size: 11px;
+  font-weight: 800;
+  color: #94a3b8;
+  width: 24px;
+}
+
+.gold-rank {
+  color: #d97706;
+}
+
+.silver-rank {
+  color: #64748b;
+}
+
+.bronze-rank {
+  color: #b45309;
+}
+
+.peer-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #e0e7ff;
+  color: #4f46e5;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.peer-info {
+  flex: 1;
+}
+
+.peer-name-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.peer-name {
+  font-size: 12px;
+  color: #172033;
+}
+
+.peer-pct {
+  font-size: 12px;
+  font-weight: 700;
+  color: #5146df;
+}
+
+.progress-track {
+  height: 6px;
+  background: #e8ebf0;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #5146df, #08a8df);
+  border-radius: 99px;
+}
+
+.peer-lead {
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.loading-state {
+  opacity: 0.6;
+}
+
+@media (max-width: 950px) {
+  .room-details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .card-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .room-summary-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .banner-stats {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .mini-stat {
+    text-align: left;
+  }
+}

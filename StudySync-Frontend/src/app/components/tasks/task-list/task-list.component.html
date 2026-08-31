@@ -1,0 +1,4 @@
+<app-navbar></app-navbar><app-sidebar></app-sidebar>
+<main class="page"><div class="page-header"><div><h1>Study Tasks</h1><p>Organize tasks by section and due date.</p></div><a class="btn primary" [routerLink]="['/rooms',roomId,'tasks','create']">+ Add Task</a></div>
+<div class="card toolbar"><input class="input" placeholder="Search task title..." [(ngModel)]="search"><select class="select" [(ngModel)]="section"><option value="">All Sections</option><option *ngFor="let s of sections">{{ s }}</option></select></div>
+<div class="card table-card"><div class="task-item" *ngFor="let task of filteredTasks"><div><span class="badge">{{ task.section }}</span><h3>{{ task.title }}</h3><p>{{ task.description }}</p></div><time>{{ task.dueDate | date:'mediumDate' }}</time><div class="actions"><a class="btn secondary" [routerLink]="['/tasks',task._id,'edit']">Edit</a><button class="btn danger" type="button" (click)="deleteTask(task)">Delete</button></div></div></div></main>

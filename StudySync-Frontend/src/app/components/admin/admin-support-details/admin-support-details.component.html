@@ -1,0 +1,86 @@
+<div class="details-container">
+  <!-- Top Action Navigation -->
+  <div class="details-nav">
+    <button class="btn-back" (click)="goBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      <span>Back to Support Inbox</span>
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <span>Loading ticket details...</span>
+  </div>
+
+  <!-- Ticket Card -->
+  <div class="details-card" *ngIf="!loading && ticket">
+    <div class="ticket-header">
+      <div class="header-main">
+        <div class="tags-row">
+          <span class="type-tag">{{ ticket.type }}</span>
+          <span
+            class="status-tag"
+            [class.status-pending]="ticket.status === 'pending'"
+            [class.status-progress]="ticket.status === 'in_progress'"
+            [class.status-resolved]="ticket.status === 'resolved'"
+          >
+            {{ ticket.status === 'in_progress' ? 'In Progress' : (ticket.status | titlecase) }}
+          </span>
+        </div>
+        <h1 class="ticket-title">{{ ticket.subject }}</h1>
+        <span class="timestamp">Submitted: {{ ticket.createdAt | date:'medium' }}</span>
+      </div>
+
+      <!-- Quick Status Changer -->
+      <div class="status-action-box">
+        <span class="action-label">Change Ticket Status:</span>
+        <div class="status-buttons">
+          <button
+            class="btn-status-toggle btn-pend"
+            [class.active]="ticket.status === 'pending'"
+            [disabled]="updatingStatus"
+            (click)="changeStatus('pending')"
+          >
+            Pending
+          </button>
+          <button
+            class="btn-status-toggle btn-prog"
+            [class.active]="ticket.status === 'in_progress'"
+            [disabled]="updatingStatus"
+            (click)="changeStatus('in_progress')"
+          >
+            In Progress
+          </button>
+          <button
+            class="btn-status-toggle btn-resolv"
+            [class.active]="ticket.status === 'resolved'"
+            [disabled]="updatingStatus"
+            (click)="changeStatus('resolved')"
+          >
+            Resolved
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Student User Information -->
+    <div class="user-info-card">
+      <span class="avatar">{{ getUserName().charAt(0) }}</span>
+      <div class="user-meta">
+        <strong class="user-name">{{ getUserName() }}</strong>
+        <span class="user-email">{{ getUserEmail() }}</span>
+      </div>
+    </div>
+
+    <!-- Full Message Body -->
+    <div class="message-box">
+      <h3>Message / Issue Description</h3>
+      <div class="content-text">
+        {{ ticket.content }}
+      </div>
+    </div>
+  </div>
+</div>

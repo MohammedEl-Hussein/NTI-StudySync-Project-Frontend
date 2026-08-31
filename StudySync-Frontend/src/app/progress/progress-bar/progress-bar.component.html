@@ -1,0 +1,28 @@
+<div class="progress-container">
+  <!-- Optional Top Header Label & Percentage -->
+  <div class="progress-meta" *ngIf="showLabel || label">
+    <div class="label-group">
+      <span class="progress-title" *ngIf="label">{{ label }}</span>
+      <small class="progress-sub" *ngIf="subtitle">{{ subtitle }}</small>
+    </div>
+    <strong class="progress-pct" *ngIf="showLabel">{{ safePercentage }}%</strong>
+  </div>
+
+  <!-- Progress Bar Track & Fill -->
+  <div class="progress-track" [style.height]="height">
+    <div
+      class="progress-bar-fill"
+      [class.color-gradient]="color === 'gradient'"
+      [class.color-primary]="color === 'primary'"
+      [class.color-success]="color === 'success'"
+      [class.color-warning]="color === 'warning'"
+      [class.color-purple]="color === 'purple'"
+      [class.animated-bar]="animated"
+      [style.width.%]="safePercentage"
+      role="progressbar"
+      [attr.aria-valuenow]="safePercentage"
+      aria-valuemin="0"
+      aria-valuemax="100"
+    ></div>
+  </div>
+</div>

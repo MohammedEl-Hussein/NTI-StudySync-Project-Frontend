@@ -1,0 +1,37 @@
+<div class="stat-grid profile-stats" [class.loading-state]="loading">
+  <!-- Joined Rooms Stat Card -->
+  <div class="stat-card">
+    <div class="stat-icon-wrapper room-icon">
+      <span class="icon">🏛️</span>
+    </div>
+    <div class="stat-details">
+      <small>Joined Rooms</small>
+      <strong class="stat-value">{{ stats.joinedRooms }}</strong>
+      <span class="stat-subtext">Active study spaces</span>
+    </div>
+  </div>
+
+  <!-- Tasks Completed Stat Card -->
+  <div class="stat-card">
+    <div class="stat-icon-wrapper task-icon">
+      <span class="icon">✓</span>
+    </div>
+    <div class="stat-details">
+      <small>Tasks Completed</small>
+      <strong class="stat-value">{{ stats.completedTasks }}</strong>
+      <span class="stat-subtext">Across all syllabus</span>
+    </div>
+  </div>
+
+  <!-- Overall Progress Stat Card -->
+  <div class="stat-card highlight">
+    <div class="stat-icon-wrapper prog-icon">
+      <span class="icon">📈</span>
+    </div>
+    <div class="stat-details">
+      <small>Overall Progress</small>
+      <strong class="stat-value gradient-text">{{ stats.overallProgress }}%</strong>
+      <span class="stat-subtext">Comprehensive score</span>
+    </div>
+  </div>
+</div>

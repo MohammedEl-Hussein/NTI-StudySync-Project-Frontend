@@ -1,0 +1,11 @@
+<div class="overlay" *ngIf="visible">
+  <section class="dialog" role="dialog" aria-modal="true">
+    <div class="dialog-icon">{{ destructive ? '!' : '?' }}</div>
+    <h3>{{ title }}</h3>
+    <p>{{ message }}</p>
+    <div class="actions">
+      <button class="btn secondary" type="button" (click)="cancel()">Cancel</button>
+      <button class="btn" [class.danger]="destructive" [class.primary]="!destructive" type="button" (click)="confirm()">{{ confirmText || 'Confirm' }}</button>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,4 @@
+<div class="chat-layout">
+  <aside class="chat-members card"><h3>Active Members</h3><div class="chat-member" *ngFor="let member of activeMembers"><span class="avatar">{{ member.name?.charAt(0) }}</span><div><strong>{{ member.name }}</strong><small [class.offline]="member.status==='Offline'">● {{ member.status }}</small></div></div></aside>
+  <section class="chat-window card"><div class="chat-messages"><div class="message" *ngFor="let message of messages" [class.mine]="message.userId === currentUser?._id"><span class="avatar">{{ message.user?.name?.charAt(0) || 'U' }}</span><div><div class="meta"><strong>{{ message.user?.name || 'User' }}</strong><time>{{ message.sentAt | date:'shortTime' }}</time></div><p>{{ message.content }}</p></div></div></div><form class="composer" (ngSubmit)="sendMessage()"><input [(ngModel)]="newMessage" name="message" placeholder="Type your message..." autocomplete="off"><button class="send" type="submit">➤</button></form></section>
+</div>

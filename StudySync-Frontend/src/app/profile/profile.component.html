@@ -1,0 +1,115 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main class="page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1>My Profile</h1>
+      <p>Manage your academic profile, view credentials, and track global statistics.</p>
+    </div>
+    <div class="header-actions">
+      <a class="btn primary" routerLink="/profile/edit">
+        <span class="btn-icon">✎</span>
+        <span>Edit Profile</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Profile Hero Section -->
+  <section class="profile-hero card">
+    <div class="hero-left">
+      <div class="big-avatar">
+        {{ user?.name?.charAt(0) || 'U' }}
+      </div>
+      <div class="hero-text">
+        <div class="hero-name-row">
+          <h1>{{ user?.name || 'Student Name' }}</h1>
+          <span class="role-badge" [class.admin-role]="user?.role === 'admin'">
+            {{ user?.role === 'admin' ? 'Platform Admin' : 'Student' }}
+          </span>
+        </div>
+        <p class="hero-email">{{ user?.email || 'email@studysync.edu' }}</p>
+        <p class="hero-bio" *ngIf="user?.bio">{{ user?.bio }}</p>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <button class="btn secondary" type="button" routerLink="/profile/edit">
+        <span>Edit Details</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Combined Multi-Service Profile Statistics Component -->
+  <app-profile-stats></app-profile-stats>
+
+  <!-- Detailed Personal & Academic Info Card -->
+  <section class="card profile-info-card">
+    <div class="card-head">
+      <div class="card-head-title">
+        <h2>Academic & Personal Credentials</h2>
+        <p>Full breakdown of your registered institutional records.</p>
+      </div>
+      <a class="btn-link" routerLink="/profile/edit">Modify Information &rarr;</a>
+    </div>
+
+    <div class="details-grid">
+      <!-- Full Name -->
+      <div class="info-group">
+        <span class="info-label">Full Name</span>
+        <strong class="info-value">{{ user?.name || '—' }}</strong>
+      </div>
+
+      <!-- Age -->
+      <div class="info-group">
+        <span class="info-label">Age</span>
+        <strong class="info-value">{{ user?.age ? user?.age + ' years old' : 'Not specified' }}</strong>
+      </div>
+
+      <!-- Study Level -->
+      <div class="info-group">
+        <span class="info-label">Study Level</span>
+        <strong class="info-value highlight-val">{{ user?.studyLevel || 'Undergraduate' }}</strong>
+      </div>
+
+      <!-- Organization / University -->
+      <div class="info-group">
+        <span class="info-label">Organization / University</span>
+        <strong class="info-value">{{ user?.organization || '—' }}</strong>
+      </div>
+
+      <!-- Department / Major -->
+      <div class="info-group">
+        <span class="info-label">Department / Specialization</span>
+        <strong class="info-value">{{ user?.department || '—' }}</strong>
+      </div>
+
+      <!-- Gender -->
+      <div class="info-group">
+        <span class="info-label">Gender</span>
+        <strong class="info-value">{{ user?.gender || '—' }}</strong>
+      </div>
+
+      <!-- Phone -->
+      <div class="info-group">
+        <span class="info-label">Phone Number</span>
+        <strong class="info-value">{{ user?.phone || '—' }}</strong>
+      </div>
+
+      <!-- Email -->
+      <div class="info-group">
+        <span class="info-label">Email Address</span>
+        <strong class="info-value email-val">{{ user?.email || '—' }}</strong>
+      </div>
+
+      <!-- Role -->
+      <div class="info-group">
+        <span class="info-label">Account Role</span>
+        <strong class="info-value">
+          <span class="badge">{{ user?.role?.toUpperCase() || 'STUDENT' }}</span>
+        </strong>
+      </div>
+    </div>
+  </section>
+</main>

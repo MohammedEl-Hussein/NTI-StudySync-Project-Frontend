@@ -1,0 +1,91 @@
+<div class="card room-progress-card" [class.loading-state]="loading">
+  <!-- Room Selector and Header -->
+  <div class="card-head">
+    <div class="head-left">
+      <h2>Room Progress & Peer Standing</h2>
+      <p>API Endpoint: <code>GET /progresses/room/&#123;&#123; selectedRoomId &#125;&#125;</code></p>
+    </div>
+
+    <!-- Room Selector Dropdown -->
+    <div class="head-right">
+      <label class="select-label" for="room-select">Select Room:</label>
+      <select
+        id="room-select"
+        class="select room-select"
+        [value]="selectedRoomId"
+        (change)="onRoomChange($any($event.target).value)"
+      >
+        <option *ngFor="let room of joinedRooms" [value]="room._id || room.id">
+          {{ room.title }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div *ngIf="roomData" class="room-content-wrap">
+    <!-- Room Summary Banner -->
+    <div class="room-summary-banner">
+      <div class="banner-left">
+        <span class="badge room-badge">{{ roomData.category || 'Computer Science' }}</span>
+        <h3>{{ roomData.roomTitle }}</h3>
+        <p>Active peer cohort with {{ roomData.totalMembers || 8 }} collaborating members.</p>
+      </div>
+
+      <div class="banner-stats">
+        <div class="mini-stat">
+          <small>Room Progress</small>
+          <strong>{{ roomData.overallProgress }}%</strong>
+        </div>
+        <div class="mini-stat">
+          <small>Tasks Completed</small>
+          <strong>{{ roomData.completedTasks }}/{{ roomData.totalTasks }}</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layout Grid: Room Sections + Peer Leaderboard -->
+    <div class="room-details-grid">
+      <!-- Left Column: Sections in this Room -->
+      <div class="room-sections-col">
+        <app-section-progress
+          [sections]="roomData.sections"
+          title="Room Milestone Breakdown"
+        ></app-section-progress>
+      </div>
+
+      <!-- Right Column: Room Peer Leaderboard -->
+      <div class="card peers-card">
+        <div class="peers-head">
+          <h3>Peer Progress Leaderboard</h3>
+          <span class="badge peer-badge">{{ roomData.peers.length || 0 }} Members</span>
+        </div>
+
+        <div class="peers-list">
+          <div class="peer-row" *ngFor="let peer of roomData.peers; let idx = index">
+            <span class="peer-rank" [class.gold-rank]="idx === 0" [class.silver-rank]="idx === 1" [class.bronze-rank]="idx === 2">
+              #{{ idx + 1 }}
+            </span>
+            <div class="peer-avatar">
+              {{ peer.avatar || peer.name.charAt(0) }}
+            </div>
+            <div class="peer-info">
+              <div class="peer-name-line">
+                <strong class="peer-name">{{ peer.name }}</strong>
+                <span class="peer-pct">{{ peer.percentage }}%</span>
+              </div>
+              <div class="peer-bar-wrap">
+                <div class="progress-track">
+                  <div
+                    class="progress-bar-fill"
+                    [class.peer-lead]="idx === 0"
+                    [style.width.%]="peer.percentage"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

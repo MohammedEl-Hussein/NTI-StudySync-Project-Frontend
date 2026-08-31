@@ -1,0 +1,64 @@
+<div class="details-container">
+  <!-- Top Action Navigation -->
+  <div class="details-nav">
+    <button class="btn-back" (click)="goBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      <span>Back to Users List</span>
+    </button>
+
+    <div class="top-actions" *ngIf="user">
+      <button class="btn-delete" (click)="deleteUser()">Delete Account</button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <span>Loading user details...</span>
+  </div>
+
+  <!-- User Profile Card -->
+  <div class="details-card" *ngIf="!loading && user">
+    <div class="profile-header">
+      <div class="avatar-large">{{ (user.name || 'U').charAt(0) }}</div>
+      <div class="profile-title">
+        <h1>{{ user.name }}</h1>
+        <div class="profile-meta">
+          <span class="meta-email">{{ user.email }}</span>
+          <span class="role-badge" [class.badge-admin]="user.role === 'admin'" [class.badge-user]="user.role !== 'admin'">
+            {{ user.role || 'user' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="info-label">User ID</span>
+        <span class="info-value text-mono">{{ user._id || user.id }}</span>
+      </div>
+
+      <div class="info-item">
+        <span class="info-label">Study Level / Year</span>
+        <span class="info-value">{{ user.studyLevel || 'Not set' }}</span>
+      </div>
+
+      <div class="info-item">
+        <span class="info-label">Organization / University</span>
+        <span class="info-value">{{ user.organization || 'Independent Student' }}</span>
+      </div>
+
+      <div class="info-item">
+        <span class="info-label">Account Created Date</span>
+        <span class="info-value">{{ (user.createdAt | date:'medium') || 'N/A' }}</span>
+      </div>
+    </div>
+
+    <div class="bio-section" *ngIf="user.bio">
+      <h3>About / Bio</h3>
+      <p>{{ user.bio }}</p>
+    </div>
+  </div>
+</div>

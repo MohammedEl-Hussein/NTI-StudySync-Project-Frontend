@@ -1,0 +1,75 @@
+<div class="details-container">
+  <!-- Top Action Navigation -->
+  <div class="details-nav">
+    <button class="btn-back" (click)="goBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      <span>Back to Rooms</span>
+    </button>
+
+    <div class="top-actions" *ngIf="room">
+      <button class="btn-delete" (click)="deleteRoom()">Delete Study Room</button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <span>Loading study room details...</span>
+  </div>
+
+  <!-- Room Info Card -->
+  <div class="details-card" *ngIf="!loading && room">
+    <div class="room-header">
+      <div class="room-icon-large">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+        </svg>
+      </div>
+      <div class="room-title-block">
+        <h1>{{ room.title }}</h1>
+        <div class="room-badges">
+          <span class="badge-category">{{ room.category }}</span>
+          <span class="badge-level">{{ room.level }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats & Meta Row -->
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="info-label">Room ID</span>
+        <span class="info-value text-mono">{{ room._id || room.id }}</span>
+      </div>
+
+      <div class="info-item">
+        <span class="info-label">Active Members</span>
+        <span class="info-value"><strong>{{ room.members || room.memberCount || 0 }}</strong> / {{ room.maxMembers || 15 }}</span>
+      </div>
+
+      <div class="info-item">
+        <span class="info-label">Overall Syllabus Progress</span>
+        <div class="prog-row">
+          <span class="info-value">{{ room.progress || 0 }}%</span>
+          <div class="prog-bar-wrap">
+            <div class="prog-bar-fill" [style.width.%]="room.progress || 0"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-item">
+        <span class="info-label">Study Schedule</span>
+        <span class="info-value">
+          {{ (room.startDate | date:'MMM d, y') || 'Open' }} – {{ (room.endDate | date:'MMM d, y') || 'Ongoing' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="desc-box">
+      <h3>Room Description & Learning Goals</h3>
+      <p>{{ room.description || 'No detailed description provided for this study room.' }}</p>
+    </div>
+  </div>
+</div>
