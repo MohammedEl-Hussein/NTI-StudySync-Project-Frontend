@@ -1,0 +1,121 @@
+<main class="admin-page">
+  <div class="page-header">
+    <div>
+      <h1>User Management</h1>
+      <p>View and manage registered StudySync users.</p>
+    </div>
+    <button class="btn primary" (click)="logout()">Logout</button>
+  </div>
+
+  <div class="filters">
+    <select class="select" [(ngModel)]="roleFilter">
+      <option value="">Role: All Roles</option>
+      <option value="user">User</option>
+      <option value="admin">Admin</option>
+    </select>
+    <select class="select" [(ngModel)]="levelFilter">
+      <option value="">Study Level: All Levels</option>
+      <option value="Beginner">Beginner</option>
+      <option value="Intermediate">Intermediate</option>
+      <option value="Advanced">Advanced</option>
+      <option value="Undergraduate">Undergraduate</option>
+      <option value="Graduate">Graduate</option>
+    </select>
+  </div>
+
+  <!-- Admin View: Table of Users -->
+  <div class="table-wrap" *ngIf="isAdmin; else nonAdminView">
+    <table *ngIf="filteredUsers.length > 0; else noUsers">
+      <thead>
+        <tr>
+          <th>AVATAR</th>
+          <th>NAME</th>
+          <th>EMAIL</th>
+          <th>STUDY LEVEL</th>
+          <th>ORGANIZATION</th>
+          <th>ROLE</th>
+          <th>JOINED DATE</th>
+          <th>ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of filteredUsers">
+          <td>
+            <span class="avatar">{{ user.name ? user.name.charAt(0).toUpperCase() : 'U' }}</span>
+          </td>
+          <td><strong>{{ user.name || 'N/A' }}</strong></td>
+          <td>{{ user.email || 'N/A' }}</td>
+          <td>{{ user.studyLevel || '-' }}</td>
+          <td>{{ user.organization || '-' }}</td>
+          <td>
+            <span class="role" [ngClass]="{'admin': user.role === 'admin'}">{{ user.role || 'user' }}</span>
+          </td>
+          <td>{{ (user.createdAt | date:'MMM d, y') || '-' }}</td>
+          <td>
+            <button class="icon-btn" (click)="selectUserForEdit(user)" title="Edit User">⚙</button>
+            <button class="icon-btn danger" (click)="deleteUser(user._id || user.id)" title="Delete User">✕</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pagination" *ngIf="filteredUsers.length > 0">
+      Showing {{ filteredUsers.length }} users <span>1</span>
+    </div>
+
+    <ng-template #noUsers>
+      <div style="padding: 32px; text-align: center; color: #7c8493;">
+        No users match the selected filters.
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Non-Admin View -->
+  <ng-template #nonAdminView>
+    <div style="background: #fff; border: 1px solid #e5e8ee; border-radius: 13px; padding: 48px; text-align: center;">
+      <div style="font-size: 40px; margin-bottom: 12px;">🔒</div>
+      <h2 style="margin: 0 0 8px; color: #20293b;">Access Restricted</h2>
+      <p style="color: #7c8493; margin: 0 0 20px;">Only users with the Admin role can view, edit, or delete the user list.</p>
+      <button class="btn primary" (click)="logout()">Log in with another account</button>
+    </div>
+  </ng-template>
+
+  <!-- Edit User Modal -->
+  <div class="modal-backdrop" *ngIf="selectedUser">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Update User Account</h3>
+        <button class="close-btn" (click)="cancelEdit()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label>
+          Full Name
+          <input type="text" [(ngModel)]="selectedUser.name" placeholder="Name" />
+        </label>
+        <label>
+          Email Address
+          <input type="email" [(ngModel)]="selectedUser.email" placeholder="Email" />
+        </label>
+        <label>
+          Role
+          <select [(ngModel)]="selectedUser.role">
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+        </label>
+        <label>
+          Study Level
+          <input type="text" [(ngModel)]="selectedUser.studyLevel" placeholder="Study Level" />
+        </label>
+        <label>
+          Organization
+          <input type="text" [(ngModel)]="selectedUser.organization" placeholder="Organization" />
+        </label>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" style="background:#e2e8f0; color:#475569;" (click)="cancelEdit()">Cancel</button>
+        <button class="btn primary" (click)="saveUserUpdate()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</main>

@@ -1,0 +1,45 @@
+<div class="auth-page">
+  <section class="auth-visual">
+    <a class="brand" routerLink="/"><span class="brand-mark">S</span>StudySync</a>
+    <div class="visual-copy"><h1>Unlock the power of peer accountability</h1><p>Create your profile, specify what you are studying, and instantly connect with high-focus study circles.</p>
+      <div class="benefits"><span>PLATFORM BENEFITS</span><p>✓ Join verified university and school channels</p><p>✓ Collaborate on shared milestones & chapters</p></div>
+    </div><small class="copyright">Collaborate. Grow. Succeed. StudySync 2026.</small>
+  </section>
+  <section class="auth-form-wrap">
+    <form class="auth-card register-card" [formGroup]="registerForm" (ngSubmit)="register()">
+      <h2>Create Academic Profile</h2><p class="sub">Fill in your information to join active study groups</p>
+      <div class="grid2">
+        <label>Full Name<input formControlName="name" placeholder="e.g. Ahmed Ali"></label>
+        <label>Age<input type="number" formControlName="age" placeholder="e.g. 21"></label>
+        <label>Study Level<select formControlName="studyLevel"><option value="">Select your level</option><option>Beginner</option><option>Intermediate</option><option>Advanced</option><option>Undergraduate</option><option>Graduate</option></select></label>
+        <label>Organization/University<input formControlName="organization" placeholder="e.g. Cairo University"></label>
+        <label>Department<input formControlName="department" placeholder="e.g. Computer Science"></label>
+        <label>Gender<select formControlName="gender"><option value="">Select gender</option><option>Male</option><option>Female</option></select></label>
+        <label>Phone Number<input formControlName="phone" placeholder="e.g. +20 100 123 4567"></label>
+        <label>Email Address<input type="email" formControlName="email" placeholder="e.g. ahmed.ali@cairo.edu.eg"></label>
+      </div>
+      <label>Password
+        <div class="password-field">
+          <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="••••••••••">
+          <button type="button" (click)="showPassword=!showPassword">
+            <svg *ngIf="showPassword" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <svg *ngIf="!showPassword" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+          </button>
+        </div>
+        <small class="hint">Must be 8+ characters, containing letters and numbers.</small>
+      </label>
+      <label>Confirm Password
+        <div class="password-field">
+          <input [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword" placeholder="••••••••••">
+          <button type="button" (click)="showConfirmPassword=!showConfirmPassword">
+            <svg *ngIf="showConfirmPassword" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <svg *ngIf="!showConfirmPassword" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+          </button>
+        </div>
+      </label>
+      <label class="checkbox"><input type="checkbox" formControlName="terms"> I agree to the Terms of Service and Privacy Policy</label>
+      <button class="btn primary full" type="submit" [disabled]="loading">{{ loading ? 'Creating...' : 'Create Account' }}</button>
+      <p class="switch">Already have an account? <a routerLink="/login">Login</a></p>
+    </form>
+  </section>
+</div>
