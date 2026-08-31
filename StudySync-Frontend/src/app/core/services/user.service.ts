@@ -14,10 +14,10 @@ export class UserService {
   private currentUserSubject = new BehaviorSubject<User>({
     _id: 'usr_haneen_01',
     id: 'usr_haneen_01',
-    name: 'Haneen Al-Sayed',
+    name: 'Haneen Mohamed',
     email: 'haneen@studysync.edu',
     role: 'student',
-    age: 21,
+    age: 19,
     studyLevel: 'Undergraduate (Senior Year)',
     organization: 'Faculty of Computer & Artificial Intelligence',
     department: 'Computer Science & Software Engineering',
