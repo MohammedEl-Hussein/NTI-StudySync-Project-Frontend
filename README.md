@@ -1,0 +1,1 @@
+# NTI-StudySync-Project-Frontend
