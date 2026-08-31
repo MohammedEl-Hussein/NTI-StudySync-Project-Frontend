@@ -1,0 +1,17 @@
+<div class="cover"></div>
+<div class="body">
+  <div>
+    <span class="badge">{{ room?.categoryNames?.[0] || 'Subject' }}</span>
+    <span class="level">{{ room?.level }}</span>
+  </div>
+  <h2>{{ room?.title }}</h2>
+  <p>{{ room?.description }}</p>
+  <div class="members">{{ room?.memberCount || 0 }}/{{ room?.maxMembers }} Members</div>
+  <div class="progress-label"><span>Plan Progress</span><strong>{{ room?.progress || 0 }}%</strong></div>
+  <div class="progress-track"><div class="progress-bar" [style.width.%]="room?.progress || 0"></div></div>
+  <small class="dates">{{ room?.startDate | date:'MMM d' }} – {{ room?.endDate | date:'MMM d' }}</small>
+  <div class="actions">
+    <a class="btn secondary" [routerLink]="['/rooms',room?._id]">View Details</a>
+    <button class="btn primary" [disabled]="room?.memberCount >= room?.maxMembers" (click)="joinRoom(room)">{{ room?.memberCount >= room?.maxMembers ? 'Full' : 'Join Room' }}</button>
+  </div>
+</div>

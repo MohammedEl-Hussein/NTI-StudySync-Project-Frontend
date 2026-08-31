@@ -1,0 +1,58 @@
+<main class="page">
+  <div class="page-header"><div><h1>Create Study Room</h1><p>Build a focused workspace for your study group.</p></div></div>
+  <div class="steps">
+    <span [class.active]="step===1">1 <b>Basic Info</b></span>
+    <span [class.active]="step===2">2 <b>Classification</b></span>
+    <span [class.active]="step===3">3 <b>Settings</b></span>
+    <span [class.active]="step===4">4 <b>Meeting</b></span>
+    <span [class.active]="step===5">5 <b>Study Plan</b></span>
+  </div>
+  <form class="card form-card" [formGroup]="roomForm" (ngSubmit)="submitRoom()">
+    <section *ngIf="step===1">
+      <h2>Basic Information</h2><p class="muted">Set up the primary details for your study room.</p>
+      <label class="form-label">Room Name<input class="input" formControlName="title" placeholder="e.g. Organic Chemistry Study Circle"></label>
+      <label class="form-label">Description<textarea class="textarea" formControlName="description" placeholder="Briefly describe the goals of this room..."></textarea></label>
+    </section>
+    
+    <section *ngIf="step===2">
+      <h2>Classification</h2>
+      <label class="form-label">Categories
+        <select class="select" formControlName="categoryIds" multiple>
+          <option *ngFor="let category of categories" [value]="category._id">{{ category.name }}</option>
+        </select>
+      </label>
+      <label class="form-label">Study Level
+        <select class="select" formControlName="level">
+          <option>Beginner</option>
+          <option>Intermediate</option>
+          <option>Advanced</option>
+        </select>
+      </label>
+    </section>
+    
+    <section *ngIf="step===3">
+      <h2>Settings</h2>
+      <label class="form-label">Maximum Members<input class="input" type="number" formControlName="maxMembers" min="2" max="150"></label>
+      <div class="grid2">
+        <label class="form-label">Start Date<input class="input" type="date" formControlName="startDate"></label>
+        <label class="form-label">End Date<input class="input" type="date" formControlName="endDate"></label>
+      </div>
+    </section>
+    
+    <section *ngIf="step===4">
+      <h2>Meeting</h2><p class="muted">Optionally add a Zoom or Google Meet link.</p>
+      <label class="form-label">Meeting URL<input class="input" formControlName="meetingURL" placeholder="https://meet.google.com/..."></label>
+    </section>
+    
+    <section *ngIf="step===5">
+      <h2>Study Plan</h2><p class="muted">The backend stores tasks separately. Create the room first, then add tasks from the room page.</p>
+      <div class="plan-note">You can add sections and tasks after the room is created.</div>
+    </section>
+    
+    <div class="form-actions">
+      <button class="btn secondary" type="button" (click)="previous()" [disabled]="step===1">Back</button>
+      <button *ngIf="step<5" class="btn primary" type="button" (click)="next()">Continue to Step {{ step + 1 }}</button>
+      <button *ngIf="step===5" class="btn primary" type="submit">Create Study Room</button>
+    </div>
+  </form>
+</main>
