@@ -7,7 +7,7 @@
     </div>
     <div class="header-actions">
       <a class="btn primary" routerLink="/profile/edit">
-        <span class="btn-icon">✎</span>
+        <i class="bi bi-pencil-square"></i>
         <span>Edit Profile</span>
       </a>
     </div>
@@ -17,24 +17,26 @@
   <section class="profile-hero card">
     <div class="hero-left">
       <div class="big-avatar">
-        {{ user?.name?.charAt(0) || 'U' }}
+        {{ user?.name?.charAt(0) || 'H' }}
       </div>
       <div class="hero-text">
         <div class="hero-name-row">
-          <h1>{{ user?.name || 'Student Name' }}</h1>
+          <h1>{{ user?.name || 'Haneen Al-Sayed' }}</h1>
           <span class="role-badge" [class.admin-role]="user?.role === 'admin'">
             {{ user?.role === 'admin' ? 'Platform Admin' : 'Student' }}
           </span>
         </div>
-        <p class="hero-email">{{ user?.email || 'email@studysync.edu' }}</p>
+        <p class="hero-email">{{ user?.email || 'haneen@studysync.edu' }}</p>
         <p class="hero-bio" *ngIf="user?.bio">{{ user?.bio }}</p>
+        <p class="hero-bio" *ngIf="!user?.bio">Computer Science Senior & Cloud Systems Researcher. Passionate about distributed architectures.</p>
       </div>
     </div>
 
     <div class="hero-right">
-      <button class="btn secondary" type="button" routerLink="/profile/edit">
+      <a class="btn secondary" routerLink="/profile/edit">
+        <i class="bi bi-gear"></i>
         <span>Edit Details</span>
-      </button>
+      </a>
     </div>
   </section>
 
@@ -55,49 +57,49 @@
       <!-- Full Name -->
       <div class="info-group">
         <span class="info-label">Full Name</span>
-        <strong class="info-value">{{ user?.name || '—' }}</strong>
+        <strong class="info-value">{{ user?.name || 'Haneen Al-Sayed' }}</strong>
       </div>
 
       <!-- Age -->
       <div class="info-group">
         <span class="info-label">Age</span>
-        <strong class="info-value">{{ user?.age ? user?.age + ' years old' : 'Not specified' }}</strong>
+        <strong class="info-value">{{ user?.age ? user?.age + ' years old' : '22 years old' }}</strong>
       </div>
 
       <!-- Study Level -->
       <div class="info-group">
         <span class="info-label">Study Level</span>
-        <strong class="info-value highlight-val">{{ user?.studyLevel || 'Undergraduate' }}</strong>
+        <strong class="info-value highlight-val">{{ user?.studyLevel || 'Undergraduate (Senior Year)' }}</strong>
       </div>
 
       <!-- Organization / University -->
       <div class="info-group">
         <span class="info-label">Organization / University</span>
-        <strong class="info-value">{{ user?.organization || '—' }}</strong>
+        <strong class="info-value">{{ user?.organization || 'Faculty of Engineering & CS' }}</strong>
       </div>
 
       <!-- Department / Major -->
       <div class="info-group">
         <span class="info-label">Department / Specialization</span>
-        <strong class="info-value">{{ user?.department || '—' }}</strong>
+        <strong class="info-value">{{ user?.department || 'Computer Science & Software Systems' }}</strong>
       </div>
 
       <!-- Gender -->
       <div class="info-group">
         <span class="info-label">Gender</span>
-        <strong class="info-value">{{ user?.gender || '—' }}</strong>
+        <strong class="info-value">{{ user?.gender || 'Female' }}</strong>
       </div>
 
       <!-- Phone -->
       <div class="info-group">
         <span class="info-label">Phone Number</span>
-        <strong class="info-value">{{ user?.phone || '—' }}</strong>
+        <strong class="info-value">{{ user?.phone || '+20 100 234 5678' }}</strong>
       </div>
 
       <!-- Email -->
       <div class="info-group">
         <span class="info-label">Email Address</span>
-        <strong class="info-value email-val">{{ user?.email || '—' }}</strong>
+        <strong class="info-value email-val">{{ user?.email || 'haneen@studysync.edu' }}</strong>
       </div>
 
       <!-- Role -->

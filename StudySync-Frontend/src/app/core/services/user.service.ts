@@ -8,16 +8,15 @@ import { User, UpdateUserDto, ProfileStats } from '../models/user.model';
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = '/api/users'; // Base API endpoint
+  private apiUrl = '/api/users';
 
-  // Mock initial current user
-  private currentUserSubject = new BehaviorSubject<User>({
+  private initialUser: User = {
     _id: 'usr_haneen_01',
     id: 'usr_haneen_01',
     name: 'Haneen Mohamed',
     email: 'haneen@studysync.edu',
     role: 'student',
-    age: 19,
+    age: 22,
     studyLevel: 'Undergraduate (Senior Year)',
     organization: 'Faculty of Computer & Artificial Intelligence',
     department: 'Computer Science & Software Engineering',
@@ -26,58 +25,61 @@ export class UserService {
     avatar: 'H',
     bio: 'Passionate about algorithms, system design, and building scalable full-stack applications.',
     createdAt: '2025-09-01T10:00:00Z'
-  });
+  };
 
-  public currentUser$ = this.currentUserSubject.asObservable();
+  private currentUserSubject: BehaviorSubject<User>;
+  public currentUser$: Observable<User>;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    let savedUser = null;
+    try {
+      const stored = localStorage.getItem('currentUser') || localStorage.getItem('user');
+      if (stored) {
+        savedUser = JSON.parse(stored);
+      }
+    } catch (e) {}
 
-  /**
-   * Get the currently authenticated user
-   */
+    const startingUser = savedUser ? { ...this.initialUser, ...savedUser } : this.initialUser;
+    this.currentUserSubject = new BehaviorSubject<User>(startingUser);
+    this.currentUser$ = this.currentUserSubject.asObservable();
+  }
+
   getCurrentUser(): Observable<User> {
     return of(this.currentUserSubject.value);
   }
 
-  /**
-   * Get user by ID (GET /users/:id)
-   */
   getUserById(id: string): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/${id}`).pipe(
-      catchError(() => {
-        // Fallback to current mock user if API is offline
-        return of(this.currentUserSubject.value);
-      })
+      catchError(() => of(this.currentUserSubject.value))
     );
   }
 
-  /**
-   * Update user profile information (PUT /users/:id)
-   */
   updateProfile(id: string, data: UpdateUserDto): Observable<User> {
+    const current = this.currentUserSubject.value;
+    const updated: User = {
+      ...current,
+      ...data,
+      updatedAt: new Date().toISOString()
+    };
+
+    try {
+      localStorage.setItem('currentUser', JSON.stringify(updated));
+    } catch (e) {}
+
+    this.currentUserSubject.next(updated);
+
     return this.http.put<User>(`${this.apiUrl}/${id}`, data).pipe(
-      tap((updatedUser) => {
-        const currentUser = this.currentUserSubject.value;
-        const merged = { ...currentUser, ...updatedUser };
+      tap((backendUser) => {
+        const merged = { ...updated, ...backendUser };
+        try {
+          localStorage.setItem('currentUser', JSON.stringify(merged));
+        } catch (e) {}
         this.currentUserSubject.next(merged);
       }),
-      catchError(() => {
-        // Fallback update in local state
-        const current = this.currentUserSubject.value;
-        const updated: User = {
-          ...current,
-          ...data,
-          updatedAt: new Date().toISOString()
-        };
-        this.currentUserSubject.next(updated);
-        return of(updated);
-      })
+      catchError(() => of(updated))
     );
   }
 
-  /**
-   * Get user profile summary stats
-   */
   getUserStats(userId?: string): Observable<ProfileStats> {
     return of({
       joinedRooms: 5,
@@ -88,10 +90,10 @@ export class UserService {
     });
   }
 
-  /**
-   * Update cached current user directly (e.g. after login)
-   */
   setCurrentUser(user: User): void {
+    try {
+      localStorage.setItem('currentUser', JSON.stringify(user));
+    } catch (e) {}
     this.currentUserSubject.next(user);
   }
 }

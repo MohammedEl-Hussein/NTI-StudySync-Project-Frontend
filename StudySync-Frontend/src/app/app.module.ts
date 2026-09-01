@@ -17,6 +17,11 @@ import { CreateRoomComponent } from './components/rooms/create-room/create-room.
 import { EditRoomComponent } from './components/rooms/edit-room/edit-room.component';
 import { RoomDetailsComponent } from './components/rooms/room-details/room-details.component';
 import { CategoriesComponent } from './components/categories/categories.component';
+// Profile Components
+import { ProfileComponent } from './components/profile/profile.component';
+import { EditProfileComponent } from './components/profile/edit-profile/edit-profile.component';
+import { ProfileStatsComponent } from './components/profile/profile-stats/profile-stats.component';
+
 
 // Room Members Components
 import { RoomMembersComponent } from './components/room-members/room-members.component';
@@ -46,7 +51,7 @@ import { TaskDetailsComponent } from './components/tasks/task-details/task-detai
 
 // Modules
 import { SharedModule } from './shared/shared.module';
-import { ProfileModule } from './profile/profile.module';
+
 import { ProgressModule } from './progress/progress.module';
 
 // Admin Components
@@ -85,6 +90,9 @@ import { MessagesPageComponent } from './components/chat/messages/messages.compo
     AdminRoomsComponent,
     AdminRoomDetailsComponent,
     AdminCategoriesComponent,
+    ProfileComponent,
+    EditProfileComponent,
+    ProfileStatsComponent,
     CreateCategoryComponent,
     EditCategoryComponent,
     SupportInboxComponent,
@@ -134,7 +142,6 @@ import { MessagesPageComponent } from './components/chat/messages/messages.compo
     ReactiveFormsModule,
     UsersComponent,
     SharedModule,
-    ProfileModule,
     ProgressModule,
     AppRoutingModule
   ],

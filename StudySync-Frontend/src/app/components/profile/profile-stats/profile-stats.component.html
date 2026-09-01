@@ -1,0 +1,41 @@
+<div class="stat-grid">
+  <!-- Enrolled Rooms -->
+  <article class="stat-card">
+    <div class="stat-icon-wrap icon-indigo"><i class="bi bi-journal-bookmark-fill"></i></div>
+    <div class="stat-info">
+      <small>Enrolled Rooms</small>
+      <strong>{{ stats.joinedRooms }}</strong>
+    </div>
+    <div class="stat-badge info-badge">Active Cohorts</div>
+  </article>
+
+  <!-- Completed Tasks -->
+  <article class="stat-card">
+    <div class="stat-icon-wrap icon-emerald"><i class="bi bi-check2-circle"></i></div>
+    <div class="stat-info">
+      <small>Completed Tasks</small>
+      <strong>{{ stats.completedTasks }}</strong>
+    </div>
+    <div class="stat-badge success-badge">Completed</div>
+  </article>
+
+  <!-- Overall Progress -->
+  <article class="stat-card">
+    <div class="stat-icon-wrap icon-cyan"><i class="bi bi-lightning-charge-fill"></i></div>
+    <div class="stat-info">
+      <small>Overall Progress</small>
+      <strong>{{ stats.overallProgress }}%</strong>
+    </div>
+    <div class="stat-badge progress-badge">Academic Momentum</div>
+  </article>
+
+  <!-- Active Study Streak -->
+  <article class="stat-card">
+    <div class="stat-icon-wrap icon-purple"><i class="bi bi-fire"></i></div>
+    <div class="stat-info">
+      <small>Daily Study Streak</small>
+      <strong>{{ stats.activeStreakDays || 14 }} Days</strong>
+    </div>
+    <div class="stat-badge host-badge">On Fire</div>
+  </article>
+</div>

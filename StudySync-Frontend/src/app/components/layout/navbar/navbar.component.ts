@@ -1,31 +1,67 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { SearchService } from '../../../services/search.service';
+import { UserService } from '../../../core/services/user.service';
+import { User } from '../../../core/models/user.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
   searchTerm = '';
   notificationsOpen = false;
-  currentUser: any;
+  profileMenuOpen = false;
+  currentUser: User | null = null;
+  private userSub!: Subscription;
+
   notifications: any[] = [
-    { title: 'Welcome to StudySync!', time: 'Just now' }
+    { title: 'Welcome to StudySync!', time: 'Just now' },
+    { title: 'New task added in Music Learning', time: '10m ago' }
   ];
 
-  constructor(private router: Router, private searchService: SearchService) {}
+  constructor(
+    private router: Router,
+    private searchService: SearchService,
+    private userService: UserService
+  ) {}
 
   ngOnInit(): void {
-    const userStr = localStorage.getItem('currentUser');
-    if (userStr) {
-      this.currentUser = JSON.parse(userStr);
-    }
+    this.userSub = this.userService.currentUser$.subscribe((user) => {
+      this.currentUser = user;
+    });
   }
 
-  toggleNotifications(): void {
+  get userInitial(): string {
+    if (this.currentUser?.name) {
+      return this.currentUser.name.trim().charAt(0).toUpperCase();
+    }
+    return 'H';
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    this.notificationsOpen = false;
+    this.profileMenuOpen = false;
+  }
+
+  toggleNotifications(event: Event): void {
+    event.stopPropagation();
+    this.profileMenuOpen = false;
     this.notificationsOpen = !this.notificationsOpen;
+  }
+
+  toggleProfileMenu(event: Event): void {
+    event.stopPropagation();
+    this.notificationsOpen = false;
+    this.profileMenuOpen = !this.profileMenuOpen;
+  }
+
+  closeDropdowns(): void {
+    this.notificationsOpen = false;
+    this.profileMenuOpen = false;
   }
 
   markAllRead(): void {
@@ -40,6 +76,20 @@ export class NavbarComponent implements OnInit {
   onSearch(): void {
     if (this.searchTerm.trim()) {
       this.router.navigate(['/rooms']);
+    }
+  }
+
+  logout(): void {
+    this.closeDropdowns();
+    localStorage.removeItem('token');
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('user');
+    this.router.navigate(['/login']);
+  }
+
+  ngOnDestroy(): void {
+    if (this.userSub) {
+      this.userSub.unsubscribe();
     }
   }
 }

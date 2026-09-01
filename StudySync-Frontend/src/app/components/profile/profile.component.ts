@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService } from '../core/services/user.service';
-import { User, ProfileStats } from '../core/models/user.model';
+import { UserService } from '../../core/services/user.service';
+import { User, ProfileStats } from '../../core/models/user.model';
 
 @Component({
   selector: 'app-profile',
@@ -32,7 +32,7 @@ export class ProfileComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error fetching user profile:', err);
+        console.warn('Using local profile data fallback:', err);
         this.loading = false;
       }
     });

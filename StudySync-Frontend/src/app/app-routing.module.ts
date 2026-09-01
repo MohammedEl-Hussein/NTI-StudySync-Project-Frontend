@@ -30,6 +30,10 @@ import { SupportCreateComponent } from './components/support/support-create/supp
 import { SupportTicketDetailsComponent } from './components/support/support-ticket-details/support-ticket-details.component';
 
 import { CategoriesComponent } from './components/categories/categories.component';
+// Profile Components
+import { ProfileComponent } from './components/profile/profile.component';
+import { EditProfileComponent } from './components/profile/edit-profile/edit-profile.component';
+
 import { MainLayoutComponent } from './components/layout/main-layout/main-layout.component';
 import { ChatRoomComponent } from './components/chat/chat-room/chat-room.component';
 import { MessagesPageComponent } from './components/chat/messages/messages.component';
@@ -87,10 +91,8 @@ const routes: Routes = [
       { path: 'support', component: SupportComponent },
       { path: 'support/create', component: SupportCreateComponent },
       { path: 'support/:id', component: SupportTicketDetailsComponent },
-      {
-        path: 'profile',
-        loadChildren: () => import('./profile/profile.module').then((m) => m.ProfileModule)
-      },
+      { path: 'profile', component: ProfileComponent },
+      { path: 'profile/edit', component: EditProfileComponent },
       {
         path: 'progress',
         loadChildren: () => import('./progress/progress.module').then((m) => m.ProgressModule)
