@@ -1,4 +1,4 @@
-﻿import { NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
@@ -17,12 +17,26 @@ import { EditCategoryComponent } from './components/admin/edit-category/edit-cat
 import { SupportInboxComponent } from './components/admin/support-inbox/support-inbox.component';
 import { AdminSupportDetailsComponent } from './components/admin/admin-support-details/admin-support-details.component';
 
+import { RoomListComponent } from './components/rooms/room-list/room-list.component';
+import { CreateRoomComponent } from './components/rooms/create-room/create-room.component';
+import { RoomDetailsComponent } from './components/rooms/room-details/room-details.component';
+import { EditRoomComponent } from './components/rooms/edit-room/edit-room.component';
+
+import { CategoriesComponent } from './components/categories/categories.component';
+import { MainLayoutComponent } from './components/layout/main-layout/main-layout.component';
+
+// Task & Study Plan Components
+import { StudyPlanComponent } from './components/tasks/study-plan/study-plan.component';
+import { TaskListComponent } from './components/tasks/task-list/task-list.component';
+import { TaskCreateComponent } from './components/tasks/task-create/task-create.component';
+import { TaskEditComponent } from './components/tasks/task-edit/task-edit.component';
+import { TaskDetailsComponent } from './components/tasks/task-details/task-details.component';
+
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'users', component: UsersComponent },
-
+  
   // Admin Portal Routes
   {
     path: 'admin',
@@ -43,12 +57,29 @@ const routes: Routes = [
 
   // Student Modules
   {
-    path: 'profile',
-    loadChildren: () => import('./profile/profile.module').then((m) => m.ProfileModule)
-  },
-  {
-    path: 'progress',
-    loadChildren: () => import('./progress/progress.module').then((m) => m.ProgressModule)
+    path: '',
+    component: MainLayoutComponent,
+    children: [
+      { path: 'users', component: UsersComponent },
+      { path: 'categories', component: CategoriesComponent },
+      { path: 'rooms', component: RoomListComponent },
+      { path: 'rooms/create', component: CreateRoomComponent },
+      { path: 'rooms/:id/edit', component: EditRoomComponent },
+      { path: 'rooms/:id/study-plan', component: StudyPlanComponent },
+      { path: 'rooms/:id', component: RoomDetailsComponent },
+      { path: 'rooms/:roomId/tasks', component: TaskListComponent },
+      { path: 'rooms/:roomId/tasks/create', component: TaskCreateComponent },
+      { path: 'tasks/:id', component: TaskDetailsComponent },
+      { path: 'tasks/:id/edit', component: TaskEditComponent },
+      {
+        path: 'profile',
+        loadChildren: () => import('./profile/profile.module').then((m) => m.ProfileModule)
+      },
+      {
+        path: 'progress',
+        loadChildren: () => import('./progress/progress.module').then((m) => m.ProgressModule)
+      }
+    ]
   },
 
   { path: '**', redirectTo: 'login' }

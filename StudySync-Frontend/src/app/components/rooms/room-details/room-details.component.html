@@ -1,16 +1,212 @@
-<app-navbar></app-navbar><app-sidebar></app-sidebar>
-<main class="page">
-  <div class="breadcrumbs"><a routerLink="/my-rooms">My Rooms</a><span>›</span><strong>{{ room?.title }}</strong></div>
-  <section class="room-hero card"><div><div><span class="badge">{{ room?.level }}</span></div><h1>{{ room?.title }}</h1><p>{{ room?.description }}</p><small>Host: {{ room?.ownerId?.name || 'Room owner' }} · {{ memberCount }}/{{ room?.maxMembers }} Members · {{ room?.startDate | date:'MMM d' }} – {{ room?.endDate | date:'MMM d, y' }}</small></div><a class="btn primary" *ngIf="room?.meetingURL" [href]="room.meetingURL" target="_blank">Join Meeting</a></section>
-  <nav class="tabs"><a [class.active]="tab==='overview'" (click)="tab='overview'">Overview</a><a [class.active]="tab==='plan'" (click)="tab='plan'">Study Plan</a><a [class.active]="tab==='members'" (click)="tab='members'">Members</a><a [class.active]="tab==='chat'" (click)="tab='chat'">Chat</a></nav>
+<div *ngIf="isLoading" class="text-center" style="padding: 50px;">Loading room details...</div>
+<div *ngIf="error" class="card danger" style="margin: 50px; padding: 20px; text-align: center;">{{ error }}</div>
 
-  <section *ngIf="tab==='overview'" class="overview-grid">
-    <div class="card"><h2>Room Overview</h2><p>{{ room?.description }}</p><div class="overview-stats"><span><strong>{{ memberCount }}</strong>Members</span><span><strong>{{ taskCount }}</strong>Tasks</span><span><strong>{{ progress }}%</strong>Progress</span></div></div>
-    <div class="card"><h2>Room Dates</h2><p>Start: {{ room?.startDate | date:'mediumDate' }}</p><p>End: {{ room?.endDate | date:'mediumDate' }}</p></div>
+<main class="page" *ngIf="!isLoading && !error && room">
+  <div class="breadcrumbs"><a routerLink="/rooms">Rooms</a><span>›</span><strong>{{ room?.title }}</strong></div>
+  
+  <section class="room-hero card">
+    <div>
+      <div><span class="badge">{{ room?.level }}</span></div>
+      <h1>{{ room?.title }}</h1>
+      <p>{{ room?.description }}</p>
+      <small>Host: {{ room?.ownerId?.name || 'Room owner' }} · {{ memberCount }}/{{ room?.maxMembers }} Members · {{ room?.startDate | date:'MMM d' }} – {{ room?.endDate | date:'MMM d, y' }}</small>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <a class="btn secondary" *ngIf="isOwner" [routerLink]="['/rooms', room?._id, 'edit']">Edit Room</a>
+      <a class="btn primary" *ngIf="room?.meetingURL" [href]="room?.meetingURL" target="_blank">Join Meeting</a>
+    </div>
   </section>
 
-  <section *ngIf="tab==='plan'" class="plan-layout"><div><div class="phase card" *ngFor="let phase of phases"><div class="phase-head"><h2>{{ phase.section }}</h2><span>{{ phase.completed }}/{{ phase.total }} Completed</span></div><div class="task-row" *ngFor="let task of phase.tasks"><input type="checkbox" [checked]="task.completed" (change)="toggleTask(task)"><div><strong [class.done]="task.completed">{{ task.title }}</strong><small>{{ task.description }}</small></div><time>{{ task.dueDate | date:'MMM d' }}</time></div></div></div><aside class="card"><h2>Overall Progress</h2><strong class="big">{{ progress }}%</strong><div class="progress-track"><div class="progress-bar" [style.width.%]="progress"></div></div><p>Keep going! Complete your next task to move the room forward.</p><div *ngIf="isOwner" class="host-actions"><a class="btn primary full" [routerLink]="['/rooms',room?._id,'tasks','create']">+ Add Task</a><button class="btn secondary full" type="button" (click)="addPhase()">Add New Phase</button></div></aside></section>
+  <nav class="tabs">
+    <a [class.active]="tab==='overview'" (click)="tab='overview'">Overview</a>
+    <a [class.active]="tab==='plan'" (click)="tab='plan'">Study Plan</a>
+    <a [class.active]="tab==='members'" (click)="tab='members'">Members</a>
+    <a [class.active]="tab==='chat'" (click)="tab='chat'">Chat</a>
+  </nav>
 
-  <section *ngIf="tab==='members'"><app-room-members [roomId]="room?._id"></app-room-members></section>
-  <section *ngIf="tab==='chat'"><app-chat-room [roomId]="room?._id"></app-chat-room></section>
+  <!-- Overview Tab -->
+  <section *ngIf="tab==='overview'" class="overview-grid">
+    <div class="card">
+      <h2>Room Overview</h2>
+      <p>{{ room?.description }}</p>
+      <div class="overview-stats">
+        <span><strong>{{ memberCount }}</strong>Members</span>
+        <span><strong>{{ taskCount }}</strong>Tasks</span>
+        <span><strong>{{ progress }}%</strong>Progress</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Room Dates</h2>
+      <p>Start: {{ room?.startDate | date:'mediumDate' }}</p>
+      <p>End: {{ room?.endDate | date:'mediumDate' }}</p>
+    </div>
+  </section>
+
+  <!-- Study Plan Tab -->
+  <section *ngIf="tab==='plan'" class="plan-layout">
+    <div>
+
+      <!-- INLINE ADD TASK / PHASE FORM CARD (NO BROWSER POPUPS) -->
+      <div *ngIf="showInlineAddForm" class="card inline-form-card" style="margin-bottom: 20px; border: 2px solid #5146df; background: #fafaff; padding: 20px; border-radius: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h3 style="margin: 0; font-size: 16px; color: #5146df; font-weight: 700;">+ Add New Task / Phase</h3>
+          <button type="button" class="btn secondary" (click)="cancelInlineAdd()" style="padding: 4px 10px; font-size: 12px;">✕ Close</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+          <div>
+            <label class="form-label" style="font-size: 11px; font-weight: 700; color: #4f586a; display: block; margin-bottom: 5px;">Phase / Section Name *</label>
+            <input class="input" type="text" [(ngModel)]="newTaskData.section" placeholder="e.g. Week 1: Fundamentals or Phase 1" style="width: 100%; box-sizing: border-box; border: 1px solid #dfe2e8; border-radius: 8px; padding: 9px 12px; font-size: 13px;">
+          </div>
+          <div>
+            <label class="form-label" style="font-size: 11px; font-weight: 700; color: #4f586a; display: block; margin-bottom: 5px;">Task Title *</label>
+            <input class="input" type="text" [(ngModel)]="newTaskData.title" placeholder="e.g. Read Chapter 1 or Complete Quiz" style="width: 100%; box-sizing: border-box; border: 1px solid #dfe2e8; border-radius: 8px; padding: 9px 12px; font-size: 13px;">
+          </div>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label class="form-label" style="font-size: 11px; font-weight: 700; color: #4f586a; display: block; margin-bottom: 5px;">Description (Optional)</label>
+          <textarea class="textarea" [(ngModel)]="newTaskData.description" placeholder="Short details or instructions for room members..." style="width: 100%; box-sizing: border-box; border: 1px solid #dfe2e8; border-radius: 8px; padding: 9px 12px; font-size: 13px; min-height: 60px; resize: vertical;"></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
+          <div>
+            <label class="form-label" style="font-size: 11px; font-weight: 700; color: #4f586a; display: block; margin-bottom: 5px;">Order</label>
+            <input class="input" type="number" min="1" [(ngModel)]="newTaskData.order" style="width: 100%; box-sizing: border-box; border: 1px solid #dfe2e8; border-radius: 8px; padding: 9px 12px; font-size: 13px;">
+          </div>
+          <div>
+            <label class="form-label" style="font-size: 11px; font-weight: 700; color: #4f586a; display: block; margin-bottom: 5px;">Due Date</label>
+            <input class="input" type="date" [(ngModel)]="newTaskData.dueDate" style="width: 100%; box-sizing: border-box; border: 1px solid #dfe2e8; border-radius: 8px; padding: 9px 12px; font-size: 13px;">
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn secondary" (click)="cancelInlineAdd()">Cancel</button>
+          <button type="button" class="btn primary" [disabled]="isSavingTask" (click)="submitInlineAddTask()">
+            {{ isSavingTask ? 'Saving Task...' : 'Save Task' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Empty State when no tasks exist -->
+      <div *ngIf="phases.length === 0 && !showInlineAddForm" class="card empty-card" style="text-align: center; padding: 40px 20px;">
+        <h3 style="font-size: 18px; margin-bottom: 8px;">No Study Tasks Created Yet</h3>
+        <p style="color: #7a8292; font-size: 13px; margin-bottom: 20px;">
+          {{ isOwner ? 'As the room owner, click "Add Task" below to start creating tasks and phases for this study room.' : 'The room owner has not added any tasks to this study plan yet.' }}
+        </p>
+        <button *ngIf="isOwner" class="btn primary" type="button" (click)="openInlineAddForm()">+ Add First Task</button>
+      </div>
+
+      <!-- Real Phases & Tasks List -->
+      <div class="phase card" *ngFor="let phase of phases" style="margin-bottom: 16px; border: 1px solid #e6e9ef; border-radius: 14px; padding: 18px; background: #fff;">
+        <!-- Phase Header -->
+        <div class="phase-head" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <h2 style="font-size: 16px; margin: 0; color: #1b2437; font-weight: 700;">{{ phase.section }}</h2>
+            <button *ngIf="isOwner" type="button" class="btn secondary" style="padding: 2px 8px; font-size: 10px;" (click)="openInlineAddForm(phase.section)">+ Add Task</button>
+          </div>
+          <span style="font-size: 12px; color: #5146df; font-weight: 700;">{{ phase.completed }}/{{ phase.total }} Completed</span>
+        </div>
+
+        <!-- Task Items -->
+        <div *ngFor="let task of phase.tasks" class="task-row-container" style="border-top: 1px solid #f0f2f5;">
+          
+          <!-- Normal View Row -->
+          <div class="task-row" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <input type="checkbox" [checked]="task.completed" (change)="toggleTask(task)" style="width: 18px; height: 18px; cursor: pointer; accent-color: #5146df;">
+              <div>
+                <strong [class.done]="task.completed" style="font-size: 14px; display: block; color: #1b2437;">{{ task.title }}</strong>
+                <small *ngIf="task.description" style="font-size: 11px; color: #7a8292; display: block; margin-top: 2px;">{{ task.description }}</small>
+              </div>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <time *ngIf="task.dueDate" style="font-size: 11px; color: #7a8292;">Due: {{ task.dueDate | date:'MMM d' }}</time>
+              <button 
+                *ngIf="isOwner" 
+                class="btn secondary" 
+                style="padding: 4px 10px; font-size: 11px;" 
+                (click)="editingTaskId === (task._id || task.id) ? cancelInlineEdit() : startInlineEdit(task)"
+              >
+                {{ editingTaskId === (task._id || task.id) ? 'Cancel' : 'Edit' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- STRETCHED INLINE EDIT FORM (UNDER THE TASK ROW) -->
+          <div 
+            *ngIf="editingTaskId === (task._id || task.id)" 
+            class="task-inline-edit-box" 
+            style="background: #f8f9fe; border: 1px solid #dcdff8; border-radius: 10px; padding: 16px; margin: 6px 0 14px 0; transition: all 0.3s ease;"
+          >
+            <h4 style="margin: 0 0 12px 0; font-size: 13px; color: #5146df; font-weight: 700;">Edit Task Details</h4>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px;">
+              <div>
+                <label class="form-label" style="font-size: 10px; font-weight: 700; color: #4f586a; display: block; margin-bottom: 4px;">Phase / Section</label>
+                <input class="input" type="text" [(ngModel)]="editTaskData.section" style="width: 100%; box-sizing: border-box; border: 1px solid #dfe2e8; border-radius: 6px; padding: 7px 10px; font-size: 12px;">
+              </div>
+              <div>
+                <label class="form-label" style="font-size: 10px; font-weight: 700; color: #4f586a; display: block; margin-bottom: 4px;">Title</label>
+                <input class="input" type="text" [(ngModel)]="editTaskData.title" style="width: 100%; box-sizing: border-box; border: 1px solid #dfe2e8; border-radius: 6px; padding: 7px 10px; font-size: 12px;">
+              </div>
+            </div>
+
+            <div style="margin-bottom: 10px;">
+              <label class="form-label" style="font-size: 10px; font-weight: 700; color: #4f586a; display: block; margin-bottom: 4px;">Description</label>
+              <textarea class="textarea" [(ngModel)]="editTaskData.description" style="width: 100%; box-sizing: border-box; border: 1px solid #dfe2e8; border-radius: 6px; padding: 7px 10px; font-size: 12px; min-height: 50px; resize: vertical;"></textarea>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+              <div>
+                <label class="form-label" style="font-size: 10px; font-weight: 700; color: #4f586a; display: block; margin-bottom: 4px;">Order</label>
+                <input class="input" type="number" min="1" [(ngModel)]="editTaskData.order" style="width: 100%; box-sizing: border-box; border: 1px solid #dfe2e8; border-radius: 6px; padding: 7px 10px; font-size: 12px;">
+              </div>
+              <div>
+                <label class="form-label" style="font-size: 10px; font-weight: 700; color: #4f586a; display: block; margin-bottom: 4px;">Due Date</label>
+                <input class="input" type="date" [(ngModel)]="editTaskData.dueDate" style="width: 100%; box-sizing: border-box; border: 1px solid #dfe2e8; border-radius: 6px; padding: 7px 10px; font-size: 12px;">
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <button type="button" class="btn danger" style="padding: 6px 12px; font-size: 11px;" (click)="deleteInlineTask(task)">Delete Task</button>
+              <div style="display: flex; gap: 8px;">
+                <button type="button" class="btn secondary" style="padding: 6px 12px; font-size: 11px;" (click)="cancelInlineEdit()">Cancel</button>
+                <button type="button" class="btn primary" style="padding: 6px 12px; font-size: 11px;" [disabled]="isSavingTask" (click)="submitInlineEditTask()">
+                  {{ isSavingTask ? 'Saving...' : 'Save Changes' }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Aside Progress & Actions -->
+    <aside class="card">
+      <h2>Overall Progress</h2>
+      <strong class="big" style="font-size: 32px; color: #5146df; display: block; margin: 8px 0;">{{ progress }}%</strong>
+      <div class="progress-track" style="height: 8px; background: #e8ebf0; border-radius: 4px; overflow: hidden; margin-bottom: 16px;">
+        <div class="progress-bar" [style.width.%]="progress" style="height: 100%; background: linear-gradient(90deg, #5146df, #08a8df);"></div>
+      </div>
+      <p style="font-size: 12px; color: #7a8292; margin-bottom: 20px;">Keep going! Complete your next task to move the room forward.</p>
+      <div *ngIf="isOwner" class="host-actions" style="display: flex; flex-direction: column; gap: 10px;">
+        <button class="btn primary full" type="button" (click)="openInlineAddForm()">Add Task</button>
+        <button class="btn secondary full" type="button" (click)="openInlineAddForm()">Add New Phase</button>
+      </div>
+    </aside>
+  </section>
+
+  <!-- Members Tab -->
+  <section *ngIf="tab==='members'">
+    <div class="card"><p class="text-muted">Room members list here.</p></div>
+  </section>
+
+  <!-- Chat Tab -->
+  <section *ngIf="tab==='chat'">
+    <div class="card"><p class="text-muted">Room chat interface here.</p></div>
+  </section>
+</main>
 </main>

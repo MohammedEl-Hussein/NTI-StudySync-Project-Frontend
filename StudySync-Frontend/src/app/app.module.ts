@@ -1,4 +1,4 @@
-﻿import { NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -8,6 +8,13 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { UsersComponent } from './components/users/users.component';
+
+// Task & Study Plan Components
+import { StudyPlanComponent } from './components/tasks/study-plan/study-plan.component';
+import { TaskListComponent } from './components/tasks/task-list/task-list.component';
+import { TaskCreateComponent } from './components/tasks/task-create/task-create.component';
+import { TaskEditComponent } from './components/tasks/task-edit/task-edit.component';
+import { TaskDetailsComponent } from './components/tasks/task-details/task-details.component';
 
 // Modules
 import { SharedModule } from './shared/shared.module';

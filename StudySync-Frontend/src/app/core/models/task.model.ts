@@ -3,13 +3,15 @@ export interface Task {
   id?: string;
   roomId: string;
   roomTitle?: string;
+  section: string;
   title: string;
   description?: string;
-  section?: string;
-  due?: string;
+  order: number;
+  dueDate?: string | Date;
+  isCompleted?: boolean;
   completed?: boolean;
-  priority?: 'low' | 'medium' | 'high';
   createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface TaskCompletion {
@@ -18,6 +20,5 @@ export interface TaskCompletion {
   taskId: string;
   userId: string;
   roomId?: string;
-  completed: boolean;
-  completedAt?: string;
+  completedAt?: string | Date;
 }
