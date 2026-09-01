@@ -1,5 +1,8 @@
 <aside class="sidebar" [class.collapsed]="collapsed">
   <div class="side-nav">
+    <a routerLink="/admin" class="admin-portal-item" *ngIf="isAdmin">
+      <i class="bi bi-shield-lock-fill"></i><span>Admin Portal</span>
+    </a>
     <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
       <i class="bi bi-grid"></i><span>Home</span>
     </a>

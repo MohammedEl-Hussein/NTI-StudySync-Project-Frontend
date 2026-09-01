@@ -164,6 +164,24 @@
   flex-shrink: 0;
 }
 
+.nav-divider {
+  height: 1px;
+  background: #334155;
+  margin: 6px 4px;
+}
+
+.switch-portal-item {
+  color: #38bdf8;
+  background: rgba(14, 165, 233, 0.1);
+  border: 1px dashed rgba(14, 165, 233, 0.35);
+}
+
+.switch-portal-item:hover {
+  color: #7dd3fc;
+  background: rgba(14, 165, 233, 0.2);
+  border-color: rgba(14, 165, 233, 0.6);
+}
+
 .sidebar-bottom {
   display: flex;
   flex-direction: column;

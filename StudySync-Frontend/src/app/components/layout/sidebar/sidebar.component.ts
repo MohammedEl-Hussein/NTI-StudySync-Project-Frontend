@@ -30,6 +30,18 @@ export class SidebarComponent implements OnInit, OnDestroy {
     return !!token && !!this.currentUser;
   }
 
+  get isAdmin(): boolean {
+    if (this.currentUser?.role === 'admin') return true;
+    const storedStr = localStorage.getItem('currentUser') || localStorage.getItem('user');
+    if (storedStr) {
+      try {
+        const parsed = JSON.parse(storedStr);
+        return parsed?.role === 'admin';
+      } catch (e) {}
+    }
+    return false;
+  }
+
   get userInitial(): string {
     return this.currentUser?.name?.trim().charAt(0).toUpperCase() || 'U';
   }
