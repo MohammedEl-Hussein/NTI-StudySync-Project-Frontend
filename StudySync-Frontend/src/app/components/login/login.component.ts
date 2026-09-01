@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UsersService } from 'src/app/services/users.service';
-import { UserService } from 'src/app/core/services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +17,6 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private usersService: UsersService,
-    private userService: UserService,
     private router: Router
   ) { }
 
@@ -75,8 +73,6 @@ export class LoginComponent implements OnInit {
           const decodedUser = this.parseJwt(token);
           if (decodedUser) {
             localStorage.setItem('currentUser', JSON.stringify(decodedUser));
-            this.userService.setCurrentUser(decodedUser);
-            
             alert('Login Successful! Welcome back.');
             if (decodedUser.role === 'admin') {
               this.router.navigate(['/admin']);

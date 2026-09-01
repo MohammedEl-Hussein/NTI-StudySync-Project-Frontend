@@ -49,6 +49,7 @@ import { TaskDetailsComponent } from './components/tasks/task-details/task-detai
 const routes: Routes = [
   { path: '', component: LandingPageComponent, pathMatch: 'full' },
   { path: 'home', component: LandingPageComponent },
+  { path: 'landing', component: LandingPageComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
 
@@ -102,7 +103,7 @@ const routes: Routes = [
     ]
   },
 
-  { path: '**', redirectTo: 'login' }
+  { path: '**', redirectTo: '' }
 ];
 
 @NgModule({

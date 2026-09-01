@@ -19,12 +19,20 @@
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   color: #172033;
   text-decoration: none;
   font-weight: 800;
-  font-size: 18px;
-  min-width: 180px;
+  font-size: 22px;
+  letter-spacing: -0.4px;
+  min-width: 210px;
+}
+
+.brand-logo-img {
+  width: 44px;
+  height: 44px;
+  border-radius: 9px;
+  object-fit: contain;
 }
 
 .brand-mark {

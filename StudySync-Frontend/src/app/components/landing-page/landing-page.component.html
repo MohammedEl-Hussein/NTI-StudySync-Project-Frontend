@@ -1,45 +1,71 @@
-<div class="landing-page-container">
-  <!-- Top Navigation Header -->
-  <header class="header">
-    <div class="logo-group" routerLink="/">
-      <div class="logo-icon-frame">
-        <i class="bi bi-laptop-fill text-white"></i>
-      </div>
-      <span class="brand-title">StudySync</span>
+<div class="landing-page-root">
+  <!-- 1. Header Navigation -->
+  <header class="figma-header">
+    <div class="logo-group" routerLink="/" (click)="closeMobileMenu()" style="cursor: pointer;">
+      <img src="assets/images/studysync-logo.png" alt="StudySync Logo" class="brand-logo-img">
+      <span class="logo-text">StudySync</span>
     </div>
 
-    <nav class="navigation">
-      <a class="nav-link active" routerLink="/">Home</a>
-      <a class="nav-link" routerLink="/rooms">Study Rooms</a>
-      <a class="nav-link" routerLink="/study-plan">Study Plans</a>
-      <a class="nav-link" routerLink="/progress">Leaderboard</a>
-      <a class="nav-link" routerLink="/support">About Us</a>
+    <!-- Desktop Navigation -->
+    <nav class="nav-menu">
+      <a class="nav-item active" routerLink="/">Home</a>
+      <a class="nav-item" (click)="scrollToSection('about')">About Us</a>
     </nav>
 
-    <div class="actions">
+    <!-- Desktop Actions -->
+    <div class="actions-group">
       <ng-container *ngIf="!isLoggedIn">
-        <a class="btn-login" routerLink="/login">Log In</a>
+        <a class="login-link" routerLink="/login">Log In</a>
         <button class="btn-signup" type="button" routerLink="/register">Sign Up</button>
       </ng-container>
       <ng-container *ngIf="isLoggedIn">
-        <a class="btn-login" routerLink="/my-rooms">My Rooms</a>
-        <button class="btn-signup" type="button" routerLink="/profile">
-          <span class="avatar-tag">{{ userInitial }}</span>
-          <span>Profile</span>
+        <a class="login-link" routerLink="/my-rooms">My Rooms</a>
+        <button class="btn-signup user-profile-btn" type="button" routerLink="/profile">
+          <span class="avatar-dot">{{ userInitial }}</span>
+          <span>{{ currentUser?.name || 'My Profile' }}</span>
         </button>
       </ng-container>
+
+      <!-- Mobile Hamburger Toggle -->
+      <button class="mobile-menu-toggle" type="button" (click)="toggleMobileMenu()" [attr.aria-expanded]="isMobileMenuOpen" aria-label="Toggle navigation menu">
+        <i class="bi" [ngClass]="isMobileMenuOpen ? 'bi-x-lg' : 'bi-list'"></i>
+      </button>
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <section class="hero-section">
-    <!-- Hero-Left -->
+  <!-- Mobile Drawer Menu -->
+  <div class="mobile-drawer" [class.open]="isMobileMenuOpen">
+    <nav class="mobile-nav-links">
+      <a class="mobile-nav-item active" routerLink="/" (click)="closeMobileMenu()">
+        <i class="bi bi-house-door"></i> Home
+      </a>
+      <a class="mobile-nav-item" (click)="scrollToSection('about')">
+        <i class="bi bi-info-circle"></i> About Us
+      </a>
+    </nav>
+    <div class="mobile-drawer-actions">
+      <ng-container *ngIf="!isLoggedIn">
+        <a class="mobile-btn-login" routerLink="/login" (click)="closeMobileMenu()">Log In</a>
+        <button class="mobile-btn-signup" type="button" routerLink="/register" (click)="closeMobileMenu()">Sign Up</button>
+      </ng-container>
+      <ng-container *ngIf="isLoggedIn">
+        <a class="mobile-btn-login" routerLink="/my-rooms" (click)="closeMobileMenu()">My Rooms</a>
+        <button class="mobile-btn-signup" type="button" routerLink="/profile" (click)="closeMobileMenu()">Profile ({{ currentUser?.name }})</button>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- Mobile Menu Backdrop -->
+  <div class="mobile-backdrop" *ngIf="isMobileMenuOpen" (click)="closeMobileMenu()"></div>
+
+  <!-- 2. Hero Section -->
+  <section class="figma-hero">
     <div class="hero-left">
       <div class="hero-text-block">
-        <div class="hero-badge">
-          <span>The Future of Collaborative Learning</span>
+        <div class="pill-badge">
+          <span>THE FUTURE OF COLLABORATIVE LEARNING</span>
         </div>
-        <h1 class="hero-main-title">
+        <h1 class="hero-main-heading">
           Study together.<br>
           Stay consistent.<br>
           Achieve more.
@@ -50,198 +76,175 @@
       </div>
 
       <div class="hero-buttons-row">
-        <button class="btn-hero-primary" type="button" (click)="navigateTo('/register')">
-          Get Started
-        </button>
-        <button class="btn-hero-secondary" type="button" (click)="navigateTo('/rooms')">
-          Explore Study Rooms
-        </button>
-      </div>
-
-      <div class="hero-social-proof">
-        <div class="avatar-stack">
-          <span class="proof-av av1">
-            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Student 1" />
-          </span>
-          <span class="proof-av av2">
-            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" alt="Student 2" />
-          </span>
-          <span class="proof-av av3">
-            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" alt="Student 3" />
-          </span>
-          <div class="proof-badge-count">+12k</div>
-        </div>
-        <p class="proof-text">Join over 12,000+ students studying live right now</p>
+        <button class="btn-get-started" type="button" (click)="navigateTo('/register')">Get Started</button>
       </div>
     </div>
 
-    <!-- Hero-Right Dashboard Mockup -->
+    <!-- Hero Right: Application Dashboard Mockup with Floating Badges -->
     <div class="hero-right">
       <div class="dashboard-mockup">
-        <!-- Mockup Window Bar -->
+        <!-- Mockup Top Window Bar -->
         <div class="mockup-topbar">
-          <div class="mac-dots-row">
-            <span class="mac-dot dot-red"></span>
-            <span class="mac-dot dot-yellow"></span>
-            <span class="mac-dot dot-green"></span>
-            <span class="mockup-room-name">Room: Advanced Calculus II</span>
+          <div class="mockup-dots">
+            <span class="dot red-dot"></span>
+            <span class="dot yellow-dot"></span>
+            <span class="dot green-dot"></span>
+            <span class="room-window-title">Room: Advanced Calculus II</span>
           </div>
-          <div class="mockup-user-chips">
-            <span class="chip-av">A</span>
-            <span class="chip-av">B</span>
+          <div class="mockup-user-avatars">
+            <span class="m-av">A</span>
+            <span class="m-av">B</span>
           </div>
         </div>
 
-        <!-- Mockup Content Grid -->
+        <!-- Mockup Body Content -->
         <div class="mockup-body">
           <!-- Left Column: Shared Study Plan -->
-          <div class="mockup-col-left">
-            <span class="col-title">Shared Study Plan</span>
-            <div class="plan-tasks-stack">
-              <div class="mockup-task-item task-done">
-                <i class="bi bi-check-circle-fill icon-check"></i>
-                <span>Week 1: Limits & Limit Proofs</span>
+          <div class="mockup-plan-col">
+            <span class="col-section-title">Shared Study Plan</span>
+            <div class="plan-items-stack">
+              <div class="plan-item-box active-plan">
+                <i class="bi bi-check-circle-fill text-success-custom"></i>
+                <span class="plan-title">Week 1: Limits & Limit Proofs</span>
               </div>
-              <div class="mockup-task-item">
-                <i class="bi bi-circle icon-uncheck"></i>
-                <span>Week 2: Infinite Series</span>
+              <div class="plan-item-box">
+                <i class="bi bi-circle text-muted-custom"></i>
+                <span class="plan-title">Week 2: Infinite Series</span>
               </div>
             </div>
           </div>
 
-          <!-- Right Column: Session Goal & Group Progress -->
-          <div class="mockup-col-right">
+          <!-- Right Column: Goal & Progress -->
+          <div class="mockup-goal-col">
             <div class="session-goal-card">
-              <div class="goal-card-top">
+              <div class="goal-header">
                 <strong>Session Goal</strong>
-                <span class="time-tag">45 mins left</span>
+                <span class="time-left">45 mins left</span>
               </div>
-              <p class="goal-desc">Solve exercises 12-18 on Fourier Transformations</p>
+              <p class="goal-task-text">Solve exercises 12-18 on Fourier Transformations</p>
             </div>
 
-            <div class="group-progress-box">
-              <div class="prog-text">Group progress: 75% completed</div>
+            <div class="mockup-progress-box">
+              <span class="prog-text">Group progress: 75% completed</span>
               <div class="prog-bar-track">
-                <div class="prog-bar-fill" style="width: 75%;"></div>
+                <div class="prog-bar-value" style="width: 75%;"></div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Floating Stats Widget -->
-      <div class="floating-stats-card">
-        <div class="stat-icon-circle">
+      <!-- Floating Stat Overlay (Bottom Left) -->
+      <div class="floating-stat-box">
+        <div class="floating-icon-wrap">
           <i class="bi bi-graph-up-arrow"></i>
         </div>
-        <div class="stat-text-col">
+        <div class="floating-stat-texts">
           <strong>Focus Streak</strong>
           <span>14 days consistent</span>
         </div>
       </div>
 
-      <!-- Floating Chat Widget -->
-      <div class="floating-chat-card">
+      <!-- Floating Chat Overlay (Top Right) -->
+      <div class="floating-chat-box">
         <div class="chat-av">L</div>
-        <span class="chat-quote">"Just completed Chapter 3!"</span>
+        <span class="chat-msg">"Just completed Chapter 3!"</span>
       </div>
     </div>
   </section>
 
-  <!-- Features Suite Section -->
-  <section class="features-section">
-    <div class="features-header-block">
-      <span class="section-tag-label">Feature Suite</span>
-      <h2 class="section-title">Everything you need to study together</h2>
-      <p class="section-subtitle">
-        Say goodbye to isolated learning blocks. StudySync delivers an integrated workspace designed specifically for peer accountability.
-      </p>
+  <!-- 3. Feature Suite Section -->
+  <section id="features" class="figma-features">
+    <div class="features-head">
+      <span class="section-tag">FEATURE SUITE</span>
+      <h2>Everything you need to study together</h2>
+      <p>Say goodbye to isolated learning blocks. StudySync delivers an integrated workspace designed specifically for peer accountability.</p>
     </div>
 
-    <div class="features-grid">
+    <div class="features-grid-8">
       <!-- 1. Study Rooms -->
-      <div class="feature-card">
-        <div class="feature-icon-box">
+      <div class="f-card">
+        <div class="f-icon-box">
           <i class="bi bi-people-fill"></i>
         </div>
-        <div class="feature-card-content">
+        <div class="f-text">
           <h3>Study Rooms</h3>
           <p>Create or join focused rooms for any subject. Collaborate in real time.</p>
         </div>
       </div>
 
       <!-- 2. Shared Study Plans -->
-      <div class="feature-card">
-        <div class="feature-icon-box">
-          <i class="bi bi-calendar3"></i>
+      <div class="f-card">
+        <div class="f-icon-box">
+          <i class="bi bi-calendar-check-fill"></i>
         </div>
-        <div class="feature-card-content">
+        <div class="f-text">
           <h3>Shared Study Plans</h3>
           <p>Organize learning into phases, weeks, or chapters with peer check-ins.</p>
         </div>
       </div>
 
       <!-- 3. Personal Progress -->
-      <div class="feature-card">
-        <div class="feature-icon-box">
-          <i class="bi bi-graph-up"></i>
+      <div class="f-card">
+        <div class="f-icon-box">
+          <i class="bi bi-bar-chart-line-fill"></i>
         </div>
-        <div class="feature-card-content">
+        <div class="f-text">
           <h3>Personal Progress</h3>
           <p>Track exactly how much you've completed vs your study goals.</p>
         </div>
       </div>
 
       <!-- 4. Real-Time Collaboration -->
-      <div class="feature-card">
-        <div class="feature-icon-box">
+      <div class="f-card">
+        <div class="f-icon-box">
           <i class="bi bi-chat-dots-fill"></i>
         </div>
-        <div class="feature-card-content">
+        <div class="f-text">
           <h3>Real-Time Collaboration</h3>
-          <p>Message study partners instantly or share notes inside your active rooms.</p>
+          <p>Message study partners, discuss tricky problems, and share session notes.</p>
         </div>
       </div>
 
       <!-- 5. Online Meetings -->
-      <div class="feature-card">
-        <div class="feature-icon-box">
+      <div class="f-card">
+        <div class="f-icon-box">
           <i class="bi bi-camera-video-fill"></i>
         </div>
-        <div class="feature-card-content">
+        <div class="f-text">
           <h3>Online Meetings</h3>
           <p>Start voice/video sessions with Zoom or Google Meet directly inside StudySync.</p>
         </div>
       </div>
 
       <!-- 6. Smart Discovery -->
-      <div class="feature-card">
-        <div class="feature-icon-box">
+      <div class="f-card">
+        <div class="f-icon-box">
           <i class="bi bi-search"></i>
         </div>
-        <div class="feature-card-content">
+        <div class="f-text">
           <h3>Smart Discovery</h3>
           <p>Find ideal rooms easily using smart filters like category, topic, or level.</p>
         </div>
       </div>
 
       <!-- 7. Room Management -->
-      <div class="feature-card">
-        <div class="feature-icon-box">
+      <div class="f-card">
+        <div class="f-icon-box">
           <i class="bi bi-shield-check"></i>
         </div>
-        <div class="feature-card-content">
+        <div class="f-text">
           <h3>Room Management</h3>
-          <p>Admins easily manage study rooms, member roles, and shared calendars.</p>
+          <p>Admins easily manage study rooms, member roles, deadlines, and shared calendars.</p>
         </div>
       </div>
 
       <!-- 8. Admin Support -->
-      <div class="feature-card">
-        <div class="feature-icon-box">
+      <div class="f-card">
+        <div class="f-icon-box">
           <i class="bi bi-life-preserver"></i>
         </div>
-        <div class="feature-card-content">
+        <div class="f-text">
           <h3>Admin Support</h3>
           <p>Dedicated support agents on standby to ensure your platform experience runs flawlessly.</p>
         </div>
@@ -249,45 +252,45 @@
     </div>
   </section>
 
-  <!-- How It Works Section -->
-  <section class="how-it-works-section">
-    <div class="how-header-block">
-      <span class="section-tag-label">Our Process</span>
-      <h2 class="section-title">How StudySync works</h2>
+  <!-- 4. How StudySync Works Section -->
+  <section id="process" class="figma-process">
+    <div class="process-head">
+      <span class="section-tag">OUR PROCESS</span>
+      <h2>How StudySync works</h2>
     </div>
 
-    <div class="how-steps-row">
+    <div class="process-steps-row">
       <!-- Step 01 -->
-      <div class="step-card">
-        <div class="step-num">01</div>
-        <div class="step-card-text">
+      <div class="p-step-col">
+        <span class="step-num">01</span>
+        <div class="step-body">
           <h3>Create Your Profile</h3>
           <p>Sign up and set your academic level, topics of interest, and study availability.</p>
         </div>
       </div>
 
       <!-- Step 02 -->
-      <div class="step-card">
-        <div class="step-num">02</div>
-        <div class="step-card-text">
+      <div class="p-step-col">
+        <span class="step-num">02</span>
+        <div class="step-body">
           <h3>Find or Host a Room</h3>
           <p>Browse highly active public rooms matching your current goals, or host your own.</p>
         </div>
       </div>
 
       <!-- Step 03 -->
-      <div class="step-card">
-        <div class="step-num">03</div>
-        <div class="step-card-text">
+      <div class="p-step-col">
+        <span class="step-num">03</span>
+        <div class="step-body">
           <h3>Follow Shared Plans</h3>
           <p>Execute syllabus objectives or chapters together with integrated milestone check-ins.</p>
         </div>
       </div>
 
       <!-- Step 04 -->
-      <div class="step-card">
-        <div class="step-num">04</div>
-        <div class="step-card-text">
+      <div class="p-step-col">
+        <span class="step-num">04</span>
+        <div class="step-body">
           <h3>Build Consistent Habits</h3>
           <p>Keep track of focus streaks, unlock status milestones, and stay ahead together.</p>
         </div>
@@ -295,159 +298,39 @@
     </div>
   </section>
 
-  <!-- Statistics Banner -->
-  <section class="statistics-banner">
-    <div class="stat-banner-item">
-      <strong>12,450</strong>
-      <span>Active Daily Studiers</span>
-    </div>
-    <div class="stat-banner-item">
-      <strong>1,820</strong>
-      <span>Collaborative Study Rooms</span>
-    </div>
-    <div class="stat-banner-item">
-      <strong>450k+</strong>
-      <span>Tasks Completed Together</span>
-    </div>
-    <div class="stat-banner-item">
-      <strong>96.4%</strong>
-      <span>Streak consistency rate</span>
-    </div>
-  </section>
 
-  <!-- Testimonials Section -->
-  <section class="testimonials-section">
-    <div class="test-header-block">
-      <span class="section-tag-label">STUDENT SUCCESS STORIES</span>
-      <h2 class="section-title">Trusted by students worldwide</h2>
-    </div>
-
-    <div class="testimonials-grid">
-      <!-- Testimonial 1 -->
-      <div class="testimonial-card">
-        <div class="stars-row">
-          <i class="bi bi-star-fill"></i>
-          <i class="bi bi-star-fill"></i>
-          <i class="bi bi-star-fill"></i>
-          <i class="bi bi-star-fill"></i>
-          <i class="bi bi-star-fill"></i>
-        </div>
-        <p class="test-quote">
-          "StudySync completely changed how I prepare for exams. Having accountability partners keep me focused for hours without procrastination."
-        </p>
-        <div class="author-row">
-          <img class="author-img" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80" alt="Clarissa Vance" />
-          <div>
-            <strong>Clarissa Vance</strong>
-            <small>Stanford University</small>
-          </div>
-        </div>
-      </div>
-
-      <!-- Testimonial 2 -->
-      <div class="testimonial-card">
-        <div class="stars-row">
-          <i class="bi bi-star-fill"></i>
-          <i class="bi bi-star-fill"></i>
-          <i class="bi bi-star-fill"></i>
-          <i class="bi bi-star-fill"></i>
-          <i class="bi bi-star-fill"></i>
-        </div>
-        <p class="test-quote">
-          "The shared study plans are a game changer. We split our syllabus into weekly phases and completed the entire coursework 2 weeks early."
-        </p>
-        <div class="author-row">
-          <img class="author-img" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&auto=format&fit=crop&q=80" alt="Arjun Mehra" />
-          <div>
-            <strong>Arjun Mehra</strong>
-            <small>CS Major, Berkeley</small>
-          </div>
-        </div>
-      </div>
-
-      <!-- Testimonial 3 -->
-      <div class="testimonial-card">
-        <div class="stars-row">
-          <i class="bi bi-star-fill"></i>
-          <i class="bi bi-star-fill"></i>
-          <i class="bi bi-star-fill"></i>
-          <i class="bi bi-star-fill"></i>
-          <i class="bi bi-star-fill"></i>
-        </div>
-        <p class="test-quote">
-          "Finally a study platform that focuses on actual collaboration rather than just isolated notes. My focus streak has never been higher!"
-        </p>
-        <div class="author-row">
-          <img class="author-img" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&auto=format&fit=crop&q=80" alt="Timothée Ado" />
-          <div>
-            <strong>Timothée Ado</strong>
-            <small>Imperial College</small>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Ready to Build Habits Banner -->
-  <section class="ready-cta-wrapper">
-    <div class="ready-cta-box">
+  <!-- 7. Call To Action (Deep Indigo) -->
+  <section class="figma-cta-section">
+    <div class="cta-inner-card">
       <h2>Ready to build consistent study habits?</h2>
-      <p>Join thousands of learners worldwide collaborating in real-time study rooms today. Consistency starts here.</p>
-      <div class="cta-buttons-row">
-        <button class="btn-cta-white" type="button" (click)="navigateTo('/register')">
-          Get Started Free
-        </button>
-        <button class="btn-cta-transparent" type="button" (click)="navigateTo('/rooms')">
-          View Rooms
-        </button>
+      <p>Join thousands of learners inside peer study circles today. Full access. Get started, and level up together.</p>
+      <div class="cta-btns-row">
+        <button class="btn-cta-primary" type="button" (click)="navigateTo('/register')">Get Started Free</button>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="landing-footer">
-    <div class="footer-top-row">
+  <!-- 8. Footer -->
+  <footer id="about" class="figma-footer">
+    <div class="footer-top">
       <div class="footer-brand-col">
         <div class="logo-group">
-          <div class="logo-icon-frame">
-            <i class="bi bi-laptop-fill text-white"></i>
-          </div>
-          <span class="brand-title">StudySync</span>
+          <img src="assets/images/studysync-logo.png" alt="StudySync Logo" class="brand-logo-img">
+          <span class="logo-text">StudySync</span>
         </div>
-        <p class="footer-brand-desc">
-          Collaborative peer learning platform designed for ambitious students and academic cohorts.
+        <p class="footer-desc">
+          Collaborative peer learning platform designed for ambitious students and academic cohorts. Focus, track, and achieve together.
         </p>
-      </div>
-
-      <div class="footer-nav-col">
-        <span class="footer-nav-title">PLATFORM</span>
-        <a routerLink="/rooms">Study Rooms</a>
-        <a routerLink="/study-plan">Study Plans</a>
-        <a routerLink="/progress">Leaderboard</a>
-      </div>
-
-      <div class="footer-nav-col">
-        <span class="footer-nav-title">RESOURCES</span>
-        <a routerLink="/support">Academic Blog</a>
-        <a routerLink="/support">Help Center</a>
-        <a routerLink="/support">Community Guidelines</a>
-      </div>
-
-      <div class="footer-nav-col">
-        <span class="footer-nav-title">LEGAL</span>
-        <a routerLink="/support">Terms of Service</a>
-        <a routerLink="/support">Privacy Policy</a>
-        <a routerLink="/support">Cookie Policy</a>
       </div>
     </div>
 
     <div class="footer-bottom-row">
-      <p>&copy; 2026 StudySync, Inc. All rights reserved.</p>
+      <span>&copy; 2026 StudySync, Inc. All rights reserved.</span>
       <div class="social-icons">
-        <i class="bi bi-twitter"></i>
-        <i class="bi bi-github"></i>
-        <i class="bi bi-linkedin"></i>
-        <i class="bi bi-envelope-fill"></i>
+        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="bi bi-github"></i></a>
+        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+        <a routerLink="/support" aria-label="Email"><i class="bi bi-envelope-fill"></i></a>
       </div>
     </div>
   </footer>
