@@ -36,6 +36,10 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { EditProfileComponent } from './components/profile/edit-profile/edit-profile.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 
+// Guards
+import { AuthGuard } from './core/guards/auth.guard';
+import { PreventLogoutGuard } from './core/guards/prevent-logout.guard';
+
 import { MainLayoutComponent } from './components/layout/main-layout/main-layout.component';
 import { ChatRoomComponent } from './components/chat/chat-room/chat-room.component';
 import { MessagesPageComponent } from './components/chat/messages/messages.component';
@@ -75,6 +79,9 @@ const routes: Routes = [
   {
     path: '',
     component: MainLayoutComponent,
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
+    canDeactivate: [PreventLogoutGuard],
     children: [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'users', component: UsersComponent },
