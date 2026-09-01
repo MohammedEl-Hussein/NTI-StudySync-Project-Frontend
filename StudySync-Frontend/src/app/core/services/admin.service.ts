@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, forkJoin } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, forkJoin, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { AdminStats, Category, SupportMessage } from '../models/admin.model';
 import { User } from '../models/user.model';
 import { Room } from '../models/room.model';
@@ -94,8 +94,27 @@ export class AdminService {
     );
   }
 
+  updateRoom(id: string, data: any): Observable<any> {
+    return this.http.put<any>(`${this.roomsUrl}/update/${id}`, data, this.getAuthOptions()).pipe(
+      map((res) => res?.data || res)
+    );
+  }
+
   deleteRoom(id: string): Observable<any> {
     return this.http.delete(`${this.roomsUrl}/delete/${id}`, this.getAuthOptions());
+  }
+
+  getRoomTasks(roomId: string): Observable<any[]> {
+    return this.http.get<any>(`${this.baseApiUrl}/tasks/getalltasks/${roomId}`, this.getAuthOptions()).pipe(
+      map((res) => {
+        if (Array.isArray(res)) return res;
+        if (Array.isArray(res?.foundTasks)) return res.foundTasks;
+        if (Array.isArray(res?.data)) return res.data;
+        if (Array.isArray(res?.tasks)) return res.tasks;
+        return [];
+      }),
+      catchError(() => of([]))
+    );
   }
 
   // ----------------------------------------------------
@@ -103,7 +122,7 @@ export class AdminService {
   // ----------------------------------------------------
   getCategories(): Observable<Category[]> {
     return this.http.get<any>(this.categoriesUrl, this.getAuthOptions()).pipe(
-      map((res) => (Array.isArray(res) ? res : res?.data || []))
+      map((res) => res?.categories || res?.data || (Array.isArray(res) ? res : []))
     );
   }
 
@@ -116,18 +135,22 @@ export class AdminService {
 
   createCategory(category: Partial<Category>): Observable<Category> {
     return this.http.post<any>(this.categoriesUrl, category, this.getAuthOptions()).pipe(
-      map((res) => res?.data || res)
+      map((res) => res?.category || res?.data || res)
     );
   }
 
   updateCategory(id: string, category: Partial<Category>): Observable<Category> {
     return this.http.patch<any>(`${this.categoriesUrl}/${id}`, category, this.getAuthOptions()).pipe(
-      map((res) => res?.data || res)
+      map((res) => res?.category || res?.data || res)
     );
   }
 
   deleteCategory(id: string): Observable<any> {
     return this.http.delete(`${this.categoriesUrl}/${id}`, this.getAuthOptions());
+  }
+
+  getRoomMembers(roomId: string): Observable<any> {
+    return this.http.get<any>(`${this.baseApiUrl}/room-members/${roomId}/members`, this.getAuthOptions());
   }
 
   // ----------------------------------------------------

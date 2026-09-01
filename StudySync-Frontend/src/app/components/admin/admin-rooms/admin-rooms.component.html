@@ -28,9 +28,7 @@
     <div class="select-group">
       <select class="filter-select" [(ngModel)]="categoryFilter">
         <option value="">All Categories</option>
-        <option value="Computer Science">Computer Science</option>
-        <option value="Software Engineering">Software Engineering</option>
-        <option value="AI / Data Science">AI / Data Science</option>
+        <option *ngFor="let cat of categories" [value]="cat._id || cat.name">{{ cat.name }}</option>
       </select>
     </div>
   </div>
@@ -53,7 +51,7 @@
           <th>CATEGORY</th>
           <th>TARGET LEVEL</th>
           <th>MEMBERS</th>
-          <th>PROGRESS</th>
+          <th>TOTAL TASKS</th>
           <th class="text-right">ACTIONS</th>
         </tr>
       </thead>
@@ -72,18 +70,22 @@
             </div>
           </td>
           <td>
-            <span class="cat-badge">{{ room.category }}</span>
+            <span class="cat-badge">{{ getPrimaryCategoryDisplay(room) }}</span>
+            <span class="cat-badge-extra" *ngIf="getExtraCategoryCount(room) > 0" [title]="'Click details to view all (' + (getExtraCategoryCount(room) + 1) + ') categories'">
+              +{{ getExtraCategoryCount(room) }}
+            </span>
           </td>
           <td class="level-text">{{ room.level }}</td>
           <td>
-            <strong>{{ room.members || room.memberCount || 0 }}</strong> / {{ room.maxMembers || 15 }}
+            <strong>{{ room.memberCount !== undefined ? room.memberCount : (room.members || 0) }}</strong> / {{ room.maxMembers || 15 }}
           </td>
           <td>
-            <div class="prog-cell">
-              <span>{{ room.progress || 0 }}%</span>
-              <div class="mini-bar">
-                <div class="mini-fill" [style.width.%]="room.progress || 0"></div>
-              </div>
+            <div class="tasks-count-pill">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              </svg>
+              <span>{{ room.totalTasks || 0 }} Tasks</span>
             </div>
           </td>
           <td class="actions-cell">
@@ -126,8 +128,26 @@
         </div>
 
         <div class="form-group">
-          <label>Category</label>
-          <input type="text" class="modal-input" [(ngModel)]="editingRoom.category" />
+          <label>Categories (Select to Add/Remove)</label>
+          
+          <div class="selected-tags-container">
+            <span class="tag-badge" *ngFor="let catId of editingCategoryIds">
+              {{ getCategoryNameById(catId) }}
+              <button type="button" class="btn-remove-tag" (click)="removeCategoryFromEdit(catId)">&times;</button>
+            </span>
+            <span *ngIf="editingCategoryIds.length === 0" class="no-tags-text">No categories selected</span>
+          </div>
+
+          <div class="category-options-grid">
+            <label class="cat-checkbox-label" *ngFor="let cat of categories">
+              <input 
+                type="checkbox" 
+                [checked]="isCategorySelectedInEdit(cat._id || cat.id || '')" 
+                (change)="toggleCategoryInEdit(cat._id || cat.id || '')" 
+              />
+              <span>{{ cat.name }}</span>
+            </label>
+          </div>
         </div>
 
         <div class="form-group">

@@ -10,6 +10,7 @@ export interface Room {
   description?: string;
   creatorId?: string;
   memberCount?: number;
+  totalTasks?: number;
   startDate?: string;
   endDate?: string;
   createdAt?: string | Date;
