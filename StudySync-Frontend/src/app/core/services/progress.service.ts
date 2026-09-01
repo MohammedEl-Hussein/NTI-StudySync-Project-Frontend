@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 import {
   Progress,
   CreateProgressDto,
@@ -83,9 +83,13 @@ export class ProgressService {
   /**
    * GET /progresses/room/:roomId - Room-specific progress & peer comparison
    */
-  getRoomProgress(roomId: string): Observable<RoomProgressData> {
+  getRoomProgress(roomId: string): Observable<RoomProgressData | null> {
     return this.http.get<any>(`${this.apiUrl}/room/${roomId}`, this.getAuthOptions()).pipe(
-      map(res => res?.data || res)
+      map(res => res?.data || res),
+      catchError((err: any) => {
+        console.error('Error fetching room progress:', err);
+        return of(null);
+      })
     );
   }
 
@@ -97,7 +101,7 @@ export class ProgressService {
       return of([]); // If no room specified, we can't fetch peers easily without an endpoint.
     }
     return this.getRoomProgress(roomId).pipe(
-      map(res => res.peers || [])
+      map(res => res?.peers || [])
     );
   }
 

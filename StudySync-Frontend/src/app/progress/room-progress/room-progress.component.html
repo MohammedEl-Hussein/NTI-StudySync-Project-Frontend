@@ -25,9 +25,9 @@
     <!-- Room Summary Banner -->
     <div class="room-summary-banner">
       <div class="banner-left">
-        <span class="badge room-badge">{{ roomData.category || 'Computer Science' }}</span>
-        <h3>{{ roomData.roomTitle }}</h3>
-        <p>Active peer cohort with {{ roomData.totalMembers || 8 }} collaborating members.</p>
+        <span class="badge room-badge">{{ $any(currentRoom)?.categoryNames?.[0] || $any(currentRoom)?.categoryIds?.[0]?.name || 'Subject' }}</span>
+        <h3>{{ currentRoom?.title || 'Loading...' }}</h3>
+        <p>{{ currentRoom?.description || 'Active peer cohort' }}</p>
       </div>
 
       <div class="banner-stats">
@@ -42,7 +42,7 @@
       </div>
     </div>
 
-    <!-- Layout Grid: Room Sections + Peer Leaderboard -->
+    <!-- Layout Grid: Room Sections -->
     <div class="room-details-grid">
       <!-- Left Column: Sections in this Room -->
       <div class="room-sections-col">
@@ -50,40 +50,6 @@
           [sections]="roomData.sections"
           title="Room Milestone Breakdown"
         ></app-section-progress>
-      </div>
-
-      <!-- Right Column: Room Peer Leaderboard -->
-      <div class="card peers-card">
-        <div class="peers-head">
-          <h3>Peer Progress Leaderboard</h3>
-          <span class="badge peer-badge">{{ roomData.peers.length || 0 }} Members</span>
-        </div>
-
-        <div class="peers-list">
-          <div class="peer-row" *ngFor="let peer of roomData.peers; let idx = index">
-            <span class="peer-rank" [class.gold-rank]="idx === 0" [class.silver-rank]="idx === 1" [class.bronze-rank]="idx === 2">
-              #{{ idx + 1 }}
-            </span>
-            <div class="peer-avatar">
-              {{ peer.avatar || peer.name.charAt(0) }}
-            </div>
-            <div class="peer-info">
-              <div class="peer-name-line">
-                <strong class="peer-name">{{ peer.name }}</strong>
-                <span class="peer-pct">{{ peer.percentage }}%</span>
-              </div>
-              <div class="peer-bar-wrap">
-                <div class="progress-track">
-                  <div
-                    class="progress-bar-fill"
-                    [class.peer-lead]="idx === 0"
-                    [style.width.%]="peer.percentage"
-                  ></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>

@@ -2,47 +2,12 @@
   <!-- Page Header -->
   <div class="page-header">
     <div>
-
       <h1>Academic Progress Dashboard</h1>
       <p>Monitor syllabus milestones, track phase completion, and benchmark peer collaboration.</p>
     </div>
-
-    <!-- Navigation Tab Pills -->
-    <div class="tab-nav">
-      <button
-        class="tab-btn"
-        [class.active]="activeTab === 'overview'"
-        type="button"
-        (click)="setTab('overview')"
-      >
-        <span class="tab-icon">📊</span>
-        <span>Overview</span>
-      </button>
-
-      <button
-        class="tab-btn"
-        [class.active]="activeTab === 'room'"
-        type="button"
-        (click)="setTab('room')"
-      >
-        <span class="tab-icon">🏛️</span>
-        <span>Room Progress</span>
-      </button>
-
-      <button
-        class="tab-btn"
-        [class.active]="activeTab === 'sections'"
-        type="button"
-        (click)="setTab('sections')"
-      >
-        <span class="tab-icon">📑</span>
-        <span>Phases & Sections</span>
-      </button>
-    </div>
   </div>
 
-  <!-- ================= TAB 1: OVERVIEW ================= -->
-  <div *ngIf="activeTab === 'overview'" class="tab-pane">
+  <div class="dashboard-content">
     <!-- Component 6: Overall Progress (Tasks Completed, Remaining, Total, Percentage) -->
     <app-overall-progress
       [completedTasks]="overallStats.completedTasks"
@@ -51,62 +16,9 @@
       [percentage]="overallStats.percentage"
     ></app-overall-progress>
 
-    <div class="progress-grid-2col">
-      <!-- Component 7: Section Progress breakdown -->
-      <div class="grid-col">
-        <app-section-progress
-          [sections]="sectionList"
-          title="Active Curriculum Milestones"
-        ></app-section-progress>
-      </div>
-
-      <!-- Peer Standings / Quick Leaderboard -->
-      <div class="grid-col">
-        <div class="card peers-card">
-          <div class="card-head">
-            <div>
-              <h2>Cohort Study Progress</h2>
-              <p>Real-time completion standing among group members.</p>
-            </div>
-            <button class="btn-sm" type="button" (click)="setTab('room')">View Details &rarr;</button>
-          </div>
-
-          <div class="peer-list">
-            <div class="peer-row" *ngFor="let peer of peerList; let i = index">
-              <span class="peer-rank" [class.lead-rank]="i === 0">#{{ i + 1 }}</span>
-              <div class="peer-avatar">{{ peer.avatar || peer.name.charAt(0) }}</div>
-              <div class="peer-meta">
-                <div class="meta-line">
-                  <strong class="peer-title">{{ peer.name }}</strong>
-                  <span class="peer-pct">{{ peer.percentage }}%</span>
-                </div>
-                <!-- Component 5: Reusable ProgressBarComponent -->
-                <app-progress-bar
-                  [percentage]="peer.percentage"
-                  [showLabel]="false"
-                  [color]="i === 0 ? 'success' : 'gradient'"
-                  height="6px"
-                ></app-progress-bar>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <!-- Component 8: RoomProgressComponent -->
+    <div style="margin-top: 32px;" *ngIf="selectedRoomId">
+      <app-room-progress [roomId]="selectedRoomId"></app-room-progress>
     </div>
-  </div>
-
-  <!-- ================= TAB 2: ROOM PROGRESS ================= -->
-  <div *ngIf="activeTab === 'room'" class="tab-pane">
-    <!-- Component 8: RoomProgressComponent (GET /progresses/room/:roomId) -->
-    <app-room-progress [roomId]="selectedRoomId"></app-room-progress>
-  </div>
-
-  <!-- ================= TAB 3: SECTIONS & PHASES ================= -->
-  <div *ngIf="activeTab === 'sections'" class="tab-pane">
-    <!-- Component 7: SectionProgressComponent (Full View) -->
-    <app-section-progress
-      [sections]="sectionList"
-      title="Detailed Phase & Module Progress"
-    ></app-section-progress>
   </div>
 </main>

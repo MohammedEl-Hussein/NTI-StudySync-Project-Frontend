@@ -22,7 +22,7 @@ export class ProgressComponent implements OnInit {
   public sectionList: SectionProgressItem[] = [];
   public peerList: PeerProgressItem[] = [];
   public rooms: Room[] = [];
-  public selectedRoomId = 'room_01';
+  public selectedRoomId = '';
   public loading = false;
 
   constructor(
@@ -56,11 +56,7 @@ export class ProgressComponent implements OnInit {
           this.rooms = allRooms.filter((r: Room) => myRoomIds.includes(r._id));
 
           if (this.rooms.length > 0) {
-            this.selectedRoomId = this.rooms[0]._id || 'room_01';
-            
-            // Now fetch room-specific progress data
-            this.progressService.getSectionProgress(this.selectedRoomId).subscribe(sections => this.sectionList = sections);
-            this.progressService.getPeerProgress(this.selectedRoomId).subscribe(peers => this.peerList = peers);
+            this.selectedRoomId = this.rooms[0]._id || '';
           }
           this.loading = false;
         },
