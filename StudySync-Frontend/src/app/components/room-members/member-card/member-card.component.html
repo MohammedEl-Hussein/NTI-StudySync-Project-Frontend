@@ -1,0 +1,44 @@
+<article class="member-card">
+  <div class="member-head">
+    <span class="avatar" [class.owner-avatar]="isRoomOwner" [class.admin-avatar]="isAdmin && !isRoomOwner">
+      {{ memberAvatar }}
+    </span>
+    <div class="member-info">
+      <strong>{{ memberName }}</strong>
+      <small>{{ memberEmail || memberOrg }}</small>
+    </div>
+    <span class="role" [class.role-owner]="isRoomOwner" [class.role-admin]="isAdmin && !isRoomOwner">
+      {{ (isRoomOwner ? 'Owner' : (isAdmin ? 'Admin' : 'Member')) | uppercase }}
+    </span>
+  </div>
+
+  <div class="progress-label">
+    <span>Personal progress</span>
+    <strong>{{ member?.progress || 0 }}%</strong>
+  </div>
+  
+  <div class="progress-track">
+    <div class="progress-bar" [style.width.%]="member?.progress || 0"></div>
+  </div>
+
+  <div class="member-actions" *ngIf="canManage && !isRoomOwner && !isSelf">
+    <button class="btn secondary" type="button" (click)="onToggleRole()">
+      {{ isAdmin ? 'Demote' : 'Make Admin' }}
+    </button>
+    <button class="btn danger" type="button" (click)="onRemove()">
+      Remove
+    </button>
+  </div>
+
+  <div class="member-actions" *ngIf="isRoomOwner">
+    <button class="btn secondary full owner-btn" type="button" disabled>
+      ★ Room Owner
+    </button>
+  </div>
+
+  <div class="member-actions" *ngIf="!canManage && !isRoomOwner && isSelf">
+    <button class="btn secondary full" type="button" disabled>
+      You
+    </button>
+  </div>
+</article>

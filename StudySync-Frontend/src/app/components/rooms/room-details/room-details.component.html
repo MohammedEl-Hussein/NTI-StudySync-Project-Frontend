@@ -73,7 +73,7 @@
   </section>
 
   <section *ngIf="tab==='members'">
-    <div class="card"><p class="text-muted">Room members list here.</p></div>
+    <app-room-members [roomId]="room?._id"></app-room-members>
   </section>
   <section *ngIf="tab==='chat'" class="room-chat-tab-view">
     <app-chat-room [roomId]="room?._id" [showBackBtn]="false"></app-chat-room>
