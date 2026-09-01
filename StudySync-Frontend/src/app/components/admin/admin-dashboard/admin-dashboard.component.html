@@ -132,15 +132,12 @@
           <div class="room-info">
             <strong>{{ r.title }}</strong>
             <div class="room-tags">
-              <span class="tag-category">{{ r.category }}</span>
-              <span class="tag-members">{{ r.members || r.memberCount || 0 }} members</span>
+              <span class="tag-category">{{ getPrimaryCategoryDisplay(r) }}</span>
+              <span class="tag-members">{{ r.memberCount !== undefined ? r.memberCount : (r.members || 0) }} members</span>
             </div>
           </div>
           <div class="room-progress-box">
-            <span class="prog-pct">{{ r.progress || 0 }}%</span>
-            <div class="prog-bar">
-              <div class="prog-fill" [style.width.%]="r.progress || 0"></div>
-            </div>
+            <span class="prog-pct">{{ r.totalTasks || 0 }} Tasks</span>
           </div>
         </div>
       </div>

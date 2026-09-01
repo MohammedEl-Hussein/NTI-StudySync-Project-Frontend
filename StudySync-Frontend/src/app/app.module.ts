@@ -76,6 +76,7 @@ import { MessageInputComponent } from './components/chat/message-input/message-i
 import { EditMessageComponent } from './components/chat/edit-message/edit-message.component';
 import { DeleteMessageComponent } from './components/chat/delete-message/delete-message.component';
 import { MessagesPageComponent } from './components/chat/messages/messages.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
@@ -131,7 +132,8 @@ import { MessagesPageComponent } from './components/chat/messages/messages.compo
     TaskListComponent,
     TaskCreateComponent,
     TaskEditComponent,
-    TaskDetailsComponent
+    TaskDetailsComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
