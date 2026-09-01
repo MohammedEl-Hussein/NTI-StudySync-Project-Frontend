@@ -34,6 +34,13 @@ import { MainLayoutComponent } from './components/layout/main-layout/main-layout
 import { ChatRoomComponent } from './components/chat/chat-room/chat-room.component';
 import { MessagesPageComponent } from './components/chat/messages/messages.component';
 
+// Task & Study Plan Components
+import { StudyPlanComponent } from './components/tasks/study-plan/study-plan.component';
+import { TaskListComponent } from './components/tasks/task-list/task-list.component';
+import { TaskCreateComponent } from './components/tasks/task-create/task-create.component';
+import { TaskEditComponent } from './components/tasks/task-edit/task-edit.component';
+import { TaskDetailsComponent } from './components/tasks/task-details/task-details.component';
+
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
@@ -68,10 +75,14 @@ const routes: Routes = [
       { path: 'rooms/create', component: CreateRoomComponent },
       { path: 'rooms/:id/edit', component: EditRoomComponent },
       { path: 'rooms/:id/chat', component: ChatRoomComponent },
+      { path: 'rooms/:id/study-plan', component: StudyPlanComponent },
       { path: 'rooms/:id', component: RoomDetailsComponent },
       { path: 'messages', component: MessagesPageComponent },
       { path: 'rooms/:id/members', component: RoomMembersComponent },
-      { path: 'rooms/:id', component: RoomDetailsComponent },
+      { path: 'rooms/:roomId/tasks', component: TaskListComponent },
+      { path: 'rooms/:roomId/tasks/create', component: TaskCreateComponent },
+      { path: 'tasks/:id', component: TaskDetailsComponent },
+      { path: 'tasks/:id/edit', component: TaskEditComponent },
       { path: 'support', component: SupportComponent },
       { path: 'support/create', component: SupportCreateComponent },
       { path: 'support/:id', component: SupportTicketDetailsComponent },
@@ -85,6 +96,7 @@ const routes: Routes = [
       }
     ]
   },
+
   { path: '**', redirectTo: 'login' }
 ];
 

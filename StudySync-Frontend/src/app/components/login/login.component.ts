@@ -18,7 +18,7 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private usersService: UsersService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -63,7 +63,7 @@ export class LoginComponent implements OnInit {
     this.usersService.loginUser(credentials).subscribe({
       next: (response: any) => {
         this.loading = false;
-        
+
         // Backend returns: { message: "login success", data: tokenString }
         const token = response.data || response.token;
 
@@ -73,7 +73,6 @@ export class LoginComponent implements OnInit {
           const decodedUser = this.parseJwt(token);
           if (decodedUser) {
             localStorage.setItem('currentUser', JSON.stringify(decodedUser));
-            
             alert('Login Successful! Welcome back.');
             if (decodedUser.role === 'admin') {
               this.router.navigate(['/admin']);

@@ -1,0 +1,57 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main class="page">
+  <div class="page-header">
+    <div>
+      <h1>Task Details</h1>
+      <p>View complete information and status of this task.</p>
+    </div>
+    <div class="header-actions">
+      <a class="btn secondary" [routerLink]="['/rooms', task?.roomId || '', 'study-plan']">Back to Study Plan</a>
+      <a class="btn secondary" [routerLink]="['/tasks', taskId, 'edit']">Edit Task</a>
+      <button class="btn danger" (click)="deleteTask()">Delete</button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="card">
+    <p>Loading task details...</p>
+  </div>
+
+  <div *ngIf="!loading && task" class="content-grid">
+    <div class="card detail-card">
+      <div class="meta-row">
+        <span class="badge">{{ task.section }}</span>
+        <span class="order-badge">Task #{{ task.order }}</span>
+        <span class="status-badge" [class.done]="isCompleted">
+          {{ isCompleted ? '✓ Completed' : '○ Pending' }}
+        </span>
+      </div>
+
+      <h2 class="task-title">{{ task.title }}</h2>
+
+      <div class="description-section">
+        <label class="form-label">Description / Instructions</label>
+        <p class="description-text">{{ task.description || 'No description provided for this task.' }}</p>
+      </div>
+
+      <div class="grid2">
+        <div class="info-group">
+          <label class="form-label">Due Date</label>
+          <span class="info-val">{{ (task.dueDate | date:'fullDate') || 'No due date set' }}</span>
+        </div>
+        <div class="info-group">
+          <label class="form-label">Completion Status</label>
+          <button 
+            class="btn" 
+            [class.primary]="!isCompleted" 
+            [class.secondary]="isCompleted"
+            (click)="toggleCompletion()"
+          >
+            {{ isCompleted ? 'Mark as Pending' : '✓ Mark as Complete' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

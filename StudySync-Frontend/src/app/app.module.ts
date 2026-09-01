@@ -37,6 +37,13 @@ import { MainLayoutComponent } from './components/layout/main-layout/main-layout
 import { EmptyStateComponent } from './components/shared/empty-state/empty-state.component';
 import { SkeletonCardComponent } from './components/shared/skeleton-card/skeleton-card.component';
 
+// Task & Study Plan Components
+import { StudyPlanComponent } from './components/tasks/study-plan/study-plan.component';
+import { TaskListComponent } from './components/tasks/task-list/task-list.component';
+import { TaskCreateComponent } from './components/tasks/task-create/task-create.component';
+import { TaskEditComponent } from './components/tasks/task-edit/task-edit.component';
+import { TaskDetailsComponent } from './components/tasks/task-details/task-details.component';
+
 // Modules
 import { SharedModule } from './shared/shared.module';
 import { ProfileModule } from './profile/profile.module';

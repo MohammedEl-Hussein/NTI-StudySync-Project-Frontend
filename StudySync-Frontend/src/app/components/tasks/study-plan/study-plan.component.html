@@ -1,0 +1,242 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main class="page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1>{{ roomTitle }} — Study Plan</h1>
+      <p>Organized learning roadmap divided into phases & sections with task completion tracking.</p>
+    </div>
+    <div class="header-actions">
+      <a class="btn secondary" [routerLink]="['/rooms', roomId]">Back to Room</a>
+      <button class="btn primary" type="button" (click)="openInlineAddForm()">+ Add New Task</button>
+    </div>
+  </div>
+
+  <!-- Overall Progress Summary -->
+  <div class="stat-grid margin-bottom">
+    <div class="stat-card">
+      <small>Overall Progress</small>
+      <strong>{{ overallProgress }}%</strong>
+      <div class="progress-track margin-top">
+        <div class="progress-bar" [style.width.%]="overallProgress"></div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <small>Total Tasks</small>
+      <strong>{{ totalTasksCount }}</strong>
+    </div>
+    <div class="stat-card">
+      <small>Completed Tasks</small>
+      <strong class="text-success">{{ completedTasksCount }}</strong>
+    </div>
+    <div class="stat-card">
+      <small>Remaining Tasks</small>
+      <strong class="text-warning">{{ totalTasksCount - completedTasksCount }}</strong>
+    </div>
+  </div>
+
+  <!-- Filter & Search Toolbar -->
+  <div class="card toolbar">
+    <div class="search-box">
+      <input 
+        class="input" 
+        placeholder="Search task title or description..." 
+        [(ngModel)]="searchQuery" 
+        (ngModelChange)="onFilterChange()"
+      />
+    </div>
+    <div class="filter-box">
+      <select class="select" [(ngModel)]="selectedSection" (ngModelChange)="onFilterChange()">
+        <option value="">All Sections / Phases</option>
+        <option *ngFor="let s of sectionsList" [value]="s">{{ s }}</option>
+      </select>
+    </div>
+    <div class="status-box">
+      <select class="select" [(ngModel)]="statusFilter" (ngModelChange)="onFilterChange()">
+        <option value="all">All Statuses</option>
+        <option value="completed">Completed Only</option>
+        <option value="incomplete">Incomplete Only</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- INLINE ADD TASK / PHASE FORM CARD (NO BROWSER POPUPS) -->
+  <div *ngIf="showInlineAddForm" class="card inline-form-card" style="margin-bottom: 20px; border: 2px solid #5146df; background: #fafaff; padding: 20px; border-radius: 14px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <h3 style="margin: 0; font-size: 16px; color: #5146df; font-weight: 700;">+ Add New Task / Phase</h3>
+      <button type="button" class="btn secondary" (click)="cancelInlineAdd()" style="padding: 4px 10px; font-size: 12px;">✕ Close</button>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+      <div>
+        <label class="form-label" style="font-size: 11px; font-weight: 700; color: #4f586a; display: block; margin-bottom: 5px;">Phase / Section Name *</label>
+        <input class="input" type="text" [(ngModel)]="newTaskData.section" placeholder="e.g. Week 1: Fundamentals or Phase 1" style="width: 100%; box-sizing: border-box; border: 1px solid #dfe2e8; border-radius: 8px; padding: 9px 12px; font-size: 13px;">
+      </div>
+      <div>
+        <label class="form-label" style="font-size: 11px; font-weight: 700; color: #4f586a; display: block; margin-bottom: 5px;">Task Title *</label>
+        <input class="input" type="text" [(ngModel)]="newTaskData.title" placeholder="e.g. Read Chapter 1 or Complete Quiz" style="width: 100%; box-sizing: border-box; border: 1px solid #dfe2e8; border-radius: 8px; padding: 9px 12px; font-size: 13px;">
+      </div>
+    </div>
+
+    <div style="margin-bottom: 14px;">
+      <label class="form-label" style="font-size: 11px; font-weight: 700; color: #4f586a; display: block; margin-bottom: 5px;">Description (Optional)</label>
+      <textarea class="textarea" [(ngModel)]="newTaskData.description" placeholder="Short details or instructions for room members..." style="width: 100%; box-sizing: border-box; border: 1px solid #dfe2e8; border-radius: 8px; padding: 9px 12px; font-size: 13px; min-height: 60px; resize: vertical;"></textarea>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
+      <div>
+        <label class="form-label" style="font-size: 11px; font-weight: 700; color: #4f586a; display: block; margin-bottom: 5px;">Order</label>
+        <input class="input" type="number" min="1" [(ngModel)]="newTaskData.order" style="width: 100%; box-sizing: border-box; border: 1px solid #dfe2e8; border-radius: 8px; padding: 9px 12px; font-size: 13px;">
+      </div>
+      <div>
+        <label class="form-label" style="font-size: 11px; font-weight: 700; color: #4f586a; display: block; margin-bottom: 5px;">Due Date</label>
+        <input class="input" type="date" [(ngModel)]="newTaskData.dueDate" style="width: 100%; box-sizing: border-box; border: 1px solid #dfe2e8; border-radius: 8px; padding: 9px 12px; font-size: 13px;">
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+      <button type="button" class="btn secondary" (click)="cancelInlineAdd()">Cancel</button>
+      <button type="button" class="btn primary" [disabled]="isSavingTask" (click)="submitInlineAddTask()">
+        {{ isSavingTask ? 'Saving Task...' : 'Save Task' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="card loading-card">
+    <p>Loading study plan tasks...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && sectionGroups.length === 0 && !showInlineAddForm" class="card empty-card">
+    <h3>No Study Plan Tasks Found</h3>
+    <p>No tasks match your current criteria or none have been added to this study room yet.</p>
+    <button class="btn primary margin-top" type="button" (click)="openInlineAddForm()">+ Create First Task</button>
+  </div>
+
+  <!-- Study Plan Phases / Sections -->
+  <div *ngIf="!loading && sectionGroups.length > 0" class="content-grid">
+    <div class="card section-card" *ngFor="let group of sectionGroups">
+      <!-- Section Header -->
+      <div class="section-header" (click)="toggleSection(group)">
+        <div class="section-title-group">
+          <button class="expand-btn" type="button">
+            {{ group.expanded ? '▼' : '►' }}
+          </button>
+          <h2>{{ group.name }}</h2>
+          <span class="badge">{{ group.completedCount }} / {{ group.totalCount }} Done</span>
+          <button type="button" class="btn secondary" style="padding: 2px 8px; font-size: 10px; margin-left: 10px;" (click)="$event.stopPropagation(); openInlineAddForm(group.name)">+ Add Task</button>
+        </div>
+        <div class="section-progress">
+          <span class="pct-text">{{ group.percentage }}%</span>
+          <div class="progress-track mini-track">
+            <div class="progress-bar" [style.width.%]="group.percentage"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task Items List -->
+      <div class="task-list-wrapper" *ngIf="group.expanded">
+        <div 
+          *ngFor="let task of group.tasks" 
+          class="task-row-container"
+          style="border-bottom: 1px solid #eef0f4;"
+        >
+          <!-- Normal Task Row -->
+          <div 
+            class="task-item" 
+            [class.completed]="task.isCompleted"
+            style="display: grid; grid-template-columns: 1fr 140px 180px; align-items: center; gap: 15px; padding: 16px 0;"
+          >
+            <!-- Task Checkbox & Main Info -->
+            <div class="task-main-info">
+              <label class="checkbox-container" (click)="$event.stopPropagation()">
+                <input 
+                  type="checkbox" 
+                  [checked]="task.isCompleted" 
+                  (change)="toggleTaskCompletion(task, $event)"
+                />
+                <span class="checkmark"></span>
+              </label>
+
+              <div class="task-text">
+                <div class="title-row">
+                  <span class="order-tag">#{{ task.order }}</span>
+                  <h3 [class.strike]="task.isCompleted">{{ task.title }}</h3>
+                </div>
+                <p *ngIf="task.description">{{ task.description }}</p>
+              </div>
+            </div>
+
+            <!-- Due Date -->
+            <div class="task-meta">
+              <time *ngIf="task.dueDate">Due: {{ task.dueDate | date:'mediumDate' }}</time>
+              <time *ngIf="!task.dueDate" class="muted">No deadline</time>
+            </div>
+
+            <!-- Actions -->
+            <div class="actions">
+              <button 
+                class="btn secondary" 
+                (click)="editingTaskId === (task._id || task.id) ? cancelInlineEdit($event) : startInlineEdit(task, $event)"
+              >
+                {{ editingTaskId === (task._id || task.id) ? 'Cancel' : 'Edit' }}
+              </button>
+              <button class="btn danger" type="button" (click)="deleteTask(task, $event)">Delete</button>
+            </div>
+          </div>
+
+          <!-- STRETCHED INLINE EDIT FORM (UNDER THE TASK ROW) -->
+          <div 
+            *ngIf="editingTaskId === (task._id || task.id)" 
+            class="task-inline-edit-box" 
+            style="background: #f8f9fe; border: 1px solid #dcdff8; border-radius: 10px; padding: 16px; margin: 6px 0 14px 0;"
+            (click)="$event.stopPropagation()"
+          >
+            <h4 style="margin: 0 0 12px 0; font-size: 13px; color: #5146df; font-weight: 700;">Edit Task Details</h4>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px;">
+              <div>
+                <label class="form-label" style="font-size: 10px; font-weight: 700; color: #4f586a; display: block; margin-bottom: 4px;">Phase / Section</label>
+                <input class="input" type="text" [(ngModel)]="editTaskData.section" style="width: 100%; box-sizing: border-box; border: 1px solid #dfe2e8; border-radius: 6px; padding: 7px 10px; font-size: 12px;">
+              </div>
+              <div>
+                <label class="form-label" style="font-size: 10px; font-weight: 700; color: #4f586a; display: block; margin-bottom: 4px;">Title</label>
+                <input class="input" type="text" [(ngModel)]="editTaskData.title" style="width: 100%; box-sizing: border-box; border: 1px solid #dfe2e8; border-radius: 6px; padding: 7px 10px; font-size: 12px;">
+              </div>
+            </div>
+
+            <div style="margin-bottom: 10px;">
+              <label class="form-label" style="font-size: 10px; font-weight: 700; color: #4f586a; display: block; margin-bottom: 4px;">Description</label>
+              <textarea class="textarea" [(ngModel)]="editTaskData.description" style="width: 100%; box-sizing: border-box; border: 1px solid #dfe2e8; border-radius: 6px; padding: 7px 10px; font-size: 12px; min-height: 50px; resize: vertical;"></textarea>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+              <div>
+                <label class="form-label" style="font-size: 10px; font-weight: 700; color: #4f586a; display: block; margin-bottom: 4px;">Order</label>
+                <input class="input" type="number" min="1" [(ngModel)]="editTaskData.order" style="width: 100%; box-sizing: border-box; border: 1px solid #dfe2e8; border-radius: 6px; padding: 7px 10px; font-size: 12px;">
+              </div>
+              <div>
+                <label class="form-label" style="font-size: 10px; font-weight: 700; color: #4f586a; display: block; margin-bottom: 4px;">Due Date</label>
+                <input class="input" type="date" [(ngModel)]="editTaskData.dueDate" style="width: 100%; box-sizing: border-box; border: 1px solid #dfe2e8; border-radius: 6px; padding: 7px 10px; font-size: 12px;">
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <button type="button" class="btn danger" style="padding: 6px 12px; font-size: 11px;" (click)="deleteTask(task, $event)">Delete Task</button>
+              <div style="display: flex; gap: 8px;">
+                <button type="button" class="btn secondary" style="padding: 6px 12px; font-size: 11px;" (click)="cancelInlineEdit($event)">Cancel</button>
+                <button type="button" class="btn primary" style="padding: 6px 12px; font-size: 11px;" [disabled]="isSavingTask" (click)="submitInlineEditTask($event)">
+                  {{ isSavingTask ? 'Saving...' : 'Save Changes' }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

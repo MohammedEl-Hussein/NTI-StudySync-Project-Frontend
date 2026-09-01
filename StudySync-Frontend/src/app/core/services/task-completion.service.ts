@@ -1,36 +1,70 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 import { TaskCompletion } from '../models/task.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaskCompletionService {
-  private apiUrl = '/api/task-completions';
-
-  private mockCompletions: TaskCompletion[] = [
-    { _id: 'tc_1', id: 'tc_1', taskId: 'task_01', userId: 'usr_haneen_01', completed: true, completedAt: '2026-08-28T10:00:00Z' },
-    { _id: 'tc_2', id: 'tc_2', taskId: 'task_02', userId: 'usr_haneen_01', completed: true, completedAt: '2026-08-29T14:30:00Z' },
-    { _id: 'tc_3', id: 'tc_3', taskId: 'task_04', userId: 'usr_haneen_01', completed: true, completedAt: '2026-08-30T17:15:00Z' }
-  ];
+  private baseApiUrl = 'http://localhost:3001';
+  private apiUrl = `${this.baseApiUrl}/task-completion`;
 
   constructor(private http: HttpClient) {}
 
+  private getAuthOptions() {
+    const token = localStorage.getItem('token');
+    let headers = new HttpHeaders();
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+    return { headers };
+  }
+
   /**
-   * Get user completed tasks
+   * Complete task in database: POST /task-completion/complete
    */
-  getUserCompletions(userId?: string): Observable<TaskCompletion[]> {
-    return this.http.get<TaskCompletion[]>(`${this.apiUrl}/user`).pipe(
-      catchError(() => of(this.mockCompletions))
+  completeTask(taskId: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/complete`, { taskId }, this.getAuthOptions()).pipe(
+      map(res => res.data || res)
     );
   }
 
   /**
-   * Get completed task count
+   * Uncomplete task in database: DELETE /task-completion/uncomplete
    */
-  getCompletedCount(userId?: string): Observable<number> {
-    return of(42);
+  uncompleteTask(taskId: string): Observable<any> {
+    const authOptions = this.getAuthOptions();
+    const options = {
+      headers: authOptions.headers,
+      body: { taskId }
+    };
+    return this.http.delete<any>(`${this.apiUrl}/uncomplete`, options);
+  }
+
+  /**
+   * Get all completed tasks for current user from database: GET /task-completion/allcompleted
+   */
+  getMyCompletions(): Observable<TaskCompletion[]> {
+    return this.http.get<any>(`${this.apiUrl}/allcompleted`, this.getAuthOptions()).pipe(
+      map(res => {
+        console.log('HTTP response /task-completion/allcompleted:', res);
+        if (Array.isArray(res)) return res;
+        if (Array.isArray(res?.data)) return res.data;
+        return [];
+      }),
+      catchError(err => {
+        console.warn('Could not load completed tasks:', err);
+        return of([]);
+      })
+    );
+  }
+
+  /**
+   * Alias for backward compatibility
+   */
+  getCompletedTasksByUser(userId?: string): Observable<TaskCompletion[]> {
+    return this.getMyCompletions();
   }
 }
