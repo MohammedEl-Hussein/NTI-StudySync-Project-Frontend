@@ -34,11 +34,13 @@
 
       <div class="group-items">
         <app-message-item
-          *ngFor="let msg of group.messages"
+          *ngFor="let msg of group.messages; let i = index"
           [message]="msg"
           [currentUserId]="currentUserId"
           [isRoomOwnerOrAdmin]="isRoomOwnerOrAdmin"
           [room]="room"
+          [isFirstInGroup]="checkIsFirstInGroup(group.messages, i)"
+          [isLastInGroup]="checkIsLastInGroup(group.messages, i)"
           (edit)="onEdit($event)"
           (delete)="onDelete($event)"
         ></app-message-item>

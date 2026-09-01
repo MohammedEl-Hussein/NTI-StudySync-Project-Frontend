@@ -2,9 +2,13 @@
   display: flex;
   gap: 10px;
   max-width: 75%;
-  margin-bottom: 16px;
+  margin-bottom: 3px;
   position: relative;
   align-items: flex-end;
+}
+
+.message-wrapper.last-in-group {
+  margin-bottom: 14px;
 }
 
 .message-wrapper.mine {
@@ -15,6 +19,11 @@
 
 .avatar-col {
   flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
   margin-bottom: 2px;
 }
 
@@ -31,6 +40,11 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
+.avatar-placeholder {
+  width: 34px;
+  height: 34px;
+}
+
 .mine-avatar {
   background: linear-gradient(135deg, #4f46e5, #3730a3);
   font-size: 15px;
@@ -39,7 +53,7 @@
 .message-content-box {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   min-width: 0;
 }
 
@@ -53,7 +67,7 @@
   gap: 6px;
   font-size: 11px;
   color: #64748b;
-  padding: 0 4px;
+  padding: 0 4px 2px;
 }
 
 .sender-name {
@@ -77,25 +91,6 @@
   gap: 2px;
 }
 
-.message-time {
-  font-size: 10px;
-  color: #94a3b8;
-}
-
-.edited-tag {
-  font-size: 10px;
-  color: #94a3b8;
-  font-style: italic;
-}
-
-.sending-tag {
-  font-size: 10px;
-  color: #f59e0b;
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-}
-
 .bubble-container {
   position: relative;
   display: inline-flex;
@@ -106,7 +101,7 @@
 .bubble {
   background: #f1f5f9;
   color: #1e293b;
-  padding: 10px 14px;
+  padding: 9px 14px;
   border-radius: 16px;
   border-bottom-left-radius: 4px;
   font-size: 13.5px;
@@ -124,6 +119,20 @@
   box-shadow: 0 3px 12px rgba(79, 70, 229, 0.25);
 }
 
+/* Consecutive bubble corners */
+.message-wrapper:not(.mine):not(.last-in-group) .bubble {
+  border-bottom-left-radius: 6px;
+}
+.message-wrapper:not(.mine):not(.first-in-group) .bubble {
+  border-top-left-radius: 6px;
+}
+.message-wrapper.mine:not(.last-in-group) .bubble {
+  border-bottom-right-radius: 6px;
+}
+.message-wrapper.mine:not(.first-in-group) .bubble {
+  border-top-right-radius: 6px;
+}
+
 .bubble p.text {
   margin: 0;
   white-space: pre-wrap;
@@ -131,6 +140,40 @@
 
 .message-wrapper.pending .bubble {
   opacity: 0.7;
+}
+
+/* Footer Metadata (Timestamp ONLY under message) */
+.message-footer-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 6px 0;
+  min-height: 16px;
+}
+
+.mine .message-footer-meta {
+  justify-content: flex-end;
+}
+
+.message-time-under {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+.edited-tag {
+  font-size: 10px;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.sending-tag {
+  font-size: 10px;
+  color: #f59e0b;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
 }
 
 /* Actions Menu */

@@ -35,7 +35,7 @@ export class MessageService {
 
     return this.http.get<any>(`${this.apiUrl}/chat/${chatId}`, this.getAuthHeaders()).pipe(
       map((res) => {
-        let list: Message[] = [];
+        let list: any[] = [];
         if (Array.isArray(res)) {
           list = res;
         } else if (res && Array.isArray(res.data)) {
@@ -43,15 +43,16 @@ export class MessageService {
         } else if (res && Array.isArray(res.messages)) {
           list = res.messages;
         }
-        return list;
+        return list.map((m) => this.normalizeMessage(m));
       }),
       catchError((err) => {
         // Attempt fallback endpoint GET /messages/:chatId or GET /messages?chatId=...
         return this.http.get<any>(`${this.apiUrl}/${chatId}`, this.getAuthHeaders()).pipe(
           map((res) => {
-            if (Array.isArray(res)) return res;
-            if (res && Array.isArray(res.data)) return res.data;
-            return [];
+            let list: any[] = [];
+            if (Array.isArray(res)) list = res;
+            else if (res && Array.isArray(res.data)) list = res.data;
+            return list.map((m) => this.normalizeMessage(m));
           }),
           catchError(() => of([]))
         );
@@ -64,12 +65,49 @@ export class MessageService {
   }
 
   /**
+   * Helper to ensure every message has a real timestamp
+   */
+  normalizeMessage(raw: any): Message {
+    if (!raw) return raw;
+    let createdAt = raw.createdAt || raw.updatedAt || raw.timestamp || raw.date;
+
+    // If createdAt is missing, recover exact timestamp from MongoDB ObjectId (first 8 hex characters)
+    if (!createdAt && raw._id && typeof raw._id === 'string' && raw._id.length === 24 && /^[0-9a-fA-F]{24}$/.test(raw._id)) {
+      try {
+        const timestampSec = parseInt(raw._id.substring(0, 8), 16);
+        const d = new Date(timestampSec * 1000);
+        if (!isNaN(d.getTime()) && d.getFullYear() >= 2020) {
+          createdAt = d.toISOString();
+        }
+      } catch {}
+    }
+
+    if (!createdAt) {
+      createdAt = new Date().toISOString();
+    }
+
+    return {
+      ...raw,
+      createdAt: createdAt
+    };
+  }
+
+  /**
    * Send a new message
    * API: POST /messages
    */
   sendMessage(data: SendMessageDto): Observable<Message> {
-    return this.http.post<any>(this.apiUrl, data, this.getAuthHeaders()).pipe(
-      map((res) => (res && res.data ? res.data : res)),
+    const payload = {
+      ...data,
+      createdAt: data.createdAt || new Date().toISOString(),
+      timestamp: new Date().toISOString()
+    };
+
+    return this.http.post<any>(this.apiUrl, payload, this.getAuthHeaders()).pipe(
+      map((res) => {
+        const raw = res && res.data ? res.data : res;
+        return this.normalizeMessage(raw);
+      }),
       tap((newMsg: Message) => {
         const current = this.messagesSubject.getValue();
         // Check if message already exists in list

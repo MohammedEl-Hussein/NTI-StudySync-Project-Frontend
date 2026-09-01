@@ -6,14 +6,14 @@
         <i class="bi bi-chat-left-text-fill icon-brand"></i>
         <h2>Messages</h2>
       </div>
-      <span class="badge-total">{{ filteredRooms.length }} Rooms</span>
+      <span class="badge-total">{{ filteredRooms.length }} Joined</span>
     </div>
 
     <div class="search-box">
       <i class="bi bi-search search-icon"></i>
       <input
         type="text"
-        placeholder="Search rooms..."
+        placeholder="Search joined rooms..."
         [(ngModel)]="search"
         (ngModelChange)="filterRooms()"
         class="search-input"
@@ -38,8 +38,9 @@
       <!-- Empty state -->
       <div *ngIf="!isLoading && filteredRooms.length === 0" class="empty-list">
         <i class="bi bi-chat-square-dots"></i>
-        <p>No study rooms found</p>
-        <a routerLink="/rooms" class="btn-browse">Browse Rooms</a>
+        <p *ngIf="search">No matching joined rooms</p>
+        <p *ngIf="!search">You haven't joined any study rooms yet</p>
+        <a routerLink="/rooms" class="btn-browse">Explore & Join Rooms</a>
       </div>
 
       <!-- Room Conversation items -->
@@ -59,9 +60,18 @@
         <div class="room-item-info">
           <div class="item-title-row">
             <strong class="item-title">{{ room.title }}</strong>
-            <span class="item-badge">{{ room.level }}</span>
+            <span class="item-time" *ngIf="room.lastMessageTime">{{ room.lastMessageTime }}</span>
+            <span class="item-badge" *ngIf="!room.lastMessageTime">{{ room.level }}</span>
           </div>
-          <p class="item-desc">{{ room.description || 'Click to enter room chat...' }}</p>
+
+          <div class="item-subtitle-row">
+            <p class="item-desc" [class.has-last-msg]="room.lastMessage">
+              {{ room.lastMessage || room.description || 'Click to enter room chat...' }}
+            </p>
+            <span class="unread-badge" *ngIf="room.unreadCount && room.unreadCount > 0">
+              {{ room.unreadCount > 99 ? '99+' : room.unreadCount }}
+            </span>
+          </div>
         </div>
       </div>
     </div>

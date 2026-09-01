@@ -28,7 +28,7 @@
 
       <!-- Message Composer -->
       <app-message-input
-        [disabled]="isLoadingMessages || isSending"
+        [disabled]="isLoadingMessages"
         (sendMessage)="onSendMessage($event)"
       ></app-message-input>
     </main>
@@ -40,6 +40,7 @@
       [ownerId]="room?.ownerId"
       [adminIds]="room?.adminIds || []"
       [currentUserId]="currentUserId"
+      [messages]="messages"
       [isOpen]="isMembersOpen"
       (close)="toggleMembers()"
     ></app-chat-members>
