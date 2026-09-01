@@ -17,6 +17,7 @@ import { CreateRoomComponent } from './components/rooms/create-room/create-room.
 import { EditRoomComponent } from './components/rooms/edit-room/edit-room.component';
 import { RoomDetailsComponent } from './components/rooms/room-details/room-details.component';
 import { CategoriesComponent } from './components/categories/categories.component';
+import { LandingPageComponent } from './components/landing-page/landing-page.component';
 // Profile Components
 import { ProfileComponent } from './components/profile/profile.component';
 import { EditProfileComponent } from './components/profile/edit-profile/edit-profile.component';
@@ -90,6 +91,7 @@ import { MessagesPageComponent } from './components/chat/messages/messages.compo
     AdminRoomsComponent,
     AdminRoomDetailsComponent,
     AdminCategoriesComponent,
+    LandingPageComponent,
     ProfileComponent,
     EditProfileComponent,
     ProfileStatsComponent,

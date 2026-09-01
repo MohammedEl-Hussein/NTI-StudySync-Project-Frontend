@@ -1,3 +1,4 @@
+import { LandingPageComponent } from './components/landing-page/landing-page.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
@@ -46,7 +47,8 @@ import { TaskEditComponent } from './components/tasks/task-edit/task-edit.compon
 import { TaskDetailsComponent } from './components/tasks/task-details/task-details.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', component: LandingPageComponent, pathMatch: 'full' },
+  { path: 'home', component: LandingPageComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
 
