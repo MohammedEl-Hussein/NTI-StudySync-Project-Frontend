@@ -17,19 +17,28 @@ import { EditCategoryComponent } from './components/admin/edit-category/edit-cat
 import { SupportInboxComponent } from './components/admin/support-inbox/support-inbox.component';
 import { AdminSupportDetailsComponent } from './components/admin/admin-support-details/admin-support-details.component';
 
+// Room Components
 import { RoomListComponent } from './components/rooms/room-list/room-list.component';
 import { CreateRoomComponent } from './components/rooms/create-room/create-room.component';
 import { RoomDetailsComponent } from './components/rooms/room-details/room-details.component';
 import { EditRoomComponent } from './components/rooms/edit-room/edit-room.component';
+import { RoomMembersComponent } from './components/room-members/room-members.component';
+
+// Support Components
+import { SupportComponent } from './components/support/support.component';
+import { SupportCreateComponent } from './components/support/support-create/support-create.component';
+import { SupportTicketDetailsComponent } from './components/support/support-ticket-details/support-ticket-details.component';
 
 import { CategoriesComponent } from './components/categories/categories.component';
-
 import { MainLayoutComponent } from './components/layout/main-layout/main-layout.component';
+import { ChatRoomComponent } from './components/chat/chat-room/chat-room.component';
+import { MessagesPageComponent } from './components/chat/messages/messages.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+
   // Admin Portal Routes
   {
     path: 'admin',
@@ -48,6 +57,7 @@ const routes: Routes = [
     ]
   },
 
+  // Main User Portal Routes
   {
     path: '',
     component: MainLayoutComponent,
@@ -57,7 +67,14 @@ const routes: Routes = [
       { path: 'rooms', component: RoomListComponent },
       { path: 'rooms/create', component: CreateRoomComponent },
       { path: 'rooms/:id/edit', component: EditRoomComponent },
+      { path: 'rooms/:id/chat', component: ChatRoomComponent },
       { path: 'rooms/:id', component: RoomDetailsComponent },
+      { path: 'messages', component: MessagesPageComponent },
+      { path: 'rooms/:id/members', component: RoomMembersComponent },
+      { path: 'rooms/:id', component: RoomDetailsComponent },
+      { path: 'support', component: SupportComponent },
+      { path: 'support/create', component: SupportCreateComponent },
+      { path: 'support/:id', component: SupportTicketDetailsComponent },
       {
         path: 'profile',
         loadChildren: () => import('./profile/profile.module').then((m) => m.ProfileModule)

@@ -18,6 +18,17 @@ import { EditRoomComponent } from './components/rooms/edit-room/edit-room.compon
 import { RoomDetailsComponent } from './components/rooms/room-details/room-details.component';
 import { CategoriesComponent } from './components/categories/categories.component';
 
+// Room Members Components
+import { RoomMembersComponent } from './components/room-members/room-members.component';
+import { MemberCardComponent } from './components/room-members/member-card/member-card.component';
+import { InviteMemberModalComponent } from './components/room-members/invite-member-modal/invite-member-modal.component';
+
+// Support Components
+import { SupportComponent } from './components/support/support.component';
+import { SupportCreateComponent } from './components/support/support-create/support-create.component';
+import { MySupportTicketsComponent } from './components/support/my-support-tickets/my-support-tickets.component';
+import { SupportTicketDetailsComponent } from './components/support/support-ticket-details/support-ticket-details.component';
+
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { SidebarComponent } from './components/layout/sidebar/sidebar.component';
@@ -44,6 +55,17 @@ import { EditCategoryComponent } from './components/admin/edit-category/edit-cat
 import { SupportInboxComponent } from './components/admin/support-inbox/support-inbox.component';
 import { AdminSupportDetailsComponent } from './components/admin/admin-support-details/admin-support-details.component';
 
+// Chat & Messages Components (Habiba)
+import { ChatRoomComponent } from './components/chat/chat-room/chat-room.component';
+import { ChatHeaderComponent } from './components/chat/chat-header/chat-header.component';
+import { ChatMembersComponent } from './components/chat/chat-members/chat-members.component';
+import { MessageListComponent } from './components/chat/message-list/message-list.component';
+import { MessageItemComponent } from './components/chat/message-item/message-item.component';
+import { MessageInputComponent } from './components/chat/message-input/message-input.component';
+import { EditMessageComponent } from './components/chat/edit-message/edit-message.component';
+import { DeleteMessageComponent } from './components/chat/delete-message/delete-message.component';
+import { MessagesPageComponent } from './components/chat/messages/messages.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -69,11 +91,28 @@ import { AdminSupportDetailsComponent } from './components/admin/admin-support-d
     EditRoomComponent,
     RoomDetailsComponent,
     CategoriesComponent,
+    RoomMembersComponent,
+    MemberCardComponent,
+    InviteMemberModalComponent,
+    SupportComponent,
+    SupportCreateComponent,
+    MySupportTicketsComponent,
+    SupportTicketDetailsComponent,
     SidebarComponent,
     NavbarComponent,
     MainLayoutComponent,
     EmptyStateComponent,
-    SkeletonCardComponent
+    SkeletonCardComponent,
+    // Habiba - Chat & Messages
+    ChatRoomComponent,
+    ChatHeaderComponent,
+    ChatMembersComponent,
+    MessageListComponent,
+    MessageItemComponent,
+    MessageInputComponent,
+    EditMessageComponent,
+    DeleteMessageComponent,
+    MessagesPageComponent
   ],
   imports: [
     BrowserModule,

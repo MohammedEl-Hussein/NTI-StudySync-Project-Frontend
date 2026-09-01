@@ -1,0 +1,176 @@
+:host {
+  display: block;
+}
+
+.member-card {
+  background: #ffffff;
+  border: 1px solid #e6e9ef;
+  border-radius: 13px;
+  padding: 18px;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.member-card:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  border-color: #d7dbe4;
+}
+
+.member-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #e9eafd;
+  color: #5146df;
+  font-weight: 800;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.avatar.owner-avatar {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.avatar.admin-avatar {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.member-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.member-info strong {
+  display: block;
+  font-size: 13px;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.member-info small {
+  display: block;
+  color: #89909e;
+  font-size: 10px;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.role {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  background: #eef0ff;
+  color: #5146df;
+  border-radius: 8px;
+  padding: 5px 8px;
+  flex-shrink: 0;
+}
+
+.role.role-owner {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.role.role-admin {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  margin: 18px 0 6px;
+  font-size: 10px;
+  color: #7e8695;
+}
+
+.progress-label strong {
+  color: #252d3e;
+}
+
+.progress-track {
+  height: 6px;
+  background: #e8ebf0;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: auto;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #5146df, #08a8df);
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+
+.member-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.btn {
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.secondary {
+  background: #fff;
+  border: 1px solid #e0e3e9;
+  color: #566073;
+  flex: 1;
+}
+
+.secondary:hover:not(:disabled) {
+  background: #f8fafc;
+  color: #1e293b;
+  border-color: #cbd5e1;
+}
+
+.danger {
+  background: #fff0f0;
+  color: #df4e4e;
+  border: 1px solid #f9dcdc;
+  flex: 1;
+}
+
+.danger:hover:not(:disabled) {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.owner-btn {
+  background: #f8fafc;
+  color: #b45309;
+  border-color: #fde68a;
+  cursor: default;
+}
+
+.full {
+  width: 100%;
+}

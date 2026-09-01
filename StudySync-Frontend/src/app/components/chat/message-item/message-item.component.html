@@ -1,0 +1,67 @@
+<div class="message-wrapper" [class.mine]="isMine" [class.pending]="message.isPending">
+  <div class="avatar-col" *ngIf="!isMine">
+    <span class="avatar" [style.background]="getAvatarColor(senderName)">
+      {{ avatarInitial }}
+    </span>
+  </div>
+
+  <div class="message-content-box">
+    <div class="message-meta">
+      <span class="sender-name">{{ senderName }}</span>
+      <span *ngIf="isRoomHost" class="host-badge">
+        <i class="bi bi-star-fill"></i> Host
+      </span>
+      <time class="message-time">
+        {{ message.createdAt | date:'shortTime' }}
+      </time>
+      <span *ngIf="isEdited" class="edited-tag">(edited)</span>
+      <span *ngIf="message.isPending" class="sending-tag">
+        <i class="bi bi-clock"></i> sending...
+      </span>
+    </div>
+
+    <div class="bubble-container">
+      <div class="bubble">
+        <p class="text">{{ message.content }}</p>
+      </div>
+
+      <!-- Action buttons menu (hover) -->
+      <div class="message-actions" *ngIf="!message.isPending">
+        <button
+          type="button"
+          class="action-btn"
+          (click)="copyContent()"
+          [title]="copied ? 'Copied!' : 'Copy text'"
+        >
+          <i [class]="copied ? 'bi bi-check-lg' : 'bi bi-clipboard'"></i>
+        </button>
+
+        <button
+          *ngIf="canEdit"
+          type="button"
+          class="action-btn"
+          (click)="onEdit()"
+          title="Edit message"
+        >
+          <i class="bi bi-pencil-square"></i>
+        </button>
+
+        <button
+          *ngIf="canDelete"
+          type="button"
+          class="action-btn danger"
+          (click)="onDelete()"
+          title="Delete message"
+        >
+          <i class="bi bi-trash3"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="avatar-col" *ngIf="isMine">
+    <span class="avatar mine-avatar">
+      <i class="bi bi-person-fill"></i>
+    </span>
+  </div>
+</div>

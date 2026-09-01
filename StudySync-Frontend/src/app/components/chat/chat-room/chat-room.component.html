@@ -1,4 +1,65 @@
-<div class="chat-layout">
-  <aside class="chat-members card"><h3>Active Members</h3><div class="chat-member" *ngFor="let member of activeMembers"><span class="avatar">{{ member.name?.charAt(0) }}</span><div><strong>{{ member.name }}</strong><small [class.offline]="member.status==='Offline'">● {{ member.status }}</small></div></div></aside>
-  <section class="chat-window card"><div class="chat-messages"><div class="message" *ngFor="let message of messages" [class.mine]="message.userId === currentUser?._id"><span class="avatar">{{ message.user?.name?.charAt(0) || 'U' }}</span><div><div class="meta"><strong>{{ message.user?.name || 'User' }}</strong><time>{{ message.sentAt | date:'shortTime' }}</time></div><p>{{ message.content }}</p></div></div></div><form class="composer" (ngSubmit)="sendMessage()"><input [(ngModel)]="newMessage" name="message" placeholder="Type your message..." autocomplete="off"><button class="send" type="submit">➤</button></form></section>
+<div class="chat-room-container card">
+  <!-- Header -->
+  <app-chat-header
+    *ngIf="showHeader"
+    [room]="room"
+    [memberCount]="members.length"
+    [onlineCount]="onlineCount"
+    [isMembersOpen]="isMembersOpen"
+    [showBackBtn]="showBackBtn"
+    (toggleMembers)="toggleMembers()"
+    (backToRoom)="navigateBackToRoom()"
+  ></app-chat-header>
+
+  <!-- Chat Workspace -->
+  <div class="chat-workspace">
+    <!-- Main Chat Column -->
+    <main class="chat-main-panel">
+      <!-- Message List -->
+      <app-message-list
+        [messages]="messages"
+        [currentUserId]="currentUserId"
+        [isRoomOwnerOrAdmin]="isRoomOwnerOrAdmin"
+        [isLoading]="isLoadingMessages"
+        [room]="room"
+        (editMessage)="openEditModal($event)"
+        (deleteMessage)="openDeleteModal($event)"
+      ></app-message-list>
+
+      <!-- Message Composer -->
+      <app-message-input
+        [disabled]="isLoadingMessages || isSending"
+        (sendMessage)="onSendMessage($event)"
+      ></app-message-input>
+    </main>
+
+    <!-- Members Sidebar -->
+    <app-chat-members
+      *ngIf="isMembersOpen"
+      [members]="members"
+      [ownerId]="room?.ownerId"
+      [adminIds]="room?.adminIds || []"
+      [currentUserId]="currentUserId"
+      [isOpen]="isMembersOpen"
+      (close)="toggleMembers()"
+    ></app-chat-members>
+  </div>
+
+  <!-- Edit Message Modal -->
+  <app-edit-message
+    [isOpen]="isEditModalOpen"
+    [message]="editingMessage"
+    [isSaving]="isSavingEdit"
+    (save)="onSaveEdit($event)"
+    (cancel)="closeEditModal()"
+  ></app-edit-message>
+
+  <!-- Delete Message Modal -->
+  <app-delete-message
+    [isOpen]="isDeleteModalOpen"
+    [message]="deletingMessage"
+    [isDeleting]="isDeletingMsg"
+    (confirm)="onConfirmDelete($event)"
+    (cancel)="closeDeleteModal()"
+  ></app-delete-message>
 </div>

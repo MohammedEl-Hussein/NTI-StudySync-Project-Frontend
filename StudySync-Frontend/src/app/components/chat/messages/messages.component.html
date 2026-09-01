@@ -1,3 +1,90 @@
-<app-navbar></app-navbar><app-sidebar></app-sidebar>
-<main class="page"><div class="page-header"><div><h1>Messages</h1><p>Chat with your study room partners.</p></div></div>
-<div class="messages-layout"><aside class="card conversations"><input class="input" placeholder="Search conversations..." [(ngModel)]="search"><button *ngFor="let chat of filteredChats" type="button" [class.active]="selectedChat?._id===chat._id" (click)="openChat(chat)"><span class="avatar">{{ chat.roomId?.title?.charAt(0) }}</span><div><strong>{{ chat.roomId?.title }}</strong><small>{{ chat.lastMessage || 'Start the conversation' }}</small></div></button></aside><section class="card conversation-view"><app-chat-room *ngIf="selectedChat" [roomId]="selectedChat.roomId?._id"></app-chat-room><app-empty-state *ngIf="!selectedChat" icon="▢" title="Start the conversation" message="Select a room to chat with your study group partners."></app-empty-state></section></div></main>
+<div class="messages-page-wrapper">
+  <!-- Left Side: Conversations / Rooms List -->
+  <aside class="conversations-sidebar card">
+    <div class="conversations-header">
+      <div class="header-title-box">
+        <i class="bi bi-chat-left-text-fill icon-brand"></i>
+        <h2>Messages</h2>
+      </div>
+      <span class="badge-total">{{ filteredRooms.length }} Rooms</span>
+    </div>
+
+    <div class="search-box">
+      <i class="bi bi-search search-icon"></i>
+      <input
+        type="text"
+        placeholder="Search rooms..."
+        [(ngModel)]="search"
+        (ngModelChange)="filterRooms()"
+        class="search-input"
+      />
+      <button *ngIf="search" (click)="search=''; filterRooms()" class="btn-clear">
+        <i class="bi bi-x-circle-fill"></i>
+      </button>
+    </div>
+
+    <div class="conversations-list">
+      <!-- Loading skeleton -->
+      <div *ngIf="isLoading" class="list-loading">
+        <div class="skeleton-item" *ngFor="let i of [1,2,3,4]">
+          <div class="skeleton-circle"></div>
+          <div class="skeleton-lines">
+            <div class="skeleton-line full"></div>
+            <div class="skeleton-line half"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty state -->
+      <div *ngIf="!isLoading && filteredRooms.length === 0" class="empty-list">
+        <i class="bi bi-chat-square-dots"></i>
+        <p>No study rooms found</p>
+        <a routerLink="/rooms" class="btn-browse">Browse Rooms</a>
+      </div>
+
+      <!-- Room Conversation items -->
+      <div
+        *ngFor="let room of filteredRooms"
+        class="conversation-item"
+        [class.active]="selectedRoom?._id === room._id"
+        (click)="selectRoom(room)"
+      >
+        <div class="avatar-box">
+          <span class="room-avatar" [style.background]="getAvatarColor(room.title)">
+            {{ getAvatarInitial(room) }}
+          </span>
+          <span class="active-dot"></span>
+        </div>
+
+        <div class="room-item-info">
+          <div class="item-title-row">
+            <strong class="item-title">{{ room.title }}</strong>
+            <span class="item-badge">{{ room.level }}</span>
+          </div>
+          <p class="item-desc">{{ room.description || 'Click to enter room chat...' }}</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Right Side: Active Chat Window -->
+  <section class="conversation-content">
+    <app-chat-room
+      *ngIf="selectedRoom"
+      [roomId]="selectedRoom._id"
+      [showBackBtn]="false"
+    ></app-chat-room>
+
+    <!-- Empty Selected State -->
+    <div *ngIf="!selectedRoom && !isLoading" class="no-selection-card card">
+      <div class="icon-circle">
+        <i class="bi bi-chat-quote-fill"></i>
+      </div>
+      <h3>Select a Study Room</h3>
+      <p>Choose a room from the left sidebar to start chatting with your peers and collaborate on study goals.</p>
+      <a routerLink="/rooms" class="btn-primary-browse">
+        <i class="bi bi-search"></i> Explore All Rooms
+      </a>
+    </div>
+  </section>
+</div>
