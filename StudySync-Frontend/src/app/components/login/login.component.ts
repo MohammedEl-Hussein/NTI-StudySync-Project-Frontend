@@ -73,6 +73,14 @@ export class LoginComponent implements OnInit {
           const decodedUser = this.parseJwt(token);
           if (decodedUser) {
             localStorage.setItem('currentUser', JSON.stringify(decodedUser));
+            
+            alert('Login Successful! Welcome back.');
+            if (decodedUser.role === 'admin') {
+              this.router.navigate(['/admin']);
+            } else {
+              this.router.navigate(['/rooms']);
+            }
+            return;
           }
         }
 

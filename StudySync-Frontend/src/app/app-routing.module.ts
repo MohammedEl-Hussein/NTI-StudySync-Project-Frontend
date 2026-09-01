@@ -48,16 +48,6 @@ const routes: Routes = [
     ]
   },
 
-  // Student Modules
-  {
-    path: 'profile',
-    loadChildren: () => import('./profile/profile.module').then((m) => m.ProfileModule)
-  },
-  {
-    path: 'progress',
-    loadChildren: () => import('./progress/progress.module').then((m) => m.ProgressModule)
-  },
-
   {
     path: '',
     component: MainLayoutComponent,
@@ -68,6 +58,14 @@ const routes: Routes = [
       { path: 'rooms/create', component: CreateRoomComponent },
       { path: 'rooms/:id/edit', component: EditRoomComponent },
       { path: 'rooms/:id', component: RoomDetailsComponent },
+      {
+        path: 'profile',
+        loadChildren: () => import('./profile/profile.module').then((m) => m.ProfileModule)
+      },
+      {
+        path: 'progress',
+        loadChildren: () => import('./progress/progress.module').then((m) => m.ProgressModule)
+      }
     ]
   },
   { path: '**', redirectTo: 'login' }
