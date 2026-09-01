@@ -1,0 +1,19 @@
+<div class="toast-container" *ngIf="activeToasts.length > 0">
+  <div class="toast-item" *ngFor="let toast of activeToasts" (click)="handleToastClick(toast)">
+    <div class="toast-icon">
+      <i class="bi" [ngClass]="{
+        'bi-chat-dots': toast.type === 'chat',
+        'bi-list-task': toast.type === 'task',
+        'bi-info-circle': toast.type === 'system',
+        'bi-alarm': toast.type === 'reminder'
+      }"></i>
+    </div>
+    <div class="toast-content">
+      <strong>{{ toast.title }}</strong>
+      <p>{{ toast.message }}</p>
+    </div>
+    <button class="toast-close" (click)="removeToast(toast._id); $event.stopPropagation()">
+      <i class="bi bi-x"></i>
+    </button>
+  </div>
+</div>
