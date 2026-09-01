@@ -1,0 +1,87 @@
+<main class="page">
+  <div class="page-header">
+    <div>
+      <h1>Edit Study Room</h1>
+      <p>Update the room information and settings.</p>
+    </div>
+    <a class="btn secondary" [routerLink]="['/rooms',roomId]">Cancel</a>
+  </div>
+  
+  <div *ngIf="isLoading" class="text-center my-5">Loading...</div>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <form *ngIf="!isLoading && !error" class="card edit-form" [formGroup]="editForm" (ngSubmit)="onSubmit()">
+    <div class="grid2">
+      <label class="form-label">Room Name
+        <input class="input" formControlName="title">
+      </label>
+      
+      <div class="form-group">
+        <label class="form-label">Categories</label>
+        <div class="custom-multi-select" (click)="toggleCategoryDropdown()">
+          <div class="selected-pills">
+            <span class="pill" *ngFor="let id of editForm.get('categoryIds')?.value">
+              {{ getCategoryName(id) }}
+              <i class="bi bi-x" (click)="toggleCategorySelection(id, $event)"></i>
+            </span>
+            <span *ngIf="!editForm.get('categoryIds')?.value?.length" class="placeholder">Select categories...</span>
+          </div>
+          <i class="bi bi-chevron-down"></i>
+          
+          <div class="dropdown-menu" *ngIf="isCategoryDropdownOpen" (click)="$event.stopPropagation()">
+            <div class="dropdown-item" *ngFor="let category of categories" (click)="toggleCategorySelection(category._id, $event)">
+              <div class="item-content">
+                <input type="checkbox" [checked]="isSelected(category._id)" (click)="$event.stopPropagation(); toggleCategorySelection(category._id, $event)">
+                <span *ngIf="editingCategoryId !== category._id">{{ category.name }}</span>
+                <input *ngIf="editingCategoryId === category._id" type="text" [(ngModel)]="editingCategoryName" [ngModelOptions]="{standalone: true}" (click)="$event.stopPropagation()" class="edit-input input">
+              </div>
+              
+              <div class="item-actions" *ngIf="isAdmin && editingCategoryId !== category._id">
+                <i class="bi bi-pencil" title="Edit" (click)="startEditCategory(category, $event)"></i>
+                <i class="bi bi-trash" title="Delete" (click)="deleteCategory(category._id, $event)"></i>
+              </div>
+              
+              <div class="item-actions" *ngIf="isAdmin && editingCategoryId === category._id">
+                <i class="bi bi-check-circle" title="Save" (click)="saveCategory(category._id, $event)"></i>
+                <i class="bi bi-x-circle" title="Cancel" (click)="cancelEdit($event)"></i>
+              </div>
+            </div>
+            
+            <div class="add-category-section">
+              <input type="text" class="input" placeholder="New category name..." [(ngModel)]="newCategoryName" [ngModelOptions]="{standalone: true}" (click)="$event.stopPropagation()" (keyup.enter)="addCategory($event)">
+              <button type="button" class="btn primary small" (click)="addCategory($event)">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <label class="form-label">Study Level
+        <select class="select" formControlName="level">
+          <option>Beginner</option>
+          <option>Intermediate</option>
+          <option>Advanced</option>
+        </select>
+      </label>
+      <label class="form-label full-row">Description
+        <textarea class="textarea" formControlName="description"></textarea>
+      </label>
+      <label class="form-label">Maximum Members
+        <input class="input" type="number" formControlName="maxMembers">
+      </label>
+      <label class="form-label">Meeting URL
+        <input class="input" formControlName="meetingURL">
+      </label>
+      <label class="form-label">Start Date
+        <input class="input" type="date" formControlName="startDate">
+      </label>
+      <label class="form-label">End Date
+        <input class="input" type="date" formControlName="endDate">
+      </label>
+    </div>
+    
+    <div class="actions">
+      <button class="btn danger" type="button" (click)="deleteRoom()">Delete Room</button>
+      <button class="btn primary" type="submit" [disabled]="editForm.invalid || isSaving">Save Changes</button>
+    </div>
+  </form>
+</main>

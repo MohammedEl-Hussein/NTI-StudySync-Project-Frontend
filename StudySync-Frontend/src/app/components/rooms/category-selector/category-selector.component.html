@@ -1,0 +1,19 @@
+<div class="category-selector border rounded p-3 bg-light">
+  <div class="form-check" *ngFor="let cat of categories">
+    <input 
+      class="form-check-input" 
+      type="checkbox" 
+      [id]="'cat-' + cat._id"
+      [value]="cat._id"
+      [checked]="isChecked(cat._id)"
+      [disabled]="isDisabled"
+      (change)="onCategoryToggle(cat._id, $event)"
+    >
+    <label class="form-check-label" [for]="'cat-' + cat._id">
+      {{ cat.name }} <small class="text-muted" *ngIf="cat.description">({{ cat.description }})</small>
+    </label>
+  </div>
+  <div *ngIf="categories.length === 0" class="text-muted">
+    No categories available.
+  </div>
+</div>

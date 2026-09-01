@@ -1,10 +1,49 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global Typography & Reset */
 body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #f7f8fa;
+  color: #1b2437;
 }
 
 * {
   box-sizing: inherit;
+}
+
+/* Global Form Elements (Inputs, Selects, Textareas) inherited from Login */
+.input, .select, .textarea, .form-control {
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+
+.input:focus, .select:focus, .textarea:focus, .form-control:focus {
+  border-color: #5146df !important;
+  box-shadow: 0 0 0 3px rgba(81, 70, 223, 0.1) !important;
+  outline: none;
+}
+
+/* Global Buttons inherited from Login */
+.btn {
+  transition: filter 0.2s, transform 0.1s;
+  font-family: inherit;
+}
+
+.btn.primary:hover {
+  filter: brightness(1.1);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+/* Global Cards inherited from Login */
+.card, .auth-card {
+  box-shadow: 0 12px 35px rgba(25, 30, 50, 0.08) !important;
+  transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 16px 45px rgba(25, 30, 50, 0.12) !important;
 }

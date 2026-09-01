@@ -1,0 +1,83 @@
+<div class="card-inner">
+  <div class="cover" [style.background]="'url(' + (room?.coverImage || randomCover) + ')'" style="background-size: cover; background-position: center;">
+  </div>
+  
+  <div class="body">
+    <div class="tags-row" style="align-items: flex-start;">
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div class="tags">
+          <ng-container *ngIf="room?.categoryIds?.length; else fallbackCategory">
+            <span class="badge category-badge me-1" *ngFor="let cat of room.categoryIds | slice:0:2">
+              {{ $any(cat)?.name || cat }}
+            </span>
+            <span class="badge category-badge me-1" *ngIf="room.categoryIds.length > 2">
+              +{{ room.categoryIds.length - 2 }}
+            </span>
+          </ng-container>
+          <ng-template #fallbackCategory>
+            <span class="badge category-badge">{{ room?.categoryNames?.[0] || 'Subject' }}</span>
+          </ng-template>
+        </div>
+        <div>
+          <span class="badge level-badge">{{ room?.level || 'Level' }}</span>
+        </div>
+      </div>
+      
+      <div class="card-actions-wrapper">
+        <div class="video-icon">
+          <i class="bi bi-camera-video-fill"></i>
+        </div>
+        
+        <div class="options-menu" *ngIf="isOwnerOrAdmin" (click)="toggleMenu($event)">
+          <i class="bi bi-three-dots-vertical"></i>
+          <div class="dropdown" *ngIf="menuOpen">
+            <a class="dropdown-item" [routerLink]="['/rooms', room?._id, 'edit']">
+              <i class="bi bi-pencil"></i> Edit Room
+            </a>
+            <div class="dropdown-item text-danger" (click)="deleteRoom($event)">
+              <i class="bi bi-trash"></i> Delete Room
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <h2>{{ room?.title }}</h2>
+    <p class="description">{{ room?.description }}</p>
+    
+    <div class="members-row">
+      <div class="avatars">
+        <!-- Display actual members if backend provides them, otherwise just show count -->
+        <div class="avatar-more">👥</div>
+      </div>
+      <div class="member-count" [class.full]="displayMemberCount >= room?.maxMembers">
+        {{ displayMemberCount >= room?.maxMembers ? 'FULL' : displayMemberCount + '/' + room?.maxMembers + ' Joined' }}
+      </div>
+    </div>
+    
+    <div class="progress-section">
+      <div class="progress-labels">
+        <span class="progress-title">Plan Progress</span>
+        <span class="progress-percent">{{ room?.progress || 0 }}%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-bar" [style.width.%]="room?.progress || 0"></div>
+      </div>
+    </div>
+    
+    <div class="dates-row">
+      <i class="bi bi-calendar3"></i>
+      <span class="dates-text">Starts {{ room?.startDate | date:'MMM d' }} - {{ room?.endDate | date:'MMM d' }}</span>
+    </div>
+    
+    <div class="actions">
+      <a class="btn btn-outline" [routerLink]="['/rooms', room?._id]">View Details</a>
+      <button *ngIf="!isMember" class="btn btn-primary" [disabled]="displayMemberCount >= room?.maxMembers" (click)="joinRoom(room)">
+        {{ displayMemberCount >= room?.maxMembers ? 'Full' : 'Join Room' }}
+      </button>
+      <button *ngIf="isMember" class="btn btn-joined" (click)="leave.emit(room)">
+        <i class="bi bi-check-circle-fill"></i> Joined
+      </button>
+    </div>
+  </div>
+</div>

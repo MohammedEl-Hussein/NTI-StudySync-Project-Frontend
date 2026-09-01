@@ -1,0 +1,41 @@
+:host {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+.skeleton-card {
+  border: 1px solid #e8eaf0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  padding-bottom: 16px;
+}
+.skeleton {
+  background: #e9edf3;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+.image {
+  height: 145px;
+}
+.line {
+  height: 12px;
+  margin: 14px 16px 0;
+  border-radius: 6px;
+}
+.short {
+  width: 35%;
+  margin-top: 18px;
+}
+.footer {
+  width: 65%;
+  margin-top: 22px;
+}
+@keyframes pulse {
+  0%, 100% { opacity: .55; }
+  50% { opacity: 1; }
+}
+@media(max-width: 800px) {
+  :host {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,33 @@
+<main class="admin-page">
+  <div class="page-header">
+    <div>
+      <h1>Categories</h1>
+      <p>Manage the subjects available when creating study rooms.</p>
+    </div>
+    <button class="btn primary" type="button" (click)="openCreate()">+ Add Category</button>
+  </div>
+  
+  <div class="category-grid">
+    <article class="category-card" *ngFor="let category of categories">
+      <div class="icon">▦</div>
+      <h2>{{ category.name }}</h2>
+      <p>{{ category.description || 'No description provided.' }}</p>
+      <div class="actions">
+        <button class="btn secondary" (click)="edit(category)">Edit</button>
+        <button class="btn danger" (click)="delete(category)">Delete</button>
+      </div>
+    </article>
+  </div>
+  
+  <div class="modal" *ngIf="modalOpen">
+    <form class="modal-card" [formGroup]="categoryForm" (ngSubmit)="save()">
+      <h2>{{ editing ? 'Edit Category' : 'Create Category' }}</h2>
+      <label>Name<input class="input" formControlName="name"></label>
+      <label>Description<textarea class="textarea" formControlName="description"></textarea></label>
+      <div class="actions" style="justify-content:flex-end">
+        <button class="btn secondary" type="button" (click)="modalOpen=false">Cancel</button>
+        <button class="btn primary" type="submit">Save</button>
+      </div>
+    </form>
+  </div>
+</main>

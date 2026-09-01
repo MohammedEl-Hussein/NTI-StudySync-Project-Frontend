@@ -1,22 +1,98 @@
-<app-navbar></app-navbar><app-sidebar></app-sidebar>
 <main class="page">
-  <div class="page-header"><div><h1>Find your next study room</h1><p>Join focused circles matching your goals and build habits.</p></div></div>
-  <section class="filters card">
-    <input class="input search" placeholder="Search by topic or room name..." [(ngModel)]="filters.search" (input)="applyFilters()">
-    <select class="select" [(ngModel)]="filters.category" (change)="applyFilters()"><option value="">Category: All Subjects</option><option *ngFor="let c of categories" [value]="c._id">{{ c.name }}</option></select>
-    <select class="select" [(ngModel)]="filters.level" (change)="applyFilters()"><option value="">Level: All Levels</option><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select>
-    <select class="select" [(ngModel)]="filters.vacancy" (change)="applyFilters()"><option value="">Availability: Any</option><option value="available">Has Vacancy</option></select>
-    <select class="select" [(ngModel)]="filters.sort"><option>Most Members</option><option>Newest</option><option>Progress</option></select>
-  </section>
-  <div class="room-grid">
-    <article class="room-card" *ngFor="let room of filteredRooms">
-      <div class="cover"></div><div class="body"><div><span class="badge">{{ room.categoryNames?.[0] || 'Subject' }}</span><span class="level">{{ room.level }}</span></div>
-      <h2>{{ room.title }}</h2><p>{{ room.description }}</p><div class="members">{{ room.memberCount || 0 }}/{{ room.maxMembers }} Members</div>
-      <div class="progress-label"><span>Plan Progress</span><strong>{{ room.progress || 0 }}%</strong></div><div class="progress-track"><div class="progress-bar" [style.width.%]="room.progress || 0"></div></div>
-      <small class="dates">{{ room.startDate | date:'MMM d' }} – {{ room.endDate | date:'MMM d' }}</small>
-      <div class="actions"><a class="btn secondary" [routerLink]="['/rooms',room._id]">View Details</a><button class="btn primary" [disabled]="room.memberCount >= room.maxMembers" (click)="joinRoom(room)">{{ room.memberCount >= room.maxMembers ? 'Full' : 'Join Room' }}</button></div>
-      </div>
-    </article>
+  <div class="page-top">
+    <div class="header-content">
+      <h1>Find your next study room</h1>
+      <p>Join focused circles matching your goals and build habits.</p>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/rooms/create" class="btn-create-room">
+        <i class="bi bi-plus-lg"></i> Create Room
+      </a>
+    </div>
   </div>
-  <app-empty-state *ngIf="!loading && !filteredRooms.length" icon="⌕" title="No study rooms found" message="Try changing your filters or search terms." actionText="Clear filters" (click)="clearFilters()"></app-empty-state>
+  
+  <div class="filter-bar">
+    <div class="filters-left">
+      <div class="custom-dropdown" (click)="toggleDropdown('category', $event)">
+        <label>Category:</label> 
+        <span class="selected-value">{{ getCategoryName() }}</span>
+        <i class="bi bi-chevron-down"></i>
+        <div class="dropdown-menu" *ngIf="activeDropdown === 'category'">
+          <div class="dropdown-item" (click)="setFilter('category', '', $event)">All Subjects</div>
+          <div class="dropdown-item" *ngFor="let c of categories" (click)="setFilter('category', c._id, $event)">{{ c.name }}</div>
+        </div>
+      </div>
+      
+      <div class="custom-dropdown" (click)="toggleDropdown('level', $event)">
+        <label>Level:</label>
+        <span class="selected-value">{{ filters.level || 'All Levels' }}</span>
+        <i class="bi bi-chevron-down"></i>
+        <div class="dropdown-menu" *ngIf="activeDropdown === 'level'">
+          <div class="dropdown-item" (click)="setFilter('level', '', $event)">All Levels</div>
+          <div class="dropdown-item" (click)="setFilter('level', 'Beginner', $event)">Beginner</div>
+          <div class="dropdown-item" (click)="setFilter('level', 'Intermediate', $event)">Intermediate</div>
+          <div class="dropdown-item" (click)="setFilter('level', 'Advanced', $event)">Advanced</div>
+        </div>
+      </div>
+      
+      <div class="custom-dropdown" (click)="toggleDropdown('vacancy', $event)">
+        <label>Availability:</label>
+        <span class="selected-value">{{ filters.vacancy === 'available' ? 'Has Vacancy' : 'Any' }}</span>
+        <i class="bi bi-chevron-down"></i>
+        <div class="dropdown-menu" *ngIf="activeDropdown === 'vacancy'">
+          <div class="dropdown-item" (click)="setFilter('vacancy', '', $event)">Any</div>
+          <div class="dropdown-item" (click)="setFilter('vacancy', 'available', $event)">Has Vacancy</div>
+        </div>
+      </div>
+      
+      <div class="custom-dropdown" (click)="toggleDropdown('dates', $event)">
+        <label>Dates:</label>
+        <span class="selected-value">{{ filters.dates || 'Anytime' }}</span>
+        <i class="bi bi-chevron-down"></i>
+        <div class="dropdown-menu" *ngIf="activeDropdown === 'dates'">
+          <div class="dropdown-item" (click)="setFilter('dates', '', $event)">Anytime</div>
+          <div class="dropdown-item" (click)="setFilter('dates', 'Upcoming', $event)">Upcoming</div>
+          <div class="dropdown-item" (click)="setFilter('dates', 'Ongoing', $event)">Ongoing</div>
+          <div class="dropdown-item" (click)="setFilter('dates', 'Past', $event)">Past</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="filters-right">
+      <div class="custom-dropdown" (click)="toggleDropdown('sort', $event)">
+        <label>Sort:</label>
+        <span class="selected-value">{{ filters.sort }}</span>
+        <i class="bi bi-chevron-down"></i>
+        <div class="dropdown-menu right-aligned" *ngIf="activeDropdown === 'sort'">
+          <div class="dropdown-item" (click)="setFilter('sort', 'Most Members', $event)">Most Members</div>
+          <div class="dropdown-item" (click)="setFilter('sort', 'Newest', $event)">Newest</div>
+          <div class="dropdown-item" (click)="setFilter('sort', 'Progress', $event)">Progress</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="mt-4">
+    <app-skeleton-card [count]="6"></app-skeleton-card>
+  </div>
+
+  <div class="room-grid" *ngIf="!loading && filteredRooms.length > 0">
+      <app-room-card 
+        *ngFor="let room of filteredRooms" 
+        [room]="room" 
+        (join)="joinRoom($event)"
+        (leave)="leaveRoom($event)"
+        (deleted)="onRoomDeleted($event)">
+      </app-room-card>
+  </div>
+
+  <div *ngIf="!loading && !filteredRooms.length" class="mt-4">
+    <app-empty-state 
+      icon="🔍" 
+      title="No study rooms found" 
+      message="Try changing your filters or search terms." 
+      actionText="Clear filters"
+      (click)="clearFilters()">
+    </app-empty-state>
+  </div>
 </main>
