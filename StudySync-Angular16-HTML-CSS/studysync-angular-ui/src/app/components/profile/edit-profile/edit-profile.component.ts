@@ -19,11 +19,14 @@ export class EditProfileComponent implements OnInit {
 
   public genderOptions: string[] = ['Female', 'Male'];
   public studyLevelOptions: string[] = [
-    'Beginner',
-    'Intermediate',
-    'Advanced',
-    'Undergraduate',
-    'Graduate'
+    'High School',
+    'Undergraduate (Freshman)',
+    'Undergraduate (Sophomore)',
+    'Undergraduate (Junior)',
+    'Undergraduate (Senior Year)',
+    'Postgraduate / Masters',
+    'Ph.D. Candidate',
+    'Lifelong Learner'
   ];
 
   constructor(
@@ -41,10 +44,10 @@ export class EditProfileComponent implements OnInit {
     this.profileForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
       age: [null, [Validators.min(13), Validators.max(100)]],
-      studyLevel: [''],
+      studyLevel: ['Undergraduate (Senior Year)'],
       organization: [''],
       department: [''],
-      gender: [''],
+      gender: ['Female'],
       phone: ['']
     });
   }
@@ -58,23 +61,13 @@ export class EditProfileComponent implements OnInit {
           return;
         }
         this.currentUser = user;
-        const currentStudyLevel = user.studyLevel && user.studyLevel.trim() !== '' ? user.studyLevel : '';
-        if (currentStudyLevel && !this.studyLevelOptions.includes(currentStudyLevel)) {
-          this.studyLevelOptions.push(currentStudyLevel);
-        }
-
-        const currentGender = user.gender && user.gender.trim() !== '' ? user.gender : '';
-        if (currentGender && !this.genderOptions.includes(currentGender)) {
-          this.genderOptions.push(currentGender);
-        }
-
         this.profileForm.patchValue({
           name: user.name || '',
           age: user.age || null,
-          studyLevel: currentStudyLevel,
+          studyLevel: user.studyLevel || 'Undergraduate (Senior Year)',
           organization: user.organization || '',
           department: user.department || '',
-          gender: currentGender,
+          gender: user.gender || 'Female',
           phone: user.phone || ''
         });
         this.loading = false;

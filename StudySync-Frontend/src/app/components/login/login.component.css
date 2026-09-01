@@ -28,6 +28,8 @@
   text-decoration: none;
   font-weight: 800;
   font-size: 1.2rem;
+  cursor: default;
+  user-select: none;
 }
 .brand-mark {
   width: 32px;

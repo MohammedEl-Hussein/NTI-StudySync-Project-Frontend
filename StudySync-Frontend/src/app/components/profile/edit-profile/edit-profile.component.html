@@ -50,6 +50,7 @@
         <div class="form-group">
           <label class="form-label">Study Level *</label>
           <select class="select" formControlName="studyLevel">
+            <option value="" disabled selected>Select your level</option>
             <option *ngFor="let lvl of studyLevelOptions" [value]="lvl">{{ lvl }}</option>
           </select>
         </div>

@@ -48,12 +48,14 @@ export class ProgressService {
         const completedTasks = list.reduce((acc, curr) => acc + (curr.completedTasks || 0), 0);
         const remainingTasks = Math.max(0, totalTasks - completedTasks);
         const percentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+        const joinedRooms = list.length;
 
         return {
           completedTasks,
           remainingTasks,
           totalTasks,
-          percentage
+          percentage,
+          joinedRooms
         };
       })
     );
