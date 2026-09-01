@@ -27,14 +27,14 @@
 
     <!-- Notification Bell Button -->
     <button 
-      class="icon-btn" 
+      class="icon-btn notification-btn" 
       type="button" 
       (click)="toggleNotifications($event)" 
       aria-label="Notifications"
       title="Notifications"
     >
       <i class="bi bi-bell-fill"></i>
-      <span class="notify-badge" *ngIf="notifications.length > 0"></span>
+      <span class="notify-badge" *ngIf="unreadCount > 0">{{ unreadCount > 99 ? '99+' : unreadCount }}</span>
     </button>
 
     <!-- When Logged In: User Profile Dropdown Trigger -->
@@ -110,16 +110,28 @@
   <div class="notification-panel" *ngIf="notificationsOpen" (click)="$event.stopPropagation()">
     <div class="notification-head">
       <strong>Notifications</strong>
-      <button type="button" (click)="markAllRead()">Mark all read</button>
+      <button type="button" (click)="markAllRead()" *ngIf="unreadCount > 0">Mark all as read</button>
     </div>
     <div class="notification-list">
-      <div class="notification-item" *ngFor="let notification of notifications">
-        <i class="bi bi-info-circle-fill text-primary"></i>
-        <div>
-          <strong>{{ notification.title }}</strong>
-          <span>{{ notification.time }}</span>
+      <button class="notification-item" 
+              *ngFor="let notification of notifications" 
+              [class.unread]="!notification.isRead"
+              (click)="handleNotificationClick(notification)" 
+              type="button">
+        <div class="notification-icon">
+          <i class="bi" [ngClass]="{
+            'bi-chat-dots': notification.type === 'chat',
+            'bi-list-task': notification.type === 'task',
+            'bi-info-circle': notification.type === 'system',
+            'bi-alarm': notification.type === 'reminder'
+          }"></i>
         </div>
-      </div>
+        <div class="notification-content">
+          <strong>{{ notification.title }}</strong>
+          <p>{{ notification.message }}</p>
+          <span class="notification-time">{{ notification.createdAt | date:'short' }}</span>
+        </div>
+      </button>
       <div class="notification-empty" *ngIf="notifications.length === 0">
         <i class="bi bi-bell-slash"></i>
         <p>No new notifications.</p>

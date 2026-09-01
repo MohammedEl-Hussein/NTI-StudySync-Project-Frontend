@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { SearchService } from '../../../services/search.service';
 import { UserService } from '../../../core/services/user.service';
 import { User } from '../../../core/models/user.model';
+import { NotificationService, AppNotification } from '../../../core/services/notification.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -17,20 +18,35 @@ export class NavbarComponent implements OnInit, OnDestroy {
   currentUser: User | null = null;
   private userSub!: Subscription;
 
-  notifications: any[] = [
-    { title: 'Welcome to StudySync!', time: 'Just now' }
-  ];
+  notifications: AppNotification[] = [];
+  unreadCount = 0;
+  
+  private subs: Subscription = new Subscription();
 
   constructor(
     private router: Router,
     private searchService: SearchService,
-    private userService: UserService
+    private userService: UserService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
     this.userSub = this.userService.currentUser$.subscribe((user) => {
       this.currentUser = user;
+      
+      // Connect socket when user is logged in
+      if (this.currentUser && (this.currentUser._id || this.currentUser.id)) {
+        this.notificationService.connectSocket(this.currentUser._id || this.currentUser.id!);
+      }
     });
+
+    this.subs.add(this.notificationService.notifications$.subscribe(data => {
+      this.notifications = data;
+    }));
+
+    this.subs.add(this.notificationService.unreadCount$.subscribe(count => {
+      this.unreadCount = count;
+    }));
   }
 
   get isLoggedIn(): boolean {
@@ -78,8 +94,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   markAllRead(): void {
-    this.notifications = [];
+    this.notificationService.markAllAsRead();
     this.notificationsOpen = false;
+  }
+  
+  handleNotificationClick(notification: AppNotification): void {
+    this.notificationService.markAsRead(notification._id);
+    this.notificationsOpen = false;
+    if (notification.link) {
+      this.router.navigateByUrl(notification.link);
+    }
   }
 
   onSearchInput(): void {
@@ -105,5 +129,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (this.userSub) {
       this.userSub.unsubscribe();
     }
+    this.subs.unsubscribe();
   }
 }
