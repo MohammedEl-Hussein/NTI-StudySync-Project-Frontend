@@ -160,15 +160,17 @@
   position: absolute;
   bottom: -2px;
   right: -2px;
-  width: 10px;
-  height: 10px;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
-  background: #94a3b8;
+  background: #cbd5e1;
   border: 2px solid #ffffff;
+  transition: all 0.25s ease;
 }
 
 .online-indicator.online {
   background: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
 }
 
 .member-details {

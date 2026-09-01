@@ -1,25 +1,33 @@
-<div class="message-wrapper" [class.mine]="isMine" [class.pending]="message.isPending">
+<div
+  class="message-wrapper"
+  [class.mine]="isMine"
+  [class.pending]="message.isPending"
+  [class.first-in-group]="isFirstInGroup"
+  [class.last-in-group]="isLastInGroup"
+  [class.single-in-group]="isFirstInGroup && isLastInGroup"
+>
+  <!-- Avatar Column for other users (at bottom of consecutive group) -->
   <div class="avatar-col" *ngIf="!isMine">
-    <span class="avatar" [style.background]="getAvatarColor(senderName)">
+    <span
+      class="avatar"
+      *ngIf="isLastInGroup"
+      [style.background]="getAvatarColor(senderName)"
+    >
       {{ avatarInitial }}
     </span>
+    <div class="avatar-placeholder" *ngIf="!isLastInGroup"></div>
   </div>
 
   <div class="message-content-box">
-    <div class="message-meta">
+    <!-- Sender header (only shown once at top of consecutive message group for other users) -->
+    <div class="message-meta" *ngIf="isFirstInGroup && !isMine">
       <span class="sender-name">{{ senderName }}</span>
       <span *ngIf="isRoomHost" class="host-badge">
         <i class="bi bi-star-fill"></i> Host
       </span>
-      <time class="message-time">
-        {{ message.createdAt | date:'shortTime' }}
-      </time>
-      <span *ngIf="isEdited" class="edited-tag">(edited)</span>
-      <span *ngIf="message.isPending" class="sending-tag">
-        <i class="bi bi-clock"></i> sending...
-      </span>
     </div>
 
+    <!-- Bubble -->
     <div class="bubble-container">
       <div class="bubble">
         <p class="text">{{ message.content }}</p>
@@ -57,11 +65,24 @@
         </button>
       </div>
     </div>
+
+    <!-- Timestamp ONLY under the message (and only under the last message in that moment) -->
+    <div class="message-footer-meta" *ngIf="isLastInGroup">
+      <time class="message-time-under" [title]="formattedFullDate">
+        {{ formattedTime }}
+      </time>
+      <span *ngIf="isEdited" class="edited-tag">(edited)</span>
+      <span *ngIf="message.isPending" class="sending-tag">
+        <i class="bi bi-clock"></i> sending...
+      </span>
+    </div>
   </div>
 
+  <!-- Avatar Column for current user (mine) -->
   <div class="avatar-col" *ngIf="isMine">
-    <span class="avatar mine-avatar">
+    <span class="avatar mine-avatar" *ngIf="isLastInGroup">
       <i class="bi bi-person-fill"></i>
     </span>
+    <div class="avatar-placeholder" *ngIf="!isLastInGroup"></div>
   </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, interval, takeUntil, switchMap, of, catchError } from 'rxjs';
 import { Room } from '../../../models/room.model';
@@ -7,6 +7,7 @@ import { Message } from '../../../models/message.model';
 import { RoomService } from '../../../services/room.service';
 import { ChatService } from '../../../services/chat.service';
 import { MessageService } from '../../../services/message.service';
+import { MessageInputComponent } from '../message-input/message-input.component';
 
 @Component({
   selector: 'app-chat-room',
@@ -17,6 +18,8 @@ export class ChatRoomComponent implements OnInit, OnChanges, OnDestroy {
   @Input() roomId?: string;
   @Input() showHeader: boolean = true;
   @Input() showBackBtn: boolean = true;
+
+  @ViewChild(MessageInputComponent) messageInputComp?: MessageInputComponent;
 
   room: Room | any = null;
   chat: Chat | null = null;
@@ -107,7 +110,46 @@ export class ChatRoomComponent implements OnInit, OnChanges, OnDestroy {
 
   get onlineCount(): number {
     if (!this.members || this.members.length === 0) return 1;
-    return this.members.filter((m) => m.status !== 'offline').length;
+    return this.members.filter((m) => this.isMemberActive(m)).length;
+  }
+
+  isMemberActive(member: any): boolean {
+    if (!member) return false;
+
+    const memId = member.userId?._id || member.userId?.id || member.userId || member._id || member.id;
+
+    // 1. Current user viewing the room is active live
+    if (this.currentUserId && memId && memId.toString() === this.currentUserId.toString()) {
+      return true;
+    }
+
+    // 2. Explicit backend online flag
+    if (member.isOnline === true || member.userId?.isOnline === true) return true;
+    if (member.status === 'online' || member.status === 'active' ||
+        member.userId?.status === 'online' || member.userId?.status === 'active') return true;
+    if (member.status === 'offline' || member.userId?.status === 'offline') return false;
+
+    // 3. Live activity from recent room messages (sent within last 30 minutes)
+    if (this.messages && this.messages.length > 0 && memId) {
+      const thirtyMinutesAgo = Date.now() - 30 * 60 * 1000;
+      const hasRecentMessage = this.messages.some((msg) => {
+        const msgUserId = typeof msg.userId === 'object' && msg.userId !== null
+          ? (msg.userId._id || msg.userId.id)
+          : (msg.user?._id || msg.user?.id || msg.userId);
+
+        if (msgUserId && msgUserId.toString() === memId.toString()) {
+          const msgTime = msg.createdAt ? new Date(msg.createdAt).getTime() : 0;
+          return msgTime > thirtyMinutesAgo;
+        }
+        return false;
+      });
+
+      if (hasRecentMessage) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private initRoomChat(roomId: string): void {
@@ -213,12 +255,14 @@ export class ChatRoomComponent implements OnInit, OnChanges, OnDestroy {
         this.isSending = false;
         // Replace optimistic with actual
         this.messages = this.messages.map((m) => (m._id === tempId ? { ...savedMsg, isPending: false } : m));
+        this.messageInputComp?.focusInput();
       },
       error: (err) => {
         this.isSending = false;
         console.error('Failed to send message:', err);
         // Mark optimistic message as error or remove
         this.messages = this.messages.filter((m) => m._id !== tempId);
+        this.messageInputComp?.focusInput();
         alert('Failed to send message. Please try again.');
       }
     });

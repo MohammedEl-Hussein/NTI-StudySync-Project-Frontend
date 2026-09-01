@@ -29,6 +29,8 @@ export interface SendMessageDto {
   roomId?: string;
   content: string;
   userId?: string;
+  createdAt?: string | Date;
+  timestamp?: string | Date;
 }
 
 export interface UpdateMessageDto {
