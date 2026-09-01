@@ -15,6 +15,14 @@ export interface Room {
   adminIds: User[] | string[];
   createdAt?: string;
   updatedAt?: string;
+  // UI & Live Chat helpers
+  members?: any[];
+  memberCount?: number;
+  lastMessage?: string;
+  lastMessageTime?: string;
+  lastMessageRawDate?: number;
+  unreadCount?: number;
+  chatId?: string;
 }
 
 export interface CreateRoomDto {

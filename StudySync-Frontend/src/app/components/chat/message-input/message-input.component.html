@@ -1,14 +1,51 @@
 <div class="composer-wrapper">
-  <!-- Quick Emoji Bar Dropdown -->
-  <div *ngIf="showEmojiBar" class="emoji-bar">
-    <button
-      *ngFor="let emoji of quickEmojis"
-      type="button"
-      class="emoji-btn"
-      (click)="insertEmoji(emoji)"
-    >
-      {{ emoji }}
-    </button>
+  <!-- Rich Categorized Emoji Picker Dropdown -->
+  <div *ngIf="showEmojiBar" class="emoji-picker-panel">
+    <!-- Quick Reaction Row -->
+    <div class="quick-reactions-row">
+      <span class="quick-label">Quick:</span>
+      <div class="quick-emojis-list">
+        <button
+          *ngFor="let emoji of quickEmojis"
+          type="button"
+          class="quick-emoji-btn"
+          (click)="insertEmoji(emoji)"
+          [title]="emoji"
+        >
+          {{ emoji }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="emoji-tabs">
+      <button
+        *ngFor="let cat of emojiCategories"
+        type="button"
+        class="category-tab-btn"
+        [class.active]="activeCategory === cat.id"
+        (click)="setCategory(cat.id)"
+        [title]="cat.name"
+      >
+        <span class="tab-icon">{{ cat.icon }}</span>
+        <span class="tab-name">{{ cat.name }}</span>
+      </button>
+    </div>
+
+    <!-- Emojis Grid for active category -->
+    <div class="emoji-grid-container">
+      <div class="emoji-grid">
+        <button
+          *ngFor="let emoji of currentCategoryEmojis"
+          type="button"
+          class="emoji-item-btn"
+          (click)="insertEmoji(emoji)"
+          [title]="emoji"
+        >
+          {{ emoji }}
+        </button>
+      </div>
+    </div>
   </div>
 
   <form class="composer-form" (ngSubmit)="submit()">
@@ -23,6 +60,7 @@
     </button>
 
     <input
+      #inputField
       type="text"
       class="composer-input"
       [placeholder]="placeholder"

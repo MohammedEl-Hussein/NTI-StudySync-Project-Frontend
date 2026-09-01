@@ -2,13 +2,15 @@
   display: block;
   width: 100%;
   height: 100%;
+  min-height: 0;
 }
 
 .chat-room-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 120px);
-  min-height: 540px;
+  height: calc(100vh - 112px);
+  max-height: calc(100vh - 112px);
+  min-height: 480px;
   background: #ffffff;
   border-radius: 16px;
   border: 1px solid #e2e8f0;
@@ -17,10 +19,17 @@
   position: relative;
 }
 
+/* When inside /messages grid or embedded tab */
+:host-context(.conversation-content) .chat-room-container {
+  height: 100%;
+  max-height: 100%;
+}
+
 .chat-workspace {
   display: flex;
   flex: 1;
   min-height: 0;
+  height: 100%;
   position: relative;
   overflow: hidden;
 }
@@ -31,12 +40,15 @@
   flex: 1;
   min-width: 0;
   min-height: 0;
+  height: 100%;
   background: #fbfcfe;
+  overflow: hidden;
 }
 
 @media (max-width: 768px) {
   .chat-room-container {
-    height: calc(100vh - 90px);
+    height: calc(100vh - 80px);
+    max-height: calc(100vh - 80px);
     border-radius: 12px;
   }
 }

@@ -38,7 +38,11 @@
         <span class="member-avatar" [style.background]="getAvatarColor(getMemberName(member))">
           {{ getAvatarInitial(member) }}
         </span>
-        <span class="online-indicator" [class.online]="member.status !== 'offline'"></span>
+        <span
+          class="online-indicator"
+          [class.online]="isMemberActive(member)"
+          [title]="isMemberActive(member) ? 'Active now' : 'Offline'"
+        ></span>
       </div>
 
       <div class="member-details">
