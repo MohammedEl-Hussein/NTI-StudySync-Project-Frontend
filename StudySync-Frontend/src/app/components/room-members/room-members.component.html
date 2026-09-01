@@ -23,9 +23,6 @@
     </div>
 
     <div class="header-actions">
-      <button class="btn primary" *ngIf="canManage" type="button" (click)="openInvite()">
-        + Invite Student
-      </button>
 
       <button class="btn danger-outline" *ngIf="isCurrentUserMember && !isOwner" type="button" (click)="leaveRoom()">
         Leave Room

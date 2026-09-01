@@ -7,17 +7,6 @@
     </div>
   </div>
 
-  <!-- Help & FAQ Quick Cards -->
-  <section class="help-cards-grid">
-    <div class="help-card card" *ngFor="let item of faqs; let i = index" (click)="toggleFaq(i)">
-      <div class="faq-q">
-        <i class="bi bi-question-circle"></i>
-        <strong>{{ item.question }}</strong>
-      </div>
-      <p class="faq-a">{{ item.answer }}</p>
-    </div>
-  </section>
-
   <!-- Main Support Grid: Create on left, My Tickets on right -->
   <div class="support-grid">
     <div class="support-left">

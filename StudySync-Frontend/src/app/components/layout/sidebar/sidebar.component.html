@@ -3,8 +3,8 @@
     <a routerLink="/admin" class="admin-portal-item" *ngIf="isAdmin">
       <i class="bi bi-shield-lock-fill"></i><span>Admin Portal</span>
     </a>
-    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
-      <i class="bi bi-grid"></i><span>Home</span>
+    <a routerLink="/dashboard" routerLinkActive="active">
+      <i class="bi bi-grid"></i><span>Dashboard</span>
     </a>
     <a routerLink="/rooms" routerLinkActive="active">
       <i class="bi bi-search"></i><span>Browse Rooms</span>

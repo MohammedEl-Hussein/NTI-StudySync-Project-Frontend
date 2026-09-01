@@ -18,11 +18,11 @@ import { EditRoomComponent } from './components/rooms/edit-room/edit-room.compon
 import { RoomDetailsComponent } from './components/rooms/room-details/room-details.component';
 import { CategoriesComponent } from './components/categories/categories.component';
 import { LandingPageComponent } from './components/landing-page/landing-page.component';
+
 // Profile Components
 import { ProfileComponent } from './components/profile/profile.component';
 import { EditProfileComponent } from './components/profile/edit-profile/edit-profile.component';
 import { ProfileStatsComponent } from './components/profile/profile-stats/profile-stats.component';
-
 
 // Room Members Components
 import { RoomMembersComponent } from './components/room-members/room-members.component';
@@ -53,8 +53,6 @@ import { TaskDetailsComponent } from './components/tasks/task-details/task-detai
 // Modules
 import { SharedModule } from './shared/shared.module';
 
-import { ProgressModule } from './progress/progress.module';
-
 // Admin Components
 import { AdminLayoutComponent } from './components/admin/admin-layout/admin-layout.component';
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
@@ -68,7 +66,7 @@ import { EditCategoryComponent } from './components/admin/edit-category/edit-cat
 import { SupportInboxComponent } from './components/admin/support-inbox/support-inbox.component';
 import { AdminSupportDetailsComponent } from './components/admin/admin-support-details/admin-support-details.component';
 
-// Chat & Messages Components (Habiba)
+// Chat & Messages Components
 import { ChatRoomComponent } from './components/chat/chat-room/chat-room.component';
 import { ChatHeaderComponent } from './components/chat/chat-header/chat-header.component';
 import { ChatMembersComponent } from './components/chat/chat-members/chat-members.component';
@@ -78,6 +76,7 @@ import { MessageInputComponent } from './components/chat/message-input/message-i
 import { EditMessageComponent } from './components/chat/edit-message/edit-message.component';
 import { DeleteMessageComponent } from './components/chat/delete-message/delete-message.component';
 import { MessagesPageComponent } from './components/chat/messages/messages.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
@@ -120,7 +119,6 @@ import { MessagesPageComponent } from './components/chat/messages/messages.compo
     MainLayoutComponent,
     EmptyStateComponent,
     SkeletonCardComponent,
-    // Habiba - Chat & Messages
     ChatRoomComponent,
     ChatHeaderComponent,
     ChatMembersComponent,
@@ -130,12 +128,12 @@ import { MessagesPageComponent } from './components/chat/messages/messages.compo
     EditMessageComponent,
     DeleteMessageComponent,
     MessagesPageComponent,
-    // Task & Study Plan Components
     StudyPlanComponent,
     TaskListComponent,
     TaskCreateComponent,
     TaskEditComponent,
-    TaskDetailsComponent
+    TaskDetailsComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -144,7 +142,6 @@ import { MessagesPageComponent } from './components/chat/messages/messages.compo
     ReactiveFormsModule,
     UsersComponent,
     SharedModule,
-    ProgressModule,
     AppRoutingModule
   ],
   providers: [

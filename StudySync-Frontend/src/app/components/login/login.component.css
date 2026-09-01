@@ -23,13 +23,22 @@
 .brand {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   color: #fff;
   text-decoration: none;
   font-weight: 800;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
+  letter-spacing: -0.4px;
   cursor: default;
   user-select: none;
+}
+.auth-brand-img {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  object-fit: contain;
+  background: #ffffff;
+  padding: 3px;
 }
 .brand-mark {
   width: 32px;

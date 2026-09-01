@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RoomMembersService } from '../../services/room-members.service';
 import { RoomService } from '../../services/room.service';
+import { ProgressService } from '../../core/services/progress.service';
 import { RoomMember } from '../../models/room-member.model';
 
 @Component({
@@ -34,7 +35,8 @@ export class RoomMembersComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private roomMembersService: RoomMembersService,
-    private roomService: RoomService
+    private roomService: RoomService,
+    private progressService: ProgressService
   ) {}
 
   ngOnInit(): void {
@@ -124,7 +126,7 @@ export class RoomMembersComponent implements OnInit {
       ...raw,
       userId: userObj,
       role: role,
-      progress: raw.progress ?? Math.floor(Math.random() * 40 + 20) // Realistic default if empty
+      progress: raw.progress !== undefined ? raw.progress : 0 // Start with 0, will be updated by getPeerProgress
     };
   }
 

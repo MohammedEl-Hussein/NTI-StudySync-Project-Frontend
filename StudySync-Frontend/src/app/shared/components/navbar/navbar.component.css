@@ -1,5 +1,6 @@
 .topbar{height:64px;background:#fff;border-bottom:1px solid #e8eaf0;display:flex;align-items:center;padding:0 28px;gap:28px;position:sticky;top:0;z-index:50}
-.brand{display:flex;align-items:center;gap:9px;color:#172033;text-decoration:none;font-weight:800;font-size:18px;min-width:180px}
+.brand{display:flex;align-items:center;gap:12px;color:#172033;text-decoration:none;font-weight:800;font-size:22px;letter-spacing:-0.4px;min-width:210px}
+.brand-logo-img{width:44px;height:44px;border-radius:9px;object-fit:contain}
 .brand-mark{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:linear-gradient(135deg,#4f46e5,#09a9df);color:#fff;font-weight:800}
 .topbar-search{height:38px;max-width:430px;flex:1;display:flex;align-items:center;gap:8px;background:#f7f8fb;border:1px solid #e7e9ef;border-radius:9px;padding:0 12px}
 .search-icon{color:#98a0b2;font-size:20px}.topbar-search input{border:0;outline:0;background:transparent;width:100%;font:inherit;color:#273043}
