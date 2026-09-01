@@ -1,0 +1,124 @@
+<main class="page">
+  <!-- Breadcrumb Navigation -->
+  <div class="breadcrumbs">
+    <a routerLink="/support">Support Desk</a>
+    <span>›</span>
+    <strong>Ticket REQ-{{ (ticket?._id || ticket?.id || ticketId) | slice:0:6 | uppercase }}</strong>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state card">
+    <p>Loading ticket details...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!isLoading && error" class="error-state card">
+    <p>{{ error }}</p>
+    <button class="btn secondary mt-2" type="button" (click)="goBack()">Back to Support</button>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!isLoading && !error && ticket" class="ticket-details-layout">
+    
+    <!-- Left Column: Details -->
+    <section class="main-column">
+      <div class="card ticket-card">
+        <div class="ticket-header">
+          <div class="header-left">
+            <span class="request-tag">REQ-{{ (ticket._id || ticket.id || '') | slice:0:6 | uppercase }}</span>
+            <span class="type-pill">{{ ticket.type }}</span>
+          </div>
+          <span class="status-pill" [ngClass]="getStatusClass(ticket.status)">
+            {{ getStatusLabel(ticket.status) }}
+          </span>
+        </div>
+
+        <h1 class="ticket-title">{{ ticket.subject }}</h1>
+
+        <div class="meta-row">
+          <span><i class="bi bi-calendar3"></i> Submitted: {{ ticket.createdAt | date:'medium' }}</span>
+          <span *ngIf="ticket.updatedAt"><i class="bi bi-clock-history"></i> Updated: {{ ticket.updatedAt | date:'medium' }}</span>
+        </div>
+
+        <hr class="divider" />
+
+        <div class="content-box">
+          <h3>Description & Details</h3>
+          <p class="ticket-body">{{ ticket.content }}</p>
+        </div>
+      </div>
+
+      <!-- Support Response Info Card -->
+      <div class="card reply-card">
+        <div class="reply-header">
+          <div class="admin-badge">
+            <i class="bi bi-shield-check"></i> Support Team Response
+          </div>
+          <small class="response-time" *ngIf="ticket.status === 'resolved'">Resolved by Support Specialist</small>
+        </div>
+
+        <div *ngIf="ticket.status === 'resolved'" class="resolved-note">
+          <p>
+            Your inquiry has been marked as <strong>Resolved</strong>. If you still encounter issues or have follow-up questions, please feel free to create a new ticket from the support desk.
+          </p>
+        </div>
+
+        <div *ngIf="ticket.status === 'in_progress'" class="progress-note">
+          <p>
+            An administrator has reviewed your ticket and is currently investigating the issue. You will receive an update as soon as resolution is completed.
+          </p>
+        </div>
+
+        <div *ngIf="ticket.status === 'pending'" class="pending-note">
+          <p>
+            Your ticket is queued for our support staff. Our average response time is under 2 hours during normal operational hours.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Column: Status & Metadata -->
+    <aside class="side-column">
+      <!-- Status Progress Stepper -->
+      <div class="card status-card">
+        <h2>Status Progress</h2>
+        <div class="status-stepper">
+          <div class="step" [class.done]="isStepActive('pending')">
+            <div class="step-dot"><i class="bi bi-check"></i></div>
+            <div class="step-text">
+              <strong>Ticket Submitted</strong>
+              <small>{{ ticket.createdAt | date:'shortTime' }}</small>
+            </div>
+          </div>
+          <div class="step-line" [class.done]="isStepActive('in_progress')"></div>
+          <div class="step" [class.done]="isStepActive('in_progress')">
+            <div class="step-dot"><i class="bi bi-check"></i></div>
+            <div class="step-text">
+              <strong>Under Review</strong>
+              <small>{{ isStepActive('in_progress') ? 'Active' : 'Pending' }}</small>
+            </div>
+          </div>
+          <div class="step-line" [class.done]="isStepActive('resolved')"></div>
+          <div class="step" [class.done]="isStepActive('resolved')">
+            <div class="step-dot"><i class="bi bi-check"></i></div>
+            <div class="step-text">
+              <strong>Resolved</strong>
+              <small>{{ isStepActive('resolved') ? (ticket.updatedAt | date:'shortDate') : 'Pending' }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions Card -->
+      <div class="card actions-card">
+        <button class="btn secondary full" type="button" (click)="goBack()">
+          ← Back to Support Desk
+        </button>
+        <a routerLink="/support/create" class="btn primary full mt-2">
+          + New Support Ticket
+        </a>
+      </div>
+    </aside>
+
+  </div>
+</main>

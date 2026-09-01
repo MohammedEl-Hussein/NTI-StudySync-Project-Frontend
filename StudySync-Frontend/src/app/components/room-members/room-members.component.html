@@ -1,2 +1,131 @@
-<div class="members-header"><div><h2>Room Members</h2><p>Manage collaborative roles and view study milestones.</p></div><button class="btn primary" *ngIf="canManage" type="button" (click)="openInvite()">+ Invite Student</button></div>
-<div class="members-grid"><article class="member-card" *ngFor="let member of members"><div class="member-head"><span class="avatar">{{ member.userId?.name?.charAt(0) || 'U' }}</span><div><strong>{{ member.userId?.name }}</strong><small>{{ member.userId?.organization || 'Student' }}</small></div><span class="role">{{ member.role || getRole(member.userId?._id) }}</span></div><div class="progress-label"><span>Personal progress</span><strong>{{ member.progress || 0 }}%</strong></div><div class="progress-track"><div class="progress-bar" [style.width.%]="member.progress || 0"></div></div><div class="member-actions" *ngIf="canManage && !isOwner(member)"><button class="btn secondary" type="button" (click)="toggleAdmin(member)">{{ isAdmin(member) ? 'Demote' : 'Make Admin' }}</button><button class="btn danger" type="button" (click)="removeMember(member)">Remove</button></div><div class="member-actions" *ngIf="isOwner(member)"><button class="btn secondary full" type="button">Owner</button></div></article></div>
+<!-- Toast Alert -->
+<div *ngIf="successMsg" class="toast-alert">
+  <i class="bi bi-check-circle-fill"></i>
+  <span>{{ successMsg }}</span>
+</div>
+
+<!-- Standalone Page Container -->
+<div [class.page-wrapper]="isStandaloneRoute">
+  
+  <!-- Standalone Header -->
+  <div *ngIf="isStandaloneRoute && room" class="breadcrumbs">
+    <a routerLink="/rooms">Rooms</a>
+    <span>›</span>
+    <a [routerLink]="['/rooms', room._id]">{{ room.title }}</a>
+    <span>›</span>
+    <strong>Members</strong>
+  </div>
+
+  <div class="members-header">
+    <div>
+      <h2>Room Members <span class="count-pill">({{ members.length }})</span></h2>
+      <p>Manage collaborative roles, monitor individual progress milestones, and invite peers.</p>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn primary" *ngIf="canManage" type="button" (click)="openInvite()">
+        + Invite Student
+      </button>
+
+      <button class="btn danger-outline" *ngIf="isCurrentUserMember && !isOwner" type="button" (click)="leaveRoom()">
+        Leave Room
+      </button>
+
+      <button class="btn primary" *ngIf="!isCurrentUserMember" type="button" (click)="joinRoom()">
+        Join Room
+      </button>
+    </div>
+  </div>
+
+  <!-- Search & Role Filters Bar -->
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <i class="bi bi-search"></i>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search members by name or email..."
+        [(ngModel)]="searchQuery"
+      />
+    </div>
+
+    <div class="role-tabs">
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="roleFilter === 'all'"
+        (click)="roleFilter = 'all'"
+      >
+        All ({{ members.length }})
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="roleFilter === 'owner'"
+        (click)="roleFilter = 'owner'"
+      >
+        Owner ({{ ownerMembers.length }})
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="roleFilter === 'admin'"
+        (click)="roleFilter = 'admin'"
+      >
+        Admins ({{ adminMembers.length }})
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="roleFilter === 'member'"
+        (click)="roleFilter = 'member'"
+      >
+        Students ({{ regularMembers.length }})
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <p>Loading members...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!isLoading && error" class="error-state">
+    <p>{{ error }}</p>
+  </div>
+
+  <!-- Members Grid -->
+  <div *ngIf="!isLoading && !error && filteredMembers.length > 0" class="members-grid">
+    <app-member-card
+      *ngFor="let member of filteredMembers"
+      [member]="member"
+      [canManage]="canManage"
+      [isOwner]="isMemberOwner(member)"
+      [currentUserId]="currentUserId"
+      (toggleRole)="toggleAdmin($event)"
+      (remove)="removeMember($event)"
+    ></app-member-card>
+  </div>
+
+  <!-- Empty Members State -->
+  <div *ngIf="!isLoading && !error && filteredMembers.length === 0" class="empty-state">
+    <div class="empty-icon">👥</div>
+    <h3>No members found</h3>
+    <p *ngIf="searchQuery">No members match your search criteria "{{ searchQuery }}".</p>
+    <p *ngIf="!searchQuery">This room does not have any members matching this filter yet.</p>
+    <button *ngIf="canManage" class="btn primary" type="button" (click)="openInvite()">
+      + Invite Members Now
+    </button>
+  </div>
+
+</div>
+
+<!-- Invite Modal -->
+<app-invite-member-modal
+  *ngIf="showInviteModal"
+  [roomId]="roomId || ''"
+  [existingMemberIds]="existingMemberIds"
+  (close)="closeInvite()"
+  (invite)="onInvite($event)"
+></app-invite-member-modal>

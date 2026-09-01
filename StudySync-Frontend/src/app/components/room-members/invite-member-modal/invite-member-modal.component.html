@@ -1,0 +1,73 @@
+<div class="modal-backdrop" (click)="onClose()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div>
+        <h2>Invite Member</h2>
+        <p>Search registered students or enter an ID to add to this study room.</p>
+      </div>
+      <button class="close-btn" type="button" (click)="onClose()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Search Input -->
+      <div class="search-box">
+        <i class="bi bi-search"></i>
+        <input
+          type="text"
+          class="input"
+          placeholder="Search students by name or email..."
+          [(ngModel)]="searchQuery"
+        />
+      </div>
+
+      <!-- User Selection List -->
+      <div class="user-list">
+        <div *ngIf="isLoading" class="loading-state">
+          <span>Loading available students...</span>
+        </div>
+
+        <div *ngIf="!isLoading && availableUsers.length === 0" class="empty-state">
+          <p>No new students found matching "{{ searchQuery }}".</p>
+        </div>
+
+        <div class="user-item" *ngFor="let user of availableUsers">
+          <div class="user-avatar">
+            {{ user.name?.charAt(0) || 'U' }}
+          </div>
+          <div class="user-details">
+            <strong>{{ user.name }}</strong>
+            <small>{{ user.email }} · {{ user.organization || 'Student' }}</small>
+          </div>
+          <button
+            class="btn primary btn-sm"
+            type="button"
+            [disabled]="submittingUserId === (user._id || user.id)"
+            (click)="onInviteUser(user._id || user.id)"
+          >
+            {{ submittingUserId === (user._id || user.id) ? 'Adding...' : '+ Add' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Direct ID input fallback -->
+      <div class="manual-section">
+        <label class="manual-label">Or invite directly by User ID:</label>
+        <div class="manual-row">
+          <input
+            type="text"
+            class="input"
+            placeholder="Paste User ID (e.g. 64b8a...)"
+            [(ngModel)]="manualUserId"
+          />
+          <button class="btn secondary" type="button" (click)="onManualInvite()" [disabled]="!manualUserId.trim()">
+            Invite
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn secondary" type="button" (click)="onClose()">Done</button>
+    </div>
+  </div>
+</div>

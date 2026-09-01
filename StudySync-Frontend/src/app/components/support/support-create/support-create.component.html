@@ -1,3 +1,77 @@
-<app-navbar></app-navbar><app-sidebar></app-sidebar>
-<main class="page"><div class="page-header"><div><h1>Support & Help Desk</h1><p>Have a question or need administrative help? Submit a ticket and our team will get back to you.</p></div></div>
-<div class="support-grid"><form class="card support-form" [formGroup]="supportForm" (ngSubmit)="submit()"><h2>Create Support Ticket</h2><label class="form-label">Request Type<select class="select" formControlName="type"><option>Study Plan Help</option><option>Reporting</option><option>General Request</option></select></label><label class="form-label">Subject<input class="input" formControlName="subject" placeholder="e.g. Cannot sync tasks to shared calendar"></label><label class="form-label">Description<textarea class="textarea" formControlName="content" placeholder="Please provide detailed information regarding your support request..."></textarea></label><div class="send-row"><button class="btn primary" type="submit">Send Request</button><small>Typical response time: &lt; 2 hours</small></div></form><section><div class="section-title"><h2>Previous Requests</h2><span>{{ requests.length }}</span></div><article class="request-card card" *ngFor="let request of requests"><div><span class="request-id">REQ-{{ request._id | slice:0:4 }}</span><span class="status" [class.resolved]="request.status==='resolved'">{{ request.status }}</span></div><h3>{{ request.subject }}</h3><p>Type: {{ request.type }}</p><small>Submitted {{ request.createdAt | date:'short' }}</small><a [routerLink]="['/support',request._id]">View Thread →</a></article></section></div></main>
+<div class="card support-create-card">
+  <div class="card-header-bar">
+    <div>
+      <h2>Create Support Ticket</h2>
+      <p class="subtitle">Submit your request and our support desk will respond shortly.</p>
+    </div>
+  </div>
+
+  <div *ngIf="successMsg" class="alert alert-success">
+    <i class="bi bi-check-circle-fill"></i>
+    <span>{{ successMsg }}</span>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <span>{{ error }}</span>
+  </div>
+
+  <form [formGroup]="supportForm" (ngSubmit)="submit()" class="support-form">
+    <div class="form-group">
+      <label class="form-label" for="ticketType">
+        Request Type <span class="required">*</span>
+      </label>
+      <select id="ticketType" class="select" formControlName="type">
+        <option *ngFor="let t of requestTypes" [value]="t">{{ t }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="ticketSubject">
+        Subject <span class="required">*</span>
+      </label>
+      <input
+        id="ticketSubject"
+        type="text"
+        class="input"
+        formControlName="subject"
+        placeholder="e.g. Cannot sync tasks to shared calendar"
+        [class.is-invalid]="f['subject'].touched && f['subject'].invalid"
+      />
+      <div *ngIf="f['subject'].touched && f['subject'].errors?.['required']" class="invalid-feedback">
+        Subject is required.
+      </div>
+      <div *ngIf="f['subject'].touched && f['subject'].errors?.['minlength']" class="invalid-feedback">
+        Subject must be at least 4 characters long.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="ticketContent">
+        Description & Details <span class="required">*</span>
+      </label>
+      <textarea
+        id="ticketContent"
+        class="textarea"
+        formControlName="content"
+        rows="4"
+        placeholder="Please provide detailed information regarding your issue or inquiry..."
+        [class.is-invalid]="f['content'].touched && f['content'].invalid"
+      ></textarea>
+      <div *ngIf="f['content'].touched && f['content'].errors?.['required']" class="invalid-feedback">
+        Description is required.
+      </div>
+      <div *ngIf="f['content'].touched && f['content'].errors?.['minlength']" class="invalid-feedback">
+        Description must be at least 10 characters long.
+      </div>
+    </div>
+
+    <div class="send-row">
+      <button class="btn primary" type="submit" [disabled]="isSubmitting">
+        <span *ngIf="!isSubmitting">Send Request</span>
+        <span *ngIf="isSubmitting">Submitting...</span>
+      </button>
+      <small class="hint">Typical response time: &lt; 2 hours</small>
+    </div>
+  </form>
+</div>

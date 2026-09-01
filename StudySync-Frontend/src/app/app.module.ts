@@ -18,6 +18,17 @@ import { EditRoomComponent } from './components/rooms/edit-room/edit-room.compon
 import { RoomDetailsComponent } from './components/rooms/room-details/room-details.component';
 import { CategoriesComponent } from './components/categories/categories.component';
 
+// Room Members Components
+import { RoomMembersComponent } from './components/room-members/room-members.component';
+import { MemberCardComponent } from './components/room-members/member-card/member-card.component';
+import { InviteMemberModalComponent } from './components/room-members/invite-member-modal/invite-member-modal.component';
+
+// Support Components
+import { SupportComponent } from './components/support/support.component';
+import { SupportCreateComponent } from './components/support/support-create/support-create.component';
+import { MySupportTicketsComponent } from './components/support/my-support-tickets/my-support-tickets.component';
+import { SupportTicketDetailsComponent } from './components/support/support-ticket-details/support-ticket-details.component';
+
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { SidebarComponent } from './components/layout/sidebar/sidebar.component';
@@ -69,6 +80,13 @@ import { AdminSupportDetailsComponent } from './components/admin/admin-support-d
     EditRoomComponent,
     RoomDetailsComponent,
     CategoriesComponent,
+    RoomMembersComponent,
+    MemberCardComponent,
+    InviteMemberModalComponent,
+    SupportComponent,
+    SupportCreateComponent,
+    MySupportTicketsComponent,
+    SupportTicketDetailsComponent,
     SidebarComponent,
     NavbarComponent,
     MainLayoutComponent,

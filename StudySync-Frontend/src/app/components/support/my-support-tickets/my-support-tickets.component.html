@@ -1,0 +1,88 @@
+<div class="tickets-container">
+  <!-- Section Title & Status Filters -->
+  <div class="section-head">
+    <div class="title-wrap">
+      <h2>My Support Requests</h2>
+      <span class="badge-count">{{ tickets.length }}</span>
+    </div>
+
+    <!-- Status Tabs -->
+    <div class="status-tabs">
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="statusFilter === 'all'"
+        (click)="statusFilter = 'all'"
+      >
+        All ({{ tickets.length }})
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="statusFilter === 'pending'"
+        (click)="statusFilter = 'pending'"
+      >
+        Pending ({{ getPendingCount() }})
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="statusFilter === 'in_progress'"
+        (click)="statusFilter = 'in_progress'"
+      >
+        In Review ({{ getInProgressCount() }})
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="statusFilter === 'resolved'"
+        (click)="statusFilter = 'resolved'"
+      >
+        Resolved ({{ getResolvedCount() }})
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <p>Loading your requests...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!isLoading && error" class="error-state">
+    <p>{{ error }}</p>
+  </div>
+
+  <!-- Ticket List -->
+  <div *ngIf="!isLoading && filteredTickets.length > 0" class="ticket-list">
+    <article class="request-card card" *ngFor="let ticket of filteredTickets">
+      <div class="card-top">
+        <div class="meta-left">
+          <span class="request-id">REQ-{{ (ticket._id || ticket.id || '') | slice:0:6 | uppercase }}</span>
+          <span class="type-pill">{{ ticket.type }}</span>
+        </div>
+        <span class="status-pill" [ngClass]="getStatusClass(ticket.status)">
+          {{ getStatusLabel(ticket.status) }}
+        </span>
+      </div>
+
+      <h3 class="ticket-title">{{ ticket.subject }}</h3>
+      <p class="ticket-snippet">{{ ticket.content | slice:0:110 }}{{ (ticket.content.length || 0) > 110 ? '...' : '' }}</p>
+
+      <div class="card-footer">
+        <small class="time-meta">Submitted {{ ticket.createdAt | date:'MMM d, y, h:mm a' }}</small>
+        <a [routerLink]="['/support', ticket._id || ticket.id]" class="thread-link">
+          View Thread →
+        </a>
+      </div>
+    </article>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && filteredTickets.length === 0" class="empty-state card">
+    <div class="empty-icon">✉️</div>
+    <h3>No support requests found</h3>
+    <p *ngIf="statusFilter !== 'all'">No tickets currently matching status "{{ statusFilter }}".</p>
+    <p *ngIf="statusFilter === 'all'">You haven't submitted any support requests yet.</p>
+  </div>
+</div>
