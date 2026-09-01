@@ -1,0 +1,58 @@
+<div class="message-list-container" #scrollContainer (scroll)="onScroll($event)">
+  <!-- Loading skeleton state -->
+  <div *ngIf="isLoading && (!messages || messages.length === 0)" class="loading-state">
+    <div class="skeleton-bubble left">
+      <div class="skeleton-avatar"></div>
+      <div class="skeleton-text"></div>
+    </div>
+    <div class="skeleton-bubble right">
+      <div class="skeleton-text short"></div>
+    </div>
+    <div class="skeleton-bubble left">
+      <div class="skeleton-avatar"></div>
+      <div class="skeleton-text long"></div>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!isLoading && (!messages || messages.length === 0)" class="empty-chat-state">
+    <div class="empty-icon-circle">
+      <i class="bi bi-chat-heart-fill"></i>
+    </div>
+    <h4>No messages yet</h4>
+    <p>Break the ice! Send the first message to kick off your study session with the team.</p>
+  </div>
+
+  <!-- Grouped message stream -->
+  <div *ngIf="messages && messages.length > 0" class="messages-stream">
+    <div *ngFor="let group of groupedMessages" class="date-group">
+      <div class="date-divider">
+        <span class="divider-line"></span>
+        <span class="date-badge">{{ group.dateLabel }}</span>
+        <span class="divider-line"></span>
+      </div>
+
+      <div class="group-items">
+        <app-message-item
+          *ngFor="let msg of group.messages"
+          [message]="msg"
+          [currentUserId]="currentUserId"
+          [isRoomOwnerOrAdmin]="isRoomOwnerOrAdmin"
+          [room]="room"
+          (edit)="onEdit($event)"
+          (delete)="onDelete($event)"
+        ></app-message-item>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Scroll To Bottom Button -->
+  <button
+    *ngIf="showScrollBottomBtn"
+    class="btn-scroll-bottom"
+    (click)="scrollToBottom()"
+    title="Jump to latest messages"
+  >
+    <i class="bi bi-chevron-down"></i>
+  </button>
+</div>

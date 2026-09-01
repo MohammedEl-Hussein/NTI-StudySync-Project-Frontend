@@ -12,6 +12,9 @@
       <small>Host: {{ room?.ownerId?.name || 'Room owner' }} · {{ memberCount }}/{{ room?.maxMembers }} Members · {{ room?.startDate | date:'MMM d' }} – {{ room?.endDate | date:'MMM d, y' }}</small>
     </div>
     <div style="display: flex; gap: 8px;">
+      <a class="btn secondary" [routerLink]="['/rooms', room?._id, 'chat']">
+        <i class="bi bi-chat-dots-fill"></i> Chat Room
+      </a>
       <a class="btn secondary" *ngIf="isOwner" [routerLink]="['/rooms',room?._id, 'edit']">Edit</a>
       <a class="btn primary" *ngIf="room?.meetingURL" [href]="room?.meetingURL" target="_blank">Join Meeting</a>
     </div>
@@ -72,7 +75,7 @@
   <section *ngIf="tab==='members'">
     <div class="card"><p class="text-muted">Room members list here.</p></div>
   </section>
-  <section *ngIf="tab==='chat'">
-    <div class="card"><p class="text-muted">Room chat interface here.</p></div>
+  <section *ngIf="tab==='chat'" class="room-chat-tab-view">
+    <app-chat-room [roomId]="room?._id" [showBackBtn]="false"></app-chat-room>
   </section>
 </main>

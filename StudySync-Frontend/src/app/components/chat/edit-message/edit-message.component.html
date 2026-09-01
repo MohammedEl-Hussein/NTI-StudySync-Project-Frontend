@@ -1,0 +1,43 @@
+<div class="modal-backdrop" *ngIf="isOpen" (click)="onCancel()">
+  <div class="modal-dialog" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="header-title">
+        <i class="bi bi-pencil-square icon-accent"></i>
+        <h3>Edit Message</h3>
+      </div>
+      <button class="btn-close" (click)="onCancel()" [disabled]="isSaving">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <textarea
+        class="edit-textarea"
+        rows="4"
+        [(ngModel)]="editedContent"
+        placeholder="Edit your message..."
+        (keydown)="onKeyDown($event)"
+        [disabled]="isSaving"
+        autofocus
+      ></textarea>
+      <div class="char-hint">
+        <small>Press <strong>Enter</strong> to save, <strong>Shift + Enter</strong> for a new line, or <strong>Esc</strong> to cancel.</small>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isSaving">
+        Cancel
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onSave()"
+        [disabled]="!editedContent.trim() || isSaving"
+      >
+        <span *ngIf="isSaving" class="spinner"></span>
+        <span>{{ isSaving ? 'Saving...' : 'Save Changes' }}</span>
+      </button>
+    </div>
+  </div>
+</div>

@@ -25,6 +25,8 @@ import { EditRoomComponent } from './components/rooms/edit-room/edit-room.compon
 import { CategoriesComponent } from './components/categories/categories.component';
 
 import { MainLayoutComponent } from './components/layout/main-layout/main-layout.component';
+import { ChatRoomComponent } from './components/chat/chat-room/chat-room.component';
+import { MessagesPageComponent } from './components/chat/messages/messages.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -57,7 +59,9 @@ const routes: Routes = [
       { path: 'rooms', component: RoomListComponent },
       { path: 'rooms/create', component: CreateRoomComponent },
       { path: 'rooms/:id/edit', component: EditRoomComponent },
+      { path: 'rooms/:id/chat', component: ChatRoomComponent },
       { path: 'rooms/:id', component: RoomDetailsComponent },
+      { path: 'messages', component: MessagesPageComponent },
       {
         path: 'profile',
         loadChildren: () => import('./profile/profile.module').then((m) => m.ProfileModule)

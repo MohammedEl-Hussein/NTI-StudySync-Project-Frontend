@@ -1,1 +1,42 @@
-.chat-layout{display:grid;grid-template-columns:200px 1fr;gap:18px;height:520px}.card{background:#fff;border:1px solid #e6e9ef;border-radius:14px}.chat-members{padding:18px}.chat-members h3{font-size:13px;margin:0 0 14px}.chat-member{display:flex;align-items:center;gap:9px;padding:8px 0}.avatar{width:30px;height:30px;border-radius:50%;background:#e9eafd;color:#5146df;display:grid;place-items:center;font-size:10px;font-weight:800}.chat-member strong{display:block;font-size:10px}.chat-member small{display:block;color:#18a66b;font-size:8px;margin-top:3px}.chat-member small.offline{color:#a0a6b1}.chat-window{display:flex;flex-direction:column;overflow:hidden}.chat-messages{padding:20px;overflow:auto;flex:1}.message{display:flex;gap:10px;max-width:75%;margin-bottom:16px}.message>div{min-width:0}.meta{display:flex;gap:7px;align-items:center}.meta strong{font-size:10px}.meta time{font-size:8px;color:#a0a6b2}.message p{margin:5px 0 0;background:#f6f7fa;border-radius:10px;padding:9px 12px;font-size:11px;color:#414a5b;line-height:1.5}.message.mine{margin-left:auto;flex-direction:row-reverse}.message.mine p{background:#5146df;color:#fff}.composer{border-top:1px solid #eef0f4;padding:10px;display:flex;gap:8px}.composer input{flex:1;border:1px solid #dfe2e8;border-radius:8px;padding:11px;outline:none}.send{width:42px;border:0;border-radius:8px;background:#5146df;color:#fff;cursor:pointer}@media(max-width:650px){.chat-layout{grid-template-columns:1fr;height:auto}.chat-members{display:none}.chat-window{height:520px}}
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.chat-room-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 120px);
+  min-height: 540px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  position: relative;
+}
+
+.chat-workspace {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.chat-main-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  background: #fbfcfe;
+}
+
+@media (max-width: 768px) {
+  .chat-room-container {
+    height: calc(100vh - 90px);
+    border-radius: 12px;
+  }
+}

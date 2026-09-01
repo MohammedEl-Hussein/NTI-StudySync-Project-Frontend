@@ -1,0 +1,45 @@
+<div class="composer-wrapper">
+  <!-- Quick Emoji Bar Dropdown -->
+  <div *ngIf="showEmojiBar" class="emoji-bar">
+    <button
+      *ngFor="let emoji of quickEmojis"
+      type="button"
+      class="emoji-btn"
+      (click)="insertEmoji(emoji)"
+    >
+      {{ emoji }}
+    </button>
+  </div>
+
+  <form class="composer-form" (ngSubmit)="submit()">
+    <button
+      type="button"
+      class="btn-action emoji-toggle"
+      [class.active]="showEmojiBar"
+      (click)="toggleEmojiBar()"
+      title="Insert emoji"
+    >
+      <i class="bi bi-emoji-smile"></i>
+    </button>
+
+    <input
+      type="text"
+      class="composer-input"
+      [placeholder]="placeholder"
+      [(ngModel)]="messageText"
+      name="message"
+      autocomplete="off"
+      [disabled]="disabled"
+      (keydown)="onKeyDown($event)"
+    />
+
+    <button
+      type="submit"
+      class="btn-send"
+      [disabled]="!messageText.trim() || disabled"
+      title="Send Message (Enter)"
+    >
+      <i class="bi bi-send-fill"></i>
+    </button>
+  </form>
+</div>

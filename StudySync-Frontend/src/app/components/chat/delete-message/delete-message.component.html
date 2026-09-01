@@ -1,0 +1,45 @@
+<div class="modal-backdrop" *ngIf="isOpen" (click)="onCancel()">
+  <div class="modal-dialog" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="header-title">
+        <div class="icon-danger-badge">
+          <i class="bi bi-trash3-fill"></i>
+        </div>
+        <div>
+          <h3>Delete Message</h3>
+          <p class="subtitle">This action cannot be undone.</p>
+        </div>
+      </div>
+      <button class="btn-close" (click)="onCancel()" [disabled]="isDeleting">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <p class="warning-text">Are you sure you want to permanently delete this message?</p>
+
+      <div class="message-preview" *ngIf="message">
+        <div class="preview-sender">
+          <strong>{{ message.user?.name || 'Message' }}</strong>
+          <small>{{ message.createdAt | date:'shortTime' }}</small>
+        </div>
+        <p class="preview-text">{{ message.content }}</p>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isDeleting">
+        Cancel
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="onConfirm()"
+        [disabled]="isDeleting"
+      >
+        <span *ngIf="isDeleting" class="spinner"></span>
+        <span>{{ isDeleting ? 'Deleting...' : 'Delete Message' }}</span>
+      </button>
+    </div>
+  </div>
+</div>

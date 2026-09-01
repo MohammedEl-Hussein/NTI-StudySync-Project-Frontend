@@ -1,0 +1,67 @@
+<aside class="chat-members-sidebar" [class.open]="isOpen">
+  <div class="members-header">
+    <div class="header-title-box">
+      <i class="bi bi-people-fill icon-accent"></i>
+      <h3>Room Members</h3>
+      <span class="count-pill">{{ members.length }}</span>
+    </div>
+    <button class="btn-close-members" (click)="onClose()" title="Close Members Sidebar">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <div class="search-box">
+    <i class="bi bi-search search-icon"></i>
+    <input
+      type="text"
+      placeholder="Search members..."
+      [(ngModel)]="searchTerm"
+      class="member-search-input"
+    />
+    <button *ngIf="searchTerm" (click)="searchTerm=''" class="btn-clear-search">
+      <i class="bi bi-x-circle-fill"></i>
+    </button>
+  </div>
+
+  <div class="members-list">
+    <div *ngIf="filteredMembers.length === 0" class="no-members">
+      <i class="bi bi-person-x"></i>
+      <p>No members found</p>
+    </div>
+
+    <div
+      *ngFor="let member of filteredMembers"
+      class="member-card"
+      [class.current-user]="isCurrentUser(member)"
+    >
+      <div class="member-avatar-wrapper">
+        <span class="member-avatar" [style.background]="getAvatarColor(getMemberName(member))">
+          {{ getAvatarInitial(member) }}
+        </span>
+        <span class="online-indicator" [class.online]="member.status !== 'offline'"></span>
+      </div>
+
+      <div class="member-details">
+        <div class="name-row">
+          <span class="member-name">{{ getMemberName(member) }}</span>
+          <span *ngIf="isCurrentUser(member)" class="badge-you">You</span>
+        </div>
+
+        <div class="role-row">
+          <span *ngIf="isOwner(member)" class="role-badge host">
+            <i class="bi bi-star-fill"></i> Host
+          </span>
+          <span *ngIf="isAdmin(member) && !isOwner(member)" class="role-badge admin">
+            <i class="bi bi-shield-shaded"></i> Admin
+          </span>
+          <span *ngIf="!isAdmin(member) && !isOwner(member)" class="role-badge member">
+            Member
+          </span>
+          <span *ngIf="getMemberEmail(member)" class="member-email" [title]="getMemberEmail(member)">
+            {{ getMemberEmail(member) }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>
