@@ -34,6 +34,7 @@ import { CategoriesComponent } from './components/categories/categories.componen
 // Profile Components
 import { ProfileComponent } from './components/profile/profile.component';
 import { EditProfileComponent } from './components/profile/edit-profile/edit-profile.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 import { MainLayoutComponent } from './components/layout/main-layout/main-layout.component';
 import { ChatRoomComponent } from './components/chat/chat-room/chat-room.component';
@@ -75,6 +76,7 @@ const routes: Routes = [
     path: '',
     component: MainLayoutComponent,
     children: [
+      { path: 'dashboard', component: DashboardComponent },
       { path: 'users', component: UsersComponent },
       { path: 'categories', component: CategoriesComponent },
       { path: 'rooms', component: RoomListComponent },

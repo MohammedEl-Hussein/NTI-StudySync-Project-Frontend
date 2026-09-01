@@ -1,0 +1,113 @@
+<main class="page">
+  <div class="page-header">
+    <div>
+      <h1>{{ greeting }}, {{ currentUser?.name?.split(' ')?.[0] || 'Student' }}!</h1>
+      <p>Here's what's happening with your studies today.</p>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading your statistics...</p>
+  </div>
+
+  <ng-container *ngIf="!loading">
+    <!-- Quick Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card blue">
+        <div class="stat-icon"><i class="bi bi-journal-bookmark"></i></div>
+        <div class="stat-info">
+          <span class="stat-label">Active Cohorts</span>
+          <strong class="stat-value">{{ stats.joinedRooms }}</strong>
+        </div>
+      </div>
+      
+      <div class="stat-card green">
+        <div class="stat-icon"><i class="bi bi-check2-circle"></i></div>
+        <div class="stat-info">
+          <span class="stat-label">Completed Tasks</span>
+          <strong class="stat-value">{{ stats.completedTasks }}</strong>
+        </div>
+      </div>
+      
+      <div class="stat-card purple">
+        <div class="stat-icon"><i class="bi bi-lightning-charge"></i></div>
+        <div class="stat-info">
+          <span class="stat-label">Overall Progress</span>
+          <strong class="stat-value">{{ stats.overallProgress }}%</strong>
+        </div>
+      </div>
+
+      <div class="stat-card orange">
+        <div class="stat-icon"><i class="bi bi-fire"></i></div>
+        <div class="stat-info">
+          <span class="stat-label">Study Streak</span>
+          <strong class="stat-value">{{ stats.activeStreakDays }} Days</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Split -->
+    <div class="dashboard-split">
+      <!-- Left Column: Owned Rooms -->
+      <div class="card split-card">
+        <div class="card-head">
+          <div class="card-head-title">
+            <h2>Your Owned Rooms</h2>
+            <p>Cohorts that you are currently managing.</p>
+          </div>
+          <a class="btn dashboard-btn-outline" routerLink="/my-rooms">View All</a>
+        </div>
+        
+        <div class="empty-state" *ngIf="myRooms.length === 0">
+          <div class="empty-icon"><i class="bi bi-folder-x"></i></div>
+          <p>You don't own any rooms yet.</p>
+          <a class="btn dashboard-btn-primary" routerLink="/rooms/create">
+            <i class="bi bi-plus-lg"></i> Create a Room
+          </a>
+        </div>
+        
+        <div class="room-list" *ngIf="myRooms.length > 0">
+          <a class="room-item" *ngFor="let room of myRooms.slice(0,4)" [routerLink]="['/rooms', room._id]">
+            <div class="room-icon">
+              <i class="bi bi-people"></i>
+            </div>
+            <div class="room-details">
+              <strong>{{ room.title }}</strong>
+              <small>{{ room.level || 'All Levels' }} &bull; {{ getMembersCount(room) }} Members</small>
+            </div>
+            <i class="bi bi-chevron-right text-muted"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Right Column: Recent Activity -->
+      <div class="card split-card">
+        <div class="card-head">
+          <div class="card-head-title">
+            <h2>Recent Activity</h2>
+            <p>Your latest accomplishments.</p>
+          </div>
+        </div>
+
+        <div class="empty-state" *ngIf="recentCompletions.length === 0">
+          <div class="empty-icon"><i class="bi bi-clock-history"></i></div>
+          <p>No recent activity. Time to start studying!</p>
+        </div>
+
+        <div class="activity-feed" *ngIf="recentCompletions.length > 0">
+          <div class="activity-item" *ngFor="let comp of recentCompletions">
+            <div class="activity-dot"></div>
+            <div class="activity-content">
+              <strong>{{ comp.task?.title || comp.taskId?.title || 'Completed a task' }}</strong>
+              <small class="activity-room-name">
+                <i class="bi bi-folder2"></i> {{ comp.mappedRoomTitle || comp.room?.title || comp.roomId?.title || comp.roomTitle || 'Study Room' }}
+              </small>
+              <small class="activity-time text-muted">{{ (comp.completedAt || comp.createdAt) | date:'MMM d, y h:mm a' }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</main>
