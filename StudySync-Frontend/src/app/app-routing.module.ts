@@ -72,6 +72,7 @@ const routes: Routes = [
       { path: 'users', component: UsersComponent },
       { path: 'categories', component: CategoriesComponent },
       { path: 'rooms', component: RoomListComponent },
+      { path: 'my-rooms', component: RoomListComponent, data: { myRoomsOnly: true } },
       { path: 'rooms/create', component: CreateRoomComponent },
       { path: 'rooms/:id/edit', component: EditRoomComponent },
       { path: 'rooms/:id/chat', component: ChatRoomComponent },

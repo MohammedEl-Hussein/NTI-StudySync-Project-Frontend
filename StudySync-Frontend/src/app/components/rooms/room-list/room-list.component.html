@@ -1,8 +1,8 @@
 <main class="page">
   <div class="page-top">
     <div class="header-content">
-      <h1>Find your next study room</h1>
-      <p>Join focused circles matching your goals and build habits.</p>
+      <h1>{{ isMyRooms ? 'My Study Rooms' : 'Find your next study room' }}</h1>
+      <p>{{ isMyRooms ? 'Your active circles and study groups.' : 'Join focused circles matching your goals and build habits.' }}</p>
     </div>
     <div class="header-actions">
       <a routerLink="/rooms/create" class="btn-create-room">

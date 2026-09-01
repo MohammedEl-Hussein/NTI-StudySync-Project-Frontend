@@ -7,6 +7,7 @@ import { CategoryService } from '../../../services/category.service';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { SearchService } from '../../../services/search.service';
+import { ProgressService } from '../../../core/services/progress.service';
 
 @Component({
   selector: 'app-room-list',
@@ -19,6 +20,7 @@ export class RoomListComponent implements OnInit {
   categories: Category[] = [];
   loading = true;
   error = '';
+  isMyRooms = false;
 
   filters = {
     search: '',
@@ -35,11 +37,15 @@ export class RoomListComponent implements OnInit {
     private roomService: RoomService,
     private categoryService: CategoryService,
     private route: ActivatedRoute,
-    private searchService: SearchService
+    private searchService: SearchService,
+    private progressService: ProgressService
   ) {}
 
   ngOnInit(): void {
-    this.fetchData();
+    this.route.data.subscribe(data => {
+      this.isMyRooms = !!data['myRoomsOnly'];
+      this.fetchData();
+    });
     this.searchService.currentSearch.subscribe(term => {
       this.filters.search = term;
       this.applyFilters();
@@ -78,9 +84,12 @@ export class RoomListComponent implements OnInit {
       error: (err) => console.error(err)
     });
 
-    this.roomService.getRooms().subscribe({
-      next: (res) => {
-        const rooms = res.data || [];
+    forkJoin({
+      roomsRes: this.roomService.getRooms(),
+      progressRes: this.progressService.getAllProgress().pipe(catchError(() => of([])))
+    }).subscribe({
+      next: ({ roomsRes, progressRes }) => {
+        const rooms = roomsRes.data || [];
         if (rooms.length === 0) {
           this.rooms = [];
           this.applyFilters();
@@ -99,8 +108,24 @@ export class RoomListComponent implements OnInit {
               const membersData = (membersArrays[index] as any).members || [];
               (room as any).memberCount = membersData.length;
               (room as any).members = membersData.map((m: any) => m.userId?._id || m.userId);
+              
+              const prog = progressRes.find((p: any) => p.roomId === room._id);
+              (room as any).progress = prog ? (prog.percentage || 0) : 0;
            });
-           this.rooms = rooms;
+
+           if (this.isMyRooms) {
+             const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+             const userId = user.id || user._id || user.userId;
+             this.rooms = rooms.filter(room => {
+               const owner: any = room.ownerId;
+               const isOwner = owner === userId || owner?._id === userId;
+               const inMembers = (room as any).members?.some((m: any) => m === userId);
+               return isOwner || inMembers;
+             });
+           } else {
+             this.rooms = rooms;
+           }
+
            this.applyFilters();
            this.loading = false;
         });
