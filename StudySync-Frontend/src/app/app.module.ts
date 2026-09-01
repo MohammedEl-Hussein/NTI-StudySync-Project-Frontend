@@ -119,7 +119,13 @@ import { MessagesPageComponent } from './components/chat/messages/messages.compo
     MessageInputComponent,
     EditMessageComponent,
     DeleteMessageComponent,
-    MessagesPageComponent
+    MessagesPageComponent,
+    // Task & Study Plan Components
+    StudyPlanComponent,
+    TaskListComponent,
+    TaskCreateComponent,
+    TaskEditComponent,
+    TaskDetailsComponent
   ],
   imports: [
     BrowserModule,
