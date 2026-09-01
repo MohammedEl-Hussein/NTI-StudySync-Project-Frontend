@@ -117,7 +117,7 @@
       <div class="form-group" [class.has-error]="f['roomId'].invalid && f['roomId'].touched">
         <label class="form-label" for="prog-room">Study Room *</label>
         <select id="prog-room" class="select" formControlName="roomId">
-          <option *ngFor="let room of joinedRooms" [value]="room._id || room.id">
+          <option *ngFor="let room of joinedRooms" [value]="room._id">
             {{ room.title }}
           </option>
         </select>

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProgressService } from '../../core/services/progress.service';
-import { RoomService } from '../../core/services/room.service';
+import { RoomService } from '../../services/room.service';
 import { UserService } from '../../core/services/user.service';
 import { Progress, CreateProgressDto, UpdateProgressDto } from '../../core/models/progress.model';
-import { Room } from '../../core/models/room.model';
+import { Room } from '../../models/room.model';
 
 @Component({
   selector: 'app-progress-management',
@@ -40,7 +40,6 @@ export class ProgressManagementComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.loadProgressRecords();
     this.loadRooms();
   }
 
@@ -65,7 +64,14 @@ export class ProgressManagementComponent implements OnInit {
     this.loading = true;
     this.progressService.getAllProgress().subscribe({
       next: (list) => {
-        this.progressList = list;
+        // Map room title dynamically from loaded rooms since backend doesn't store roomTitle
+        this.progressList = list.map(prog => {
+          const matchedRoom = this.joinedRooms.find(r => r._id === prog.roomId);
+          return {
+            ...prog,
+            roomTitle: matchedRoom ? matchedRoom.title : 'General Study Room'
+          };
+        });
         this.loading = false;
       },
       error: (err) => {
@@ -76,9 +82,11 @@ export class ProgressManagementComponent implements OnInit {
   }
 
   public loadRooms(): void {
-    this.roomService.getJoinedRooms().subscribe({
-      next: (rooms) => {
-        this.joinedRooms = rooms;
+    this.roomService.getRooms().subscribe({
+      next: (res: any) => {
+        this.joinedRooms = Array.isArray(res) ? res : (res?.data || []);
+        // Load records after rooms are ready so we can map room titles
+        this.loadProgressRecords();
       }
     });
   }
@@ -87,7 +95,7 @@ export class ProgressManagementComponent implements OnInit {
     this.isEditMode = false;
     this.selectedProgressId = null;
     this.progressForm.reset({
-      roomId: this.joinedRooms[0]?._id || this.joinedRooms[0]?.id || 'room_01',
+      roomId: this.joinedRooms[0]?._id || 'room_01',
       section: '',
       totalTasks: 10,
       completedTasks: 0,
@@ -129,7 +137,7 @@ export class ProgressManagementComponent implements OnInit {
     const total = Number(formVal.totalTasks);
     const completed = Number(formVal.completedTasks);
     const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
-    const selectedRoom = this.joinedRooms.find((r) => r._id === formVal.roomId || r.id === formVal.roomId);
+    const selectedRoom = this.joinedRooms.find((r) => r._id === formVal.roomId);
 
     if (this.isEditMode && this.selectedProgressId) {
       // PUT /progresses/:id

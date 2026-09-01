@@ -3,7 +3,6 @@
   <div class="card-head">
     <div class="head-left">
       <h2>Room Progress & Peer Standing</h2>
-      <p>API Endpoint: <code>GET /progresses/room/&#123;&#123; selectedRoomId &#125;&#125;</code></p>
     </div>
 
     <!-- Room Selector Dropdown -->
@@ -15,7 +14,7 @@
         [value]="selectedRoomId"
         (change)="onRoomChange($any($event.target).value)"
       >
-        <option *ngFor="let room of joinedRooms" [value]="room._id || room.id">
+        <option *ngFor="let room of joinedRooms" [value]="room._id">
           {{ room.title }}
         </option>
       </select>

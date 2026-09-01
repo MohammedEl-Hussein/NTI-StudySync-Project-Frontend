@@ -15,12 +15,12 @@ export class RoomCardComponent implements OnInit {
 
   menuOpen = false;
 
-  constructor(private roomService: RoomService) {}
+  constructor(private roomService: RoomService) { }
 
   get isMember(): boolean {
     const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
     const userId = user.id || user._id || user.userId;
-    
+
     if (userId) {
       const isOwner = this.room?.ownerId === userId || this.room?.ownerId?._id === userId;
       const inMembers = this.room?.members?.some((m: any) => m === userId || m?._id === userId);
@@ -62,7 +62,7 @@ export class RoomCardComponent implements OnInit {
     // Fallback: If we don't have the real count from backend, but user is member, it's at least 1.
     return this.isMember ? 1 : 0;
   }
-  
+
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     // Close menu if clicking outside
@@ -77,7 +77,7 @@ export class RoomCardComponent implements OnInit {
   deleteRoom(event: Event): void {
     event.stopPropagation();
     this.menuOpen = false;
-    
+
     if (confirm(`Are you sure you want to delete "${this.room.title}"? This will permanently delete all related chat messages, tasks, and member progress.`)) {
       this.roomService.deleteRoom(this.room._id).subscribe({
         next: () => {

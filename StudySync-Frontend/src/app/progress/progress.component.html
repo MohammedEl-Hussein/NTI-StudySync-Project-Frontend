@@ -2,11 +2,7 @@
   <!-- Page Header -->
   <div class="page-header">
     <div>
-      <div class="breadcrumb">
-        <span>Analytics</span>
-        <span class="crumb-sep">/</span>
-        <span>Progress Tracking</span>
-      </div>
+
       <h1>Academic Progress Dashboard</h1>
       <p>Monitor syllabus milestones, track phase completion, and benchmark peer collaboration.</p>
     </div>
@@ -41,16 +37,6 @@
       >
         <span class="tab-icon">📑</span>
         <span>Phases & Sections</span>
-      </button>
-
-      <button
-        class="tab-btn"
-        [class.active]="activeTab === 'management'"
-        type="button"
-        (click)="setTab('management')"
-      >
-        <span class="tab-icon">⚙️</span>
-        <span>Manage Records</span>
       </button>
     </div>
   </div>
@@ -122,11 +108,5 @@
       [sections]="sectionList"
       title="Detailed Phase & Module Progress"
     ></app-section-progress>
-  </div>
-
-  <!-- ================= TAB 4: MANAGEMENT (CRUD) ================= -->
-  <div *ngIf="activeTab === 'management'" class="tab-pane">
-    <!-- Component 9: ProgressManagementComponent (POST, PUT, DELETE /progresses) -->
-    <app-progress-management></app-progress-management>
   </div>
 </main>

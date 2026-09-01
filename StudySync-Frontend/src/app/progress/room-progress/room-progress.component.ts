@@ -1,8 +1,8 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { ProgressService } from '../../core/services/progress.service';
-import { RoomService } from '../../core/services/room.service';
+import { RoomService } from '../../services/room.service';
 import { RoomProgressData, PeerProgressItem } from '../../core/models/progress.model';
-import { Room } from '../../core/models/room.model';
+import { Room } from '../../models/room.model';
 
 @Component({
   selector: 'app-room-progress',
@@ -36,11 +36,18 @@ export class RoomProgressComponent implements OnInit, OnChanges {
   }
 
   public loadJoinedRooms(): void {
-    this.roomService.getJoinedRooms().subscribe({
-      next: (rooms) => {
-        this.joinedRooms = rooms;
-      },
-      error: (err) => console.error('Error fetching joined rooms for progress:', err)
+    import('rxjs').then(({ forkJoin }) => {
+      forkJoin({
+        progresses: this.progressService.getAllProgress(),
+        rooms: this.roomService.getRooms()
+      }).subscribe({
+        next: (res: any) => {
+          const allRooms = Array.isArray(res.rooms) ? res.rooms : (res.rooms?.data || []);
+          const myRoomIds = res.progresses.map((p: any) => p.roomId);
+          this.joinedRooms = allRooms.filter((r: Room) => myRoomIds.includes(r._id));
+        },
+        error: (err) => console.error('Error fetching joined rooms for progress:', err)
+      });
     });
   }
 

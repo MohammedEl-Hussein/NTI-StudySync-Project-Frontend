@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ProgressService } from '../core/services/progress.service';
-import { RoomService } from '../core/services/room.service';
+import { RoomService } from '../services/room.service';
 import { OverallProgressData, SectionProgressItem, PeerProgressItem } from '../core/models/progress.model';
-import { Room } from '../core/models/room.model';
+import { Room } from '../models/room.model';
 
 @Component({
   selector: 'app-progress',
@@ -10,7 +10,7 @@ import { Room } from '../core/models/room.model';
   styleUrls: ['./progress.component.css']
 })
 export class ProgressComponent implements OnInit {
-  public activeTab: 'overview' | 'room' | 'sections' | 'management' = 'overview';
+  public activeTab: 'overview' | 'room' | 'sections' = 'overview';
 
   public overallStats: OverallProgressData = {
     completedTasks: 44,
@@ -34,7 +34,7 @@ export class ProgressComponent implements OnInit {
     this.loadAllProgressData();
   }
 
-  public setTab(tab: 'overview' | 'room' | 'sections' | 'management'): void {
+  public setTab(tab: 'overview' | 'room' | 'sections'): void {
     this.activeTab = tab;
   }
 
@@ -45,23 +45,27 @@ export class ProgressComponent implements OnInit {
       next: (data) => (this.overallStats = data)
     });
 
-    this.progressService.getSectionProgress().subscribe({
-      next: (sections) => (this.sectionList = sections)
-    });
+    import('rxjs').then(({ forkJoin }) => {
+      forkJoin({
+        progresses: this.progressService.getAllProgress(),
+        rooms: this.roomService.getRooms()
+      }).subscribe({
+        next: (res: any) => {
+          const allRooms = Array.isArray(res.rooms) ? res.rooms : (res.rooms?.data || []);
+          const myRoomIds = res.progresses.map((p: any) => p.roomId);
+          this.rooms = allRooms.filter((r: Room) => myRoomIds.includes(r._id));
 
-    this.progressService.getPeerProgress().subscribe({
-      next: (peers) => (this.peerList = peers)
-    });
-
-    this.roomService.getJoinedRooms().subscribe({
-      next: (rooms) => {
-        this.rooms = rooms;
-        if (rooms.length > 0) {
-          this.selectedRoomId = rooms[0]._id || rooms[0].id || 'room_01';
-        }
-        this.loading = false;
-      },
-      error: () => (this.loading = false)
+          if (this.rooms.length > 0) {
+            this.selectedRoomId = this.rooms[0]._id || 'room_01';
+            
+            // Now fetch room-specific progress data
+            this.progressService.getSectionProgress(this.selectedRoomId).subscribe(sections => this.sectionList = sections);
+            this.progressService.getPeerProgress(this.selectedRoomId).subscribe(peers => this.peerList = peers);
+          }
+          this.loading = false;
+        },
+        error: () => (this.loading = false)
+      });
     });
   }
 }
