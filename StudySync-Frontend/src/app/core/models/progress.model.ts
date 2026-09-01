@@ -37,6 +37,7 @@ export interface OverallProgressData {
   remainingTasks: number;
   totalTasks: number;
   percentage: number;
+  joinedRooms?: number;
 }
 
 export interface SectionProgressItem {
