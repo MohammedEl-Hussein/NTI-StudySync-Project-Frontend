@@ -31,7 +31,7 @@
       <div class="room-title-block">
         <h1>{{ room.title }}</h1>
         <div class="room-badges">
-          <span class="badge-category">{{ room.category }}</span>
+          <span class="badge-category" *ngFor="let catName of getRoomCategoryList(room)">{{ catName }}</span>
           <span class="badge-level">{{ room.level }}</span>
         </div>
       </div>
@@ -46,17 +46,12 @@
 
       <div class="info-item">
         <span class="info-label">Active Members</span>
-        <span class="info-value"><strong>{{ room.members || room.memberCount || 0 }}</strong> / {{ room.maxMembers || 15 }}</span>
+        <span class="info-value"><strong>{{ room.memberCount !== undefined ? room.memberCount : (room.members || 0) }}</strong> / {{ room.maxMembers || 15 }}</span>
       </div>
 
       <div class="info-item">
-        <span class="info-label">Overall Syllabus Progress</span>
-        <div class="prog-row">
-          <span class="info-value">{{ room.progress || 0 }}%</span>
-          <div class="prog-bar-wrap">
-            <div class="prog-bar-fill" [style.width.%]="room.progress || 0"></div>
-          </div>
-        </div>
+        <span class="info-label">Total Study Tasks</span>
+        <span class="info-value"><strong>{{ room.totalTasks || 0 }}</strong> Tasks</span>
       </div>
 
       <div class="info-item">
