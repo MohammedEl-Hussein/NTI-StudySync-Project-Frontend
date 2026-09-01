@@ -11,16 +11,26 @@ import { EditRoomComponent } from './components/rooms/edit-room/edit-room.compon
 
 import { CategoriesComponent } from './components/categories/categories.component';
 
+import { MainLayoutComponent } from './components/layout/main-layout/main-layout.component';
+
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'users', component: UsersComponent },
-  { path: 'categories', component: CategoriesComponent },
-  { path: 'rooms', component: RoomListComponent },
-  { path: 'rooms/create', component: CreateRoomComponent },
-  { path: 'rooms/:id/edit', component: EditRoomComponent },
-  { path: 'rooms/:id', component: RoomDetailsComponent },
+  
+  {
+    path: '',
+    component: MainLayoutComponent,
+    children: [
+      { path: 'users', component: UsersComponent },
+      { path: 'categories', component: CategoriesComponent },
+      { path: 'rooms', component: RoomListComponent },
+      { path: 'rooms/create', component: CreateRoomComponent },
+      { path: 'rooms/:id/edit', component: EditRoomComponent },
+      { path: 'rooms/:id', component: RoomDetailsComponent },
+    ]
+  },
+  
   { path: '**', redirectTo: 'login' }
 ];
 

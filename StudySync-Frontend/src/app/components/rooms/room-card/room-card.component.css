@@ -1,104 +1,323 @@
 :host {
   display: block;
-  background: #fff;
-  border: 1px solid #e4e7ed;
-  border-radius: 14px;
+}
+
+.card-inner {
+  background: #ffffff;
+  border: 1px solid #eef0f4;
+  border-radius: 16px;
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
+
+.card-inner:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
 .cover {
-  height: 130px;
-  background: linear-gradient(135deg, #20264b, #6a57e8);
+  height: 140px;
+  background-size: cover;
+  background-position: center;
+  background-color: #20264b; /* Fallback */
 }
+
 .body {
-  padding: 17px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
-.level {
-  font-size: 9px;
-  background: #f1f2f6;
-  padding: 5px 7px;
-  border-radius: 12px;
-  margin-left: 5px;
-}
-.body h2 {
-  font-size: 15px;
-  margin: 13px 0 8px;
-}
-.body p {
-  font-size: 11px;
-  color: #7b8392;
-  line-height: 1.6;
-  min-height: 35px;
-}
-.members {
-  font-size: 10px;
-  color: #626b7b;
-  margin: 12px 0;
-}
-.progress-label {
+
+.tags-row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.tags {
+  display: flex;
+  gap: 8px;
+}
+
+.badge {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.category-badge {
+  background: #eff1fa;
+  color: #4f46e5;
+}
+
+.level-badge {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.video-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: #eff1fa;
+  color: #4f46e5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 46px; /* Forces exactly 2 lines of height even if text is 1 line */
+}
+
+.description {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0 0 20px 0;
+  flex-grow: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.members-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.avatars {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  margin-left: -8px;
+}
+
+.avatar:first-child {
+  margin-left: 0;
+}
+
+.avatar-more {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  margin-left: -8px;
+  background: #111827;
+  color: #fff;
   font-size: 9px;
-  color: #7b8392;
-  margin-bottom: 5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
 }
-.progress-label strong {
-  color: #5146df;
+
+.member-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4b5563;
 }
-.dates {
-  display: block;
-  margin: 12px 0;
-  color: #9299a7;
-  font-size: 10px;
+
+.member-count.full {
+  color: #ef4444;
 }
+
+.progress-section {
+  margin-bottom: 16px;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 11px;
+}
+
+.progress-title {
+  color: #9ca3af;
+}
+
+.progress-percent {
+  color: #4f46e5;
+  font-weight: 700;
+}
+
+.progress-track {
+  height: 4px;
+  background: #e5e7eb;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #4f46e5;
+  border-radius: 2px;
+}
+
+.dates-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #9ca3af;
+  font-size: 12px;
+  margin-bottom: 20px;
+}
+
 .actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 12px;
+  margin-top: auto;
 }
-.actions .btn {
-  width: 100%;
-}
+
 .btn {
-  border: 0;
+  padding: 10px;
   border-radius: 8px;
-  padding: 10px 15px;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
   cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: all 0.2s;
   text-decoration: none;
-  display: inline-flex;
+}
+
+.btn-outline {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+}
+
+.btn-outline:hover {
+  background: #f9fafb;
+}
+
+.btn-primary {
+  background: #4f46e5;
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background: #4338ca;
+}
+
+.btn-primary:disabled {
+  background: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.member-badge, .btn-joined {
+  display: flex;
   align-items: center;
   justify-content: center;
-}
-.primary {
-  background: linear-gradient(135deg, #5146df, #08a8df);
-  color: #fff;
-}
-.secondary {
-  background: #fff;
-  border: 1px solid #e0e3e9;
-  color: #4f586a;
-}
-.danger {
-  background: #fff0f0;
-  color: #df4e4e;
-}
-.progress-track {
-  height: 7px;
-  background: #e8ebf0;
-  border-radius: 5px;
-  overflow: hidden;
-}
-.progress-bar {
-  height: 100%;
-  background: linear-gradient(90deg, #5146df, #08a8df);
-}
-.badge {
-  display: inline-flex;
-  padding: 5px 8px;
-  border-radius: 20px;
+  gap: 6px;
   background: #eef0ff;
   color: #5146df;
-  font-size: 9px;
+  border-radius: 8px;
+  font-size: 13px;
   font-weight: 700;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-joined:hover {
+  background: #ffe2e2;
+  color: #ef4444;
+}
+.btn-joined:hover i::before {
+  content: "\f62a"; /* bi-x-circle-fill */
+}
+
+.card-actions-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.options-menu {
+  position: relative;
+  cursor: pointer;
+  color: #a0a6b5;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.options-menu:hover {
+  background: #f1f3f7;
+  color: #1b2437;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #fff;
+  border: 1px solid #e7e9ef;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  z-index: 100;
+  min-width: 150px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-item {
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #3b4256;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background: #f7f8fa;
+}
+
+.dropdown-item.text-danger {
+  color: #ef4444;
+}
+
+.dropdown-item.text-danger:hover {
+  background: #fee2e2;
 }

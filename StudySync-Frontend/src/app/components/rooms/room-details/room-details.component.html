@@ -1,4 +1,7 @@
-<main class="page" *ngIf="room">
+<div *ngIf="isLoading" class="text-center" style="padding: 50px;">Loading room details...</div>
+<div *ngIf="error" class="card danger" style="margin: 50px; padding: 20px; text-align: center;">{{ error }}</div>
+
+<main class="page" *ngIf="!isLoading && !error && room">
   <div class="breadcrumbs"><a routerLink="/rooms">Rooms</a><span>›</span><strong>{{ room?.title }}</strong></div>
   
   <section class="room-hero card">

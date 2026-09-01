@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RoomService } from '../../../services/room.service';
+import { CategoryService } from '../../../services/category.service';
+import { Category } from '../../../models/category.model';
 
 function dateValidator(control: AbstractControl): ValidationErrors | null {
   const startDate = control.get('startDate')?.value;
@@ -24,19 +26,31 @@ export class EditRoomComponent implements OnInit {
   isSaving = false;
   error = '';
 
+  categories: Category[] = [];
+  isCategoryDropdownOpen = false;
+  newCategoryName = '';
+  editingCategoryId: string | null = null;
+  editingCategoryName = '';
+  isAdmin = false;
+
   constructor(
     private fb: FormBuilder,
     private roomService: RoomService,
+    private categoryService: CategoryService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    this.isAdmin = user.role === 'admin';
+    this.loadCategories();
+
     this.editForm = this.fb.group({
       title: ['', Validators.required],
       level: ['Beginner', Validators.required],
       description: [''],
-      maxMembers: [10, Validators.required],
+      maxMembers: [10, [Validators.required, Validators.min(2), Validators.max(150)]],
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
       meetingURL: [''],
@@ -50,6 +64,10 @@ export class EditRoomComponent implements OnInit {
       this.error = 'Invalid Room ID';
       this.isLoading = false;
     }
+  }
+
+  loadCategories(): void {
+    this.categoryService.getCategories().subscribe(res => this.categories = res.categories);
   }
 
   loadRoom(): void {
@@ -79,6 +97,79 @@ export class EditRoomComponent implements OnInit {
     });
   }
 
+  toggleCategoryDropdown(): void {
+    this.isCategoryDropdownOpen = !this.isCategoryDropdownOpen;
+  }
+
+  toggleCategorySelection(categoryId: string, event: Event): void {
+    event.stopPropagation();
+    const current = this.editForm.get('categoryIds')?.value as string[] || [];
+    if (current.includes(categoryId)) {
+      this.editForm.patchValue({ categoryIds: current.filter(id => id !== categoryId) });
+    } else {
+      this.editForm.patchValue({ categoryIds: [...current, categoryId] });
+    }
+  }
+
+  isSelected(categoryId: string): boolean {
+    const current = this.editForm.get('categoryIds')?.value as string[] || [];
+    return current.includes(categoryId);
+  }
+
+  getCategoryName(id: string): string {
+    return this.categories.find(c => c._id === id)?.name || '';
+  }
+
+  addCategory(event: Event): void {
+    event.stopPropagation();
+    if (!this.newCategoryName.trim()) return;
+    this.categoryService.createCategory(this.newCategoryName.trim()).subscribe({
+      next: () => {
+        this.newCategoryName = '';
+        this.loadCategories();
+      },
+      error: (err) => alert(err.error?.message || 'Error creating category')
+    });
+  }
+
+  startEditCategory(category: Category, event: Event): void {
+    event.stopPropagation();
+    this.editingCategoryId = category._id;
+    this.editingCategoryName = category.name;
+  }
+
+  saveCategory(id: string, event: Event): void {
+    event.stopPropagation();
+    if (!this.editingCategoryName.trim()) return;
+    this.categoryService.updateCategory(id, this.editingCategoryName.trim()).subscribe({
+      next: () => {
+        this.editingCategoryId = null;
+        this.loadCategories();
+      },
+      error: (err) => alert(err.error?.message || 'Error updating category')
+    });
+  }
+
+  cancelEdit(event: Event): void {
+    event.stopPropagation();
+    this.editingCategoryId = null;
+  }
+
+  deleteCategory(categoryId: string, event: Event): void {
+    event.stopPropagation();
+    if (!confirm('Are you sure you want to delete this category?')) return;
+    this.categoryService.deleteCategory(categoryId).subscribe({
+      next: () => {
+        const current = this.editForm.get('categoryIds')?.value as string[] || [];
+        if (current.includes(categoryId)) {
+          this.editForm.patchValue({ categoryIds: current.filter(id => id !== categoryId) });
+        }
+        this.loadCategories();
+      },
+      error: (err) => alert(err.error?.message || 'Error deleting category')
+    });
+  }
+
   onSubmit(): void {
     if (this.editForm.invalid) return;
     this.isSaving = true;
@@ -95,7 +186,7 @@ export class EditRoomComponent implements OnInit {
   }
 
   deleteRoom(): void {
-    if (confirm('Are you sure you want to delete this room?')) {
+    if (confirm('Are you sure you want to delete this room? This will permanently delete all related chat messages, tasks, and member progress.')) {
       this.roomService.deleteRoom(this.roomId).subscribe({
         next: () => this.router.navigate(['/rooms']),
         error: (err) => alert(err.error?.message || 'Failed to delete room')

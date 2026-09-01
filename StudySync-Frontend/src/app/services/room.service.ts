@@ -35,4 +35,12 @@ export class RoomService {
   joinRoom(roomId: string): Observable<any> {
     return this.http.post(`${this.roomMembersUrl}/${roomId}/join`, {});
   }
+
+  leaveRoom(roomId: string): Observable<any> {
+    return this.http.delete(`${this.roomMembersUrl}/${roomId}/leave`);
+  }
+
+  getRoomMembers(roomId: string): Observable<any> {
+    return this.http.get(`${this.roomMembersUrl}/${roomId}/members`);
+  }
 }

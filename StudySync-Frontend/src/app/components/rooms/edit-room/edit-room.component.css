@@ -154,7 +154,156 @@
 .grid2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0 18px;
+  gap: 24px;
+}
+
+.custom-multi-select {
+  position: relative;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 32px 8px 12px;
+  border: 1px solid #e7e9ef;
+  border-radius: 8px;
+  background: #fcfcfd;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.custom-multi-select:hover {
+  border-color: #5146df;
+}
+
+.custom-multi-select > .bi-chevron-down {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #a0a6b5;
+  pointer-events: none;
+}
+
+.selected-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  width: 100%;
+}
+
+.pill {
+  background: #eef0ff;
+  color: #5146df;
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pill i {
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.pill i:hover {
+  color: #3b32a8;
+}
+
+.placeholder {
+  color: #b0b5c1;
+  font-size: 14px;
+  padding: 4px 0;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #e7e9ef;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  z-index: 100;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.dropdown-item {
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f1f3f7;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+  background: #f7f8fa;
+}
+
+.item-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-grow: 1;
+}
+
+.item-content input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.item-actions {
+  display: flex;
+  gap: 8px;
+  color: #a0a6b5;
+}
+
+.item-actions i {
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.item-actions i.bi-pencil:hover, .item-actions i.bi-check-circle:hover {
+  color: #5146df;
+  background: #eef0ff;
+}
+
+.item-actions i.bi-trash:hover, .item-actions i.bi-x-circle:hover {
+  color: #ef4444;
+  background: #fee2e2;
+}
+
+.edit-input {
+  margin: 0 !important;
+  padding: 4px 8px !important;
+  height: 28px !important;
+}
+
+.add-category-section {
+  padding: 12px 16px;
+  display: flex;
+  gap: 8px;
+  background: #fafafb;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.add-category-section input {
+  margin: 0 !important;
+  padding: 8px 12px !important;
+}
+
+.btn.small {
+  padding: 8px 16px;
+  font-size: 12px;
 }
 .full-row {
   grid-column: 1/-1;

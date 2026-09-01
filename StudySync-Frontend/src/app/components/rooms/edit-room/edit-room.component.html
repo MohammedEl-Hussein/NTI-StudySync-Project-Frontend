@@ -15,6 +15,46 @@
       <label class="form-label">Room Name
         <input class="input" formControlName="title">
       </label>
+      
+      <div class="form-group">
+        <label class="form-label">Categories</label>
+        <div class="custom-multi-select" (click)="toggleCategoryDropdown()">
+          <div class="selected-pills">
+            <span class="pill" *ngFor="let id of editForm.get('categoryIds')?.value">
+              {{ getCategoryName(id) }}
+              <i class="bi bi-x" (click)="toggleCategorySelection(id, $event)"></i>
+            </span>
+            <span *ngIf="!editForm.get('categoryIds')?.value?.length" class="placeholder">Select categories...</span>
+          </div>
+          <i class="bi bi-chevron-down"></i>
+          
+          <div class="dropdown-menu" *ngIf="isCategoryDropdownOpen" (click)="$event.stopPropagation()">
+            <div class="dropdown-item" *ngFor="let category of categories" (click)="toggleCategorySelection(category._id, $event)">
+              <div class="item-content">
+                <input type="checkbox" [checked]="isSelected(category._id)" (click)="$event.stopPropagation(); toggleCategorySelection(category._id, $event)">
+                <span *ngIf="editingCategoryId !== category._id">{{ category.name }}</span>
+                <input *ngIf="editingCategoryId === category._id" type="text" [(ngModel)]="editingCategoryName" [ngModelOptions]="{standalone: true}" (click)="$event.stopPropagation()" class="edit-input input">
+              </div>
+              
+              <div class="item-actions" *ngIf="isAdmin && editingCategoryId !== category._id">
+                <i class="bi bi-pencil" title="Edit" (click)="startEditCategory(category, $event)"></i>
+                <i class="bi bi-trash" title="Delete" (click)="deleteCategory(category._id, $event)"></i>
+              </div>
+              
+              <div class="item-actions" *ngIf="isAdmin && editingCategoryId === category._id">
+                <i class="bi bi-check-circle" title="Save" (click)="saveCategory(category._id, $event)"></i>
+                <i class="bi bi-x-circle" title="Cancel" (click)="cancelEdit($event)"></i>
+              </div>
+            </div>
+            
+            <div class="add-category-section">
+              <input type="text" class="input" placeholder="New category name..." [(ngModel)]="newCategoryName" [ngModelOptions]="{standalone: true}" (click)="$event.stopPropagation()" (keyup.enter)="addCategory($event)">
+              <button type="button" class="btn primary small" (click)="addCategory($event)">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <label class="form-label">Study Level
         <select class="select" formControlName="level">
           <option>Beginner</option>

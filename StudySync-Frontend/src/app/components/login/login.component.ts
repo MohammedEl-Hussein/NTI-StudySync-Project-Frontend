@@ -77,7 +77,7 @@ export class LoginComponent implements OnInit {
         }
 
         alert('Login Successful! Welcome back.');
-        this.router.navigate(['/users']);
+        this.router.navigate(['/rooms']);
       },
       error: (err) => {
         this.loading = false;

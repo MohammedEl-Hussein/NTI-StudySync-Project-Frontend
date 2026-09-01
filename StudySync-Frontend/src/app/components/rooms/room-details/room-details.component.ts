@@ -35,21 +35,41 @@ export class RoomDetailsComponent implements OnInit {
     this.roomService.getRoomById(id).subscribe({
       next: (res) => {
         this.room = res.data;
-        // Mock data since tasks/progress APIs aren't integrated here yet
-        this.memberCount = this.room.maxMembers > 2 ? 2 : 1; 
-        this.progress = 25;
-        this.taskCount = 4;
-        this.phases = [
-          { section: 'Week 1: Fundamentals', completed: 1, total: 4, tasks: [
-            { title: 'Read Chapter 1', description: 'Introduction', completed: true, dueDate: new Date() },
-            { title: 'Complete Quiz', description: 'Test your knowledge', completed: false, dueDate: new Date() }
-          ] }
-        ];
         
-        // Pseudo check, usually compare with logged in user ID
-        this.isOwner = true; 
-        
-        this.isLoading = false;
+        if (!this.room) {
+          this.error = 'Room not found';
+          this.isLoading = false;
+          return;
+        }
+
+        this.roomService.getRoomMembers(id).subscribe({
+          next: (memRes) => {
+            const members = memRes.members || [];
+            this.memberCount = members.length;
+            this.room.members = members.map((m: any) => m.userId?._id || m.userId);
+
+            const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const userId = user.id || user._id || user.userId;
+            
+            this.isOwner = this.room?.ownerId === userId || this.room?.ownerId?._id === userId;
+
+            // Mock data since tasks/progress APIs aren't integrated here yet
+            this.progress = 25;
+            this.taskCount = 4;
+            this.phases = [
+              { section: 'Week 1: Fundamentals', completed: 1, total: 4, tasks: [
+                { title: 'Read Chapter 1', description: 'Introduction', completed: true, dueDate: new Date() },
+                { title: 'Complete Quiz', description: 'Test your knowledge', completed: false, dueDate: new Date() }
+              ] }
+            ];
+            
+            this.isLoading = false;
+          },
+          error: () => {
+            this.memberCount = 0;
+            this.isLoading = false;
+          }
+        });
       },
       error: (err) => {
         this.error = 'Failed to load room details';

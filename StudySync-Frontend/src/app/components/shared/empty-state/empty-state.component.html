@@ -1,0 +1,6 @@
+<section class="empty-state">
+  <div class="empty-icon">{{ icon || '?' }}</div>
+  <h3>{{ title }}</h3>
+  <p>{{ message }}</p>
+  <a *ngIf="actionText" class="btn primary" [routerLink]="actionLink">{{ actionText }}</a>
+</section>

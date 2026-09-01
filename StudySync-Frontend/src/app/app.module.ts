@@ -18,6 +18,14 @@ import { EditRoomComponent } from './components/rooms/edit-room/edit-room.compon
 import { RoomDetailsComponent } from './components/rooms/room-details/room-details.component';
 import { CategoriesComponent } from './components/categories/categories.component';
 
+import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { SidebarComponent } from './components/layout/sidebar/sidebar.component';
+import { NavbarComponent } from './components/layout/navbar/navbar.component';
+import { MainLayoutComponent } from './components/layout/main-layout/main-layout.component';
+import { EmptyStateComponent } from './components/shared/empty-state/empty-state.component';
+import { SkeletonCardComponent } from './components/shared/skeleton-card/skeleton-card.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -31,7 +39,12 @@ import { CategoriesComponent } from './components/categories/categories.componen
     CreateRoomComponent,
     EditRoomComponent,
     RoomDetailsComponent,
-    CategoriesComponent
+    CategoriesComponent,
+    SidebarComponent,
+    NavbarComponent,
+    MainLayoutComponent,
+    EmptyStateComponent,
+    SkeletonCardComponent
   ],
   imports: [
     BrowserModule,
@@ -41,7 +54,9 @@ import { CategoriesComponent } from './components/categories/categories.componen
     HttpClientModule,
     UsersComponent
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

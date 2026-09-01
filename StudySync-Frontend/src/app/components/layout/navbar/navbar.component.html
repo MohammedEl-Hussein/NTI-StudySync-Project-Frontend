@@ -1,0 +1,33 @@
+<header class="topbar">
+  <a class="brand" routerLink="/" aria-label="StudySync home">
+    <span class="brand-mark">S</span>
+    <span>StudySync</span>
+  </a>
+
+  <div class="topbar-search">
+    <span class="search-icon">⌕</span>
+    <input type="search" placeholder="Search rooms, topics..." [(ngModel)]="searchTerm" (input)="onSearchInput()" (keyup.enter)="onSearch()">
+  </div>
+
+  <div class="topbar-actions">
+    <button class="icon-btn" type="button" (click)="toggleNotifications()" aria-label="Notifications">♧</button>
+    <button class="avatar-btn" type="button" routerLink="/profile">
+      <span class="avatar">{{ currentUser?.name?.charAt(0) || 'U' }}</span>
+      <span class="chevron">⌄</span>
+    </button>
+  </div>
+
+  <div class="notification-panel" *ngIf="notificationsOpen">
+    <div class="notification-head">
+      <strong>Notifications</strong>
+      <button type="button" (click)="markAllRead()">Mark all as read</button>
+    </div>
+    <button class="notification-item" *ngFor="let notification of notifications" type="button">
+      <strong>{{ notification.title }}</strong>
+      <span>{{ notification.time }}</span>
+    </button>
+    <div class="notification-item text-muted" *ngIf="notifications.length === 0">
+      No new notifications.
+    </div>
+  </div>
+</header>

@@ -1,0 +1,38 @@
+<aside class="sidebar" [class.collapsed]="collapsed">
+  <div class="side-nav">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+      <i class="bi bi-grid"></i><span>Dashboard</span>
+    </a>
+    <a routerLink="/rooms" routerLinkActive="active">
+      <i class="bi bi-search"></i><span>Browse Rooms</span>
+    </a>
+    <a routerLink="/my-rooms" routerLinkActive="active">
+      <i class="bi bi-folder"></i><span>My Rooms</span>
+    </a>
+    <a routerLink="/study-plan" routerLinkActive="active">
+      <i class="bi bi-calendar"></i><span>Study Plan</span>
+    </a>
+    <a routerLink="/progress" routerLinkActive="active">
+      <i class="bi bi-graph-up"></i><span>Progress</span>
+    </a>
+    <a routerLink="/messages" routerLinkActive="active">
+      <i class="bi bi-chat"></i><span>Messages</span>
+    </a>
+    <a routerLink="/profile" routerLinkActive="active">
+      <i class="bi bi-person"></i><span>Profile</span>
+    </a>
+  </div>
+
+  <div class="sidebar-bottom">
+    <a class="support-link" routerLink="/support">
+      <i class="bi bi-question-circle"></i><span>Contact Admin</span>
+    </a>
+    <div class="user-mini">
+      <span class="avatar">{{ currentUser?.name?.charAt(0) || 'U' }}</span>
+      <div><strong>{{ currentUser?.name || 'Student' }}</strong><small>{{ currentUser?.role === 'admin' ? 'PLATFORM ADMIN' : 'STUDENT' }}</small></div>
+    </div>
+    <button class="logout" type="button" (click)="logout()">
+      <i class="bi bi-box-arrow-right"></i>
+    </button>
+  </div>
+</aside>

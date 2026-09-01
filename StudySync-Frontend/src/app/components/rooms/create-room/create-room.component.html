@@ -1,26 +1,101 @@
 <main class="page">
-  <div class="page-header"><div><h1>Create Study Room</h1><p>Build a focused workspace for your study group.</p></div></div>
-  <div class="steps">
-    <span [class.active]="step===1">1 <b>Basic Info</b></span>
-    <span [class.active]="step===2">2 <b>Classification</b></span>
-    <span [class.active]="step===3">3 <b>Settings</b></span>
-    <span [class.active]="step===4">4 <b>Meeting</b></span>
-    <span [class.active]="step===5">5 <b>Study Plan</b></span>
+  <div class="page-header">
+    <h1>Create Study Room</h1>
   </div>
+  
+  <div class="stepper-container">
+    <div class="stepper">
+      <div class="step" [class.active]="step >= 1">
+        <div class="step-circle">1</div>
+        <span class="step-label">Basic Info</span>
+      </div>
+      <div class="step-line"></div>
+      
+      <div class="step" [class.active]="step >= 2">
+        <div class="step-circle">2</div>
+        <span class="step-label">Classification</span>
+      </div>
+      <div class="step-line"></div>
+      
+      <div class="step" [class.active]="step >= 3">
+        <div class="step-circle">3</div>
+        <span class="step-label">Settings</span>
+      </div>
+      <div class="step-line"></div>
+      
+      <div class="step" [class.active]="step >= 4">
+        <div class="step-circle">4</div>
+        <span class="step-label">Meeting</span>
+      </div>
+      <div class="step-line"></div>
+      
+      <div class="step" [class.active]="step >= 5">
+        <div class="step-circle">5</div>
+        <span class="step-label">Study Plan</span>
+      </div>
+    </div>
+  </div>
+
   <form class="card form-card" [formGroup]="roomForm" (ngSubmit)="submitRoom()">
     <section *ngIf="step===1">
-      <h2>Basic Information</h2><p class="muted">Set up the primary details for your study room.</p>
-      <label class="form-label">Room Name<input class="input" formControlName="title" placeholder="e.g. Organic Chemistry Study Circle"></label>
-      <label class="form-label">Description<textarea class="textarea" formControlName="description" placeholder="Briefly describe the goals of this room..."></textarea></label>
+      <h2>Basic Information</h2>
+      <p class="muted">Set up the primary credentials to distinguish your study room.</p>
+      
+      <label class="form-label">Room Name
+        <input class="input" formControlName="title" placeholder="e.g., Organic Chemistry Study Circle">
+      </label>
+      
+      <label class="form-label">Study Topic
+        <!-- Assuming we want a specific topic input or just keeping category/level. In the design it shows Study Topic. Let's add a dummy input for visual match or bind it to description. -->
+        <input class="input" placeholder="e.g., Reactions of Alkenes">
+      </label>
+      
+      <label class="form-label">Description
+        <textarea class="textarea" formControlName="description" placeholder="Briefly describe the goals of this room, weekly syllabus targets, and what is expected of study members..."></textarea>
+      </label>
     </section>
     
     <section *ngIf="step===2">
       <h2>Classification</h2>
-      <label class="form-label">Categories
-        <select class="select" formControlName="categoryIds" multiple>
-          <option *ngFor="let category of categories" [value]="category._id">{{ category.name }}</option>
-        </select>
-      </label>
+      <p class="muted">Categorize your room to help others find it.</p>
+      <div class="form-group">
+        <label class="form-label">Categories</label>
+        <div class="custom-multi-select" (click)="toggleCategoryDropdown()">
+          <div class="selected-pills">
+            <span class="pill" *ngFor="let id of roomForm.get('categoryIds')?.value">
+              {{ getCategoryName(id) }}
+              <i class="bi bi-x" (click)="toggleCategorySelection(id, $event)"></i>
+            </span>
+            <span *ngIf="!roomForm.get('categoryIds')?.value?.length" class="placeholder">Select categories...</span>
+          </div>
+          <i class="bi bi-chevron-down"></i>
+          
+          <div class="dropdown-menu" *ngIf="isCategoryDropdownOpen" (click)="$event.stopPropagation()">
+            <div class="dropdown-item" *ngFor="let category of categories" (click)="toggleCategorySelection(category._id, $event)">
+              <div class="item-content">
+                <input type="checkbox" [checked]="isSelected(category._id)" (click)="$event.stopPropagation(); toggleCategorySelection(category._id, $event)">
+                <span *ngIf="editingCategoryId !== category._id">{{ category.name }}</span>
+                <input *ngIf="editingCategoryId === category._id" type="text" [(ngModel)]="editingCategoryName" [ngModelOptions]="{standalone: true}" (click)="$event.stopPropagation()" class="edit-input input">
+              </div>
+              
+              <div class="item-actions" *ngIf="isAdmin && editingCategoryId !== category._id">
+                <i class="bi bi-pencil" title="Edit" (click)="startEditCategory(category, $event)"></i>
+                <i class="bi bi-trash" title="Delete" (click)="deleteCategory(category._id, $event)"></i>
+              </div>
+              
+              <div class="item-actions" *ngIf="isAdmin && editingCategoryId === category._id">
+                <i class="bi bi-check-circle" title="Save" (click)="saveCategory(category._id, $event)"></i>
+                <i class="bi bi-x-circle" title="Cancel" (click)="cancelEdit($event)"></i>
+              </div>
+            </div>
+            
+            <div class="add-category-section">
+              <input type="text" class="input" placeholder="New category name..." [(ngModel)]="newCategoryName" [ngModelOptions]="{standalone: true}" (click)="$event.stopPropagation()" (keyup.enter)="addCategory($event)">
+              <button type="button" class="btn primary small" (click)="addCategory($event)">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
       <label class="form-label">Study Level
         <select class="select" formControlName="level">
           <option>Beginner</option>
@@ -32,6 +107,7 @@
     
     <section *ngIf="step===3">
       <h2>Settings</h2>
+      <p class="muted">Configure room capacity and duration.</p>
       <label class="form-label">Maximum Members<input class="input" type="number" formControlName="maxMembers" min="2" max="150"></label>
       <div class="grid2">
         <label class="form-label">Start Date<input class="input" type="date" formControlName="startDate"></label>
@@ -40,17 +116,21 @@
     </section>
     
     <section *ngIf="step===4">
-      <h2>Meeting</h2><p class="muted">Optionally add a Zoom or Google Meet link.</p>
+      <h2>Meeting</h2>
+      <p class="muted">Optionally add a Zoom or Google Meet link.</p>
       <label class="form-label">Meeting URL<input class="input" formControlName="meetingURL" placeholder="https://meet.google.com/..."></label>
     </section>
     
     <section *ngIf="step===5">
-      <h2>Study Plan</h2><p class="muted">The backend stores tasks separately. Create the room first, then add tasks from the room page.</p>
+      <h2>Study Plan</h2>
+      <p class="muted">The backend stores tasks separately. Create the room first, then add tasks from the room page.</p>
       <div class="plan-note">You can add sections and tasks after the room is created.</div>
     </section>
     
     <div class="form-actions">
-      <button class="btn secondary" type="button" (click)="previous()" [disabled]="step===1">Back</button>
+      <button class="btn btn-outline" type="button" (click)="step === 1 ? null : previous()">
+        {{ step === 1 ? 'Cancel' : 'Back' }}
+      </button>
       <button *ngIf="step<5" class="btn primary" type="button" (click)="next()">Continue to Step {{ step + 1 }}</button>
       <button *ngIf="step===5" class="btn primary" type="submit">Create Study Room</button>
     </div>
