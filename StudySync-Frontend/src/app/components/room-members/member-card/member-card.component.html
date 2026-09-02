@@ -36,7 +36,7 @@
     </button>
   </div>
 
-  <div class="member-actions" *ngIf="!canManage && !isRoomOwner && isSelf">
+  <div class="member-actions" *ngIf="!isRoomOwner && isSelf">
     <button class="btn secondary full" type="button" disabled>
       You
     </button>

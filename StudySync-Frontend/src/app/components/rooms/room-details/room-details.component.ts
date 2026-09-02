@@ -92,8 +92,18 @@ export class RoomDetailsComponent implements OnInit {
 
             const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
             const userId = user.id || user._id || user.userId;
-            
-            this.isOwner = this.room?.ownerId === userId || this.room?.ownerId?._id === userId;
+            const role = (user.role || user.userRole || '').toLowerCase();
+            const isSystemAdmin = role === 'admin';
+
+            const isRoomOwner = this.room?.ownerId === userId || this.room?.ownerId?._id === userId;
+            const isRoomAdmin = (this.room?.adminIds || []).some((a: any) => (a._id || a.id || a) === userId)
+              || (members || []).some((m: any) => {
+                const mId = m.userId?._id || m.userId?.id || m.userId || m._id || m.id;
+                const mRole = (m.role || '').toLowerCase();
+                return mId && String(mId) === String(userId) && mRole === 'admin';
+              });
+
+            this.isOwner = isRoomOwner || isRoomAdmin || isSystemAdmin;
           },
           error: () => {
             this.memberCount = 0;

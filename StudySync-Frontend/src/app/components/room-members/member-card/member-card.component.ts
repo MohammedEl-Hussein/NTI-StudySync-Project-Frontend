@@ -37,7 +37,7 @@ export class MemberCardComponent {
   }
 
   get role(): string {
-    return this.member?.role || (this.isOwner ? 'owner' : 'member');
+    return (this.member?.role || (this.isOwner ? 'owner' : 'member')).toLowerCase();
   }
 
   get isAdmin(): boolean {

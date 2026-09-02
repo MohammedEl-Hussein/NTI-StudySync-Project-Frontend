@@ -36,4 +36,6 @@ export interface CreateRoomDto {
   meetingURL?: string;
 }
 
-export type UpdateRoomDto = Partial<CreateRoomDto>;
+export interface UpdateRoomDto extends Partial<CreateRoomDto> {
+  adminIds?: string[];
+}

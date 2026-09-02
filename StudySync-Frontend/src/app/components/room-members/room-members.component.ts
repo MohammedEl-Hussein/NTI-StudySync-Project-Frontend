@@ -61,6 +61,7 @@ export class RoomMembersComponent implements OnInit {
       if (userJson) {
         const user = JSON.parse(userJson);
         this.currentUserId = user._id || user.id || user.userId || '';
+        this.currentUserRole = user.role || user.userRole || '';
       }
     } catch (e) {
       console.warn('Could not parse currentUser from localStorage');
@@ -113,13 +114,12 @@ export class RoomMembersComponent implements OnInit {
 
     const memberId = userObj._id || userObj.id;
     const isOwnerId = this.isOwnerUser(memberId);
-    const isAdminId = this.isAdminUser(memberId);
 
-    let role = raw.role || 'member';
+    let role = (raw.role || 'member').toLowerCase();
     if (isOwnerId) {
       role = 'owner';
-    } else if (isAdminId) {
-      role = 'admin';
+    } else if (role === 'admin' || role === 'owner' || this.isAdminUser(memberId)) {
+      role = role === 'owner' ? 'owner' : 'admin';
     }
 
     return {
@@ -131,15 +131,28 @@ export class RoomMembersComponent implements OnInit {
   }
 
   private isOwnerUser(userId: string): boolean {
-    if (!this.room || !userId) return false;
-    const ownerId = this.room.ownerId?._id || this.room.ownerId?.id || this.room.ownerId;
-    return ownerId === userId;
+    if (!userId) return false;
+    const ownerId = this.room?.ownerId?._id || this.room?.ownerId?.id || this.room?.ownerId;
+    return ownerId && String(ownerId) === String(userId);
   }
 
   private isAdminUser(userId: string): boolean {
-    if (!this.room || !userId) return false;
-    const admins = this.room.adminIds || [];
-    return admins.some((a: any) => (a._id || a.id || a) === userId);
+    if (!userId) return false;
+
+    // Check room.adminIds / room.admins
+    const adminIds = this.room?.adminIds || this.room?.admins || [];
+    const inAdminIds = adminIds.some((a: any) => {
+      const aId = a?._id || a?.id || a;
+      return aId && String(aId) === String(userId);
+    });
+    if (inAdminIds) return true;
+
+    // Check members list for role === 'admin'
+    const memberObj = (this.members || []).find((m: any) => {
+      const mId = m.userId?._id || m.userId?.id || m.userId || m._id || m.id;
+      return mId && String(mId) === String(userId);
+    });
+    return memberObj?.role === 'admin' || memberObj?.role === 'ADMIN';
   }
 
   evaluatePermissions(): void {
@@ -151,16 +164,18 @@ export class RoomMembersComponent implements OnInit {
       return;
     }
 
+    const isSystemAdmin = (this.currentUserRole || '').toLowerCase() === 'admin';
+
     this.isOwner = this.isOwnerUser(this.currentUserId);
     this.isAdmin = this.isAdminUser(this.currentUserId);
     
-    const isMemberInList = this.members.some(m => {
-      const id = m.userId?._id || m.userId?.id || m.userId;
-      return id === this.currentUserId;
+    const isMemberInList = (this.members || []).some(m => {
+      const id = m.userId?._id || m.userId?.id || m.userId || m._id || m.id;
+      return id && String(id) === String(this.currentUserId);
     });
 
     this.isCurrentUserMember = isMemberInList || this.isOwner;
-    this.canManage = this.isOwner || this.isAdmin;
+    this.canManage = this.isOwner || this.isAdmin || isSystemAdmin;
   }
 
   get existingMemberIds(): string[] {
@@ -226,21 +241,59 @@ export class RoomMembersComponent implements OnInit {
   }
 
   toggleAdmin(member: any): void {
-    const memberId = member.userId?._id || member.userId?.id || member.userId;
+    const memberId = member.userId?._id || member.userId?.id || (typeof member.userId === 'string' ? member.userId : member._id || member.id);
     if (!memberId || !this.roomId) return;
 
-    const newRole = member.role === 'admin' ? 'member' : 'admin';
+    const currentRole = (member.role || '').toLowerCase();
+    const newRole = currentRole === 'admin' ? 'member' : 'admin';
 
-    this.roomMembersService.updateMemberRole(this.roomId, memberId, newRole).subscribe({
-      next: () => {
-        member.role = newRole;
-        this.showToast(`Role updated to ${newRole}`);
-      },
-      error: () => {
-        // Optimistic toggle for smooth UI
-        member.role = newRole;
-        this.showToast(`Role updated to ${newRole}`);
+    // 1. Immediately update member role locally for instant UI update
+    member.role = newRole;
+
+    // 2. Prepare updated adminIds array for Room document
+    if (!this.room) this.room = {};
+
+    let adminIdStrings: string[] = (this.room.adminIds || []).map((a: any) =>
+      String(a._id || a.id || a)
+    );
+
+    const ownerId = this.room?.ownerId?._id || this.room?.ownerId?.id || this.room?.ownerId;
+    if (ownerId && !adminIdStrings.includes(String(ownerId))) {
+      adminIdStrings.push(String(ownerId));
+    }
+
+    if (newRole === 'admin') {
+      if (!adminIdStrings.includes(String(memberId))) {
+        adminIdStrings.push(String(memberId));
       }
+    } else {
+      adminIdStrings = adminIdStrings.filter(id => id !== String(memberId));
+      if (ownerId && !adminIdStrings.includes(String(ownerId))) {
+        adminIdStrings.push(String(ownerId));
+      }
+    }
+
+    this.room.adminIds = adminIdStrings;
+    this.showToast(`Role updated to ${newRole}`);
+    this.evaluatePermissions();
+
+    // 3. Persist updated adminIds array to backend Room document
+    this.roomService.updateRoom(this.roomId, { adminIds: adminIdStrings }).subscribe({
+      next: (res: any) => {
+        if (res?.data) {
+          this.room = res.data;
+        }
+        this.evaluatePermissions();
+      },
+      error: (err: any) => {
+        console.warn('Backend update room adminIds:', err);
+        this.evaluatePermissions();
+      }
+    });
+
+    // 4. Also call updateMemberRole in roomMembersService
+    this.roomMembersService.updateMemberRole(this.roomId, memberId, newRole).subscribe({
+      error: (err: any) => console.warn('Backend update member role:', err)
     });
   }
 

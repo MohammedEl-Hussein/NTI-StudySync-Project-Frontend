@@ -111,13 +111,21 @@
 
 .notify-badge {
   position: absolute;
-  top: 7px;
-  right: 7px;
-  width: 8px;
-  height: 8px;
-  background: #ef4444;
-  border-radius: 50%;
+  top: -6px;
+  right: -6px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 4px;
+  background-color: #ef4444;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
   border: 2px solid #ffffff;
+  box-sizing: border-box;
 }
 
 /* User Menu Wrapper */

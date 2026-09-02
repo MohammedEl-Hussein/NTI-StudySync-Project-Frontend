@@ -330,15 +330,23 @@ export class ChatRoomComponent implements OnInit, OnChanges, OnDestroy {
 
   onConfirmDelete(id: string): void {
     this.isDeletingMsg = true;
+
+    // Store backup copy of messages in case server request fails
+    const backupMessages = [...this.messages];
+    this.messages = this.messages.filter((m) => m._id !== id);
+
     this.messageService.deleteMessage(id).subscribe({
       next: () => {
-        this.messages = this.messages.filter((m) => m._id !== id);
+        this.isDeletingMsg = false;
         this.closeDeleteModal();
       },
       error: (err) => {
         this.isDeletingMsg = false;
-        console.error('Failed to delete message:', err);
-        alert('Failed to delete message. Please try again.');
+        console.error('Failed to delete message from server:', err);
+        // Restore message list if server deletion failed
+        this.messages = backupMessages;
+        this.closeDeleteModal();
+        alert(err?.error?.message || 'Failed to delete message from server.');
       }
     });
   }
