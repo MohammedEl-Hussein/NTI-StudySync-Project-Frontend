@@ -78,6 +78,7 @@ import { DeleteMessageComponent } from './components/chat/delete-message/delete-
 import { MessagesPageComponent } from './components/chat/messages/messages.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ToastComponent } from './components/shared/toast/toast.component';
+import { PopupContainerComponent } from './shared/components/popup-container/popup-container.component';
 
 @NgModule({
   declarations: [
@@ -135,7 +136,8 @@ import { ToastComponent } from './components/shared/toast/toast.component';
     TaskEditComponent,
     TaskDetailsComponent,
     DashboardComponent,
-    ToastComponent
+    ToastComponent,
+    PopupContainerComponent
   ],
   imports: [
     BrowserModule,

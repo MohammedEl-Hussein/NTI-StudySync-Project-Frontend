@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { Room } from '../../../core/models/room.model';
 import { Category } from '../../../core/models/admin.model';
+import { PopupService } from '../../../core/services/popup.service';
 
 @Component({
   selector: 'app-admin-room-details',
@@ -18,7 +19,8 @@ export class AdminRoomDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private adminService: AdminService
+    private adminService: AdminService,
+    private popupService: PopupService
   ) {}
 
   ngOnInit(): void {
@@ -100,18 +102,20 @@ export class AdminRoomDetailsComponent implements OnInit {
 
   deleteRoom(): void {
     if (!this.room || !this.roomId) return;
-    if (confirm(`Are you sure you want to delete room "${this.room.title}"?`)) {
-      this.adminService.deleteRoom(this.roomId).subscribe({
-        next: () => {
-          alert('Room deleted successfully.');
-          this.router.navigate(['/admin/rooms']);
-        },
-        error: (err) => {
-          console.error('Error deleting room:', err);
-          alert('Failed to delete room.');
-        }
-      });
-    }
+    this.popupService.confirm(`Are you sure you want to delete room "${this.room.title}"?`).subscribe(confirmed => {
+      if (confirmed) {
+        this.adminService.deleteRoom(this.roomId).subscribe({
+          next: () => {
+            this.popupService.toastSuccess('Room deleted successfully.');
+            this.router.navigate(['/admin/rooms']);
+          },
+          error: (err) => {
+            console.error('Error deleting room:', err);
+            this.popupService.toastError('Failed to delete room.');
+          }
+        });
+      }
+    });
   }
 
   goBack(): void {

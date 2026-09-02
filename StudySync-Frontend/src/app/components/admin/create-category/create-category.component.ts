@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AdminService } from '../../../core/services/admin.service';
+import { PopupService } from '../../../core/services/popup.service';
 
 @Component({
   selector: 'app-create-category',
@@ -15,7 +16,8 @@ export class CreateCategoryComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private adminService: AdminService,
-    private router: Router
+    private router: Router,
+    private popupService: PopupService
   ) {}
 
   ngOnInit(): void {
@@ -34,12 +36,12 @@ export class CreateCategoryComponent implements OnInit {
     this.submitting = true;
     this.adminService.createCategory(this.categoryForm.value).subscribe({
       next: () => {
-        alert('Category created successfully!');
+        this.popupService.toastSuccess('Category created successfully!');
         this.router.navigate(['/admin/categories']);
       },
       error: (err) => {
         console.error('Error creating category:', err);
-        alert('Failed to create category.');
+        this.popupService.toastError('Failed to create category.');
         this.submitting = false;
       }
     });

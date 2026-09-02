@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, HostListener } from '@angular/core';
 import { Room } from '../../../models/room.model';
 import { RoomService } from '../../../services/room.service';
+import { PopupService } from '../../../core/services/popup.service';
 
 @Component({
   selector: 'app-room-card',
@@ -15,7 +16,7 @@ export class RoomCardComponent implements OnInit {
 
   menuOpen = false;
 
-  constructor(private roomService: RoomService) { }
+  constructor(private roomService: RoomService, private popupService: PopupService) { }
 
   get isMember(): boolean {
     const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
@@ -78,14 +79,17 @@ export class RoomCardComponent implements OnInit {
     event.stopPropagation();
     this.menuOpen = false;
 
-    if (confirm(`Are you sure you want to delete "${this.room.title}"? This will permanently delete all related chat messages, tasks, and member progress.`)) {
-      this.roomService.deleteRoom(this.room._id).subscribe({
-        next: () => {
-          this.deleted.emit(this.room._id);
-        },
-        error: (err) => alert(err.error?.message || 'Error deleting room')
-      });
-    }
+    this.popupService.confirm(`Are you sure you want to delete "${this.room.title}"? This will permanently delete all related chat messages, tasks, and member progress.`).subscribe(confirmed => {
+      if (confirmed) {
+        this.roomService.deleteRoom(this.room._id).subscribe({
+          next: () => {
+            this.deleted.emit(this.room._id);
+            this.popupService.toastSuccess('Room deleted successfully');
+          },
+          error: (err) => this.popupService.toastError(err.error?.message || 'Error deleting room')
+        });
+      }
+    });
   }
 
   joinRoom(room: Room): void {

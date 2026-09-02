@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { User } from '../../../core/models/user.model';
+import { PopupService } from '../../../core/services/popup.service';
 
 @Component({
   selector: 'app-admin-user-details',
@@ -16,7 +17,8 @@ export class AdminUserDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private adminService: AdminService
+    private adminService: AdminService,
+    private popupService: PopupService
   ) {}
 
   ngOnInit(): void {
@@ -44,18 +46,20 @@ export class AdminUserDetailsComponent implements OnInit {
 
   deleteUser(): void {
     if (!this.user || !this.userId) return;
-    if (confirm(`Are you sure you want to delete user ${this.user.name}?`)) {
-      this.adminService.deleteUser(this.userId).subscribe({
-        next: () => {
-          alert('User deleted successfully.');
-          this.router.navigate(['/admin/users']);
-        },
-        error: (err) => {
-          console.error('Error deleting user:', err);
-          alert('Failed to delete user.');
-        }
-      });
-    }
+    this.popupService.confirm(`Are you sure you want to delete user ${this.user.name}?`).subscribe(confirmed => {
+      if (confirmed) {
+        this.adminService.deleteUser(this.userId).subscribe({
+          next: () => {
+            this.popupService.toastSuccess('User deleted successfully.');
+            this.router.navigate(['/admin/users']);
+          },
+          error: (err) => {
+            console.error('Error deleting user:', err);
+            this.popupService.toastError('Failed to delete user.');
+          }
+        });
+      }
+    });
   }
 
   goBack(): void {

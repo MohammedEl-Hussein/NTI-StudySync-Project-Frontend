@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { UsersService } from 'src/app/services/users.service';
+import { PopupService } from 'src/app/core/services/popup.service';
 
 @Component({
   selector: 'app-users',
@@ -21,7 +22,8 @@ export class UsersComponent implements OnInit {
 
   constructor(
     private userServices: UsersService,
-    private router: Router
+    private router: Router,
+    private popupService: PopupService
   ) {}
 
   ngOnInit() {
@@ -71,18 +73,20 @@ export class UsersComponent implements OnInit {
   }
 
   deleteUser(id: any) {
-    if (confirm('Are you sure you want to delete this user?')) {
-      this.userServices.deleteUser(id).subscribe({
-        next: () => {
-          alert('User deleted successfully!');
-          this.getAllUsers();
-        },
-        error: (err) => {
-          console.error('Error deleting user:', err);
-          alert(err.error?.message || 'Failed to delete user.');
-        }
-      });
-    }
+    this.popupService.confirm('Are you sure you want to delete this user?').subscribe(confirmed => {
+      if (confirmed) {
+        this.userServices.deleteUser(id).subscribe({
+          next: () => {
+            this.popupService.toastSuccess('User deleted successfully!');
+            this.getAllUsers();
+          },
+          error: (err) => {
+            console.error('Error deleting user:', err);
+            this.popupService.toastError(err.error?.message || 'Failed to delete user.');
+          }
+        });
+      }
+    });
   }
 
   selectUserForEdit(user: any) {
@@ -94,13 +98,13 @@ export class UsersComponent implements OnInit {
 
     this.userServices.update(this.selectedUser).subscribe({
       next: () => {
-        alert('User updated successfully!');
+        this.popupService.toastSuccess('User updated successfully!');
         this.selectedUser = null;
         this.getAllUsers();
       },
       error: (err) => {
         console.error('Error updating user:', err);
-        alert(err.error?.message || 'Failed to update user.');
+        this.popupService.toastError(err.error?.message || 'Failed to update user.');
       }
     });
   }

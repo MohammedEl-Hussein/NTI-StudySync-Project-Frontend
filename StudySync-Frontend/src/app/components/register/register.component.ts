@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UsersService } from 'src/app/services/users.service';
+import { PopupService } from 'src/app/core/services/popup.service';
 
 @Component({
   selector: 'app-register',
@@ -17,7 +18,8 @@ export class RegisterComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private usersService: UsersService,
-    private router: Router
+    private router: Router,
+    private popupService: PopupService
   ) {}
 
   ngOnInit(): void {
@@ -43,23 +45,23 @@ export class RegisterComponent implements OnInit {
   register(): void {
     if (this.registerForm.invalid) {
       if (this.registerForm.get('name')?.hasError('required')) {
-        alert('Please enter your full name.');
+        this.popupService.toastError('Please enter your full name.');
       } else if (this.registerForm.get('email')?.hasError('required')) {
-        alert('Please enter your email address.');
+        this.popupService.toastError('Please enter your email address.');
       } else if (this.registerForm.get('email')?.hasError('email')) {
-        alert('Please enter a valid email address.');
+        this.popupService.toastError('Please enter a valid email address.');
       } else if (this.registerForm.get('password')?.hasError('required')) {
-        alert('Please enter a password.');
+        this.popupService.toastError('Please enter a password.');
       } else if (this.registerForm.get('password')?.hasError('minlength')) {
-        alert('Your password must be at least 8 characters long.');
+        this.popupService.toastError('Your password must be at least 8 characters long.');
       } else if (this.registerForm.get('password')?.hasError('pattern')) {
-        alert('Your password must contain at least one letter and one number.');
+        this.popupService.toastError('Your password must contain at least one letter and one number.');
       } else if (this.registerForm.get('confirmPassword')?.hasError('required')) {
-        alert('Please confirm your password.');
+        this.popupService.toastError('Please confirm your password.');
       } else if (this.registerForm.get('terms')?.invalid) {
-        alert('Please agree to the Terms of Service to proceed.');
+        this.popupService.toastError('Please agree to the Terms of Service to proceed.');
       } else {
-        alert('Please fill out all required fields correctly.');
+        this.popupService.toastError('Please fill out all required fields correctly.');
       }
       return;
     }
@@ -67,7 +69,7 @@ export class RegisterComponent implements OnInit {
     const formData = this.registerForm.value;
 
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match!');
+      this.popupService.toastError('Passwords do not match!');
       return;
     }
 
@@ -88,14 +90,14 @@ export class RegisterComponent implements OnInit {
     this.usersService.addUser(newUser).subscribe({
       next: (res) => {
         this.loading = false;
-        alert('Account created successfully! Redirecting to Login.');
+        this.popupService.toastSuccess('Account created successfully! Redirecting to Login.');
         this.router.navigate(['/login']);
       },
       error: (err) => {
         this.loading = false;
         console.error('Registration error:', err);
         const errorMsg = err.error?.message || err.statusText || err.message || 'Unknown error';
-        alert(`Failed to create account. Error: ${errorMsg}`);
+        this.popupService.toastError(`Failed to create account. Error: ${errorMsg}`);
       }
     });
   }

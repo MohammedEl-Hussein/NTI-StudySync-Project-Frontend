@@ -5,6 +5,7 @@ import { catchError } from 'rxjs/operators';
 import { AdminService } from '../../../core/services/admin.service';
 import { Room } from '../../../core/models/room.model';
 import { Category } from '../../../core/models/admin.model';
+import { PopupService } from '../../../core/services/popup.service';
 
 @Component({
   selector: 'app-admin-rooms',
@@ -25,7 +26,8 @@ export class AdminRoomsComponent implements OnInit {
 
   constructor(
     private adminService: AdminService,
-    private router: Router
+    private router: Router,
+    private popupService: PopupService
   ) {}
 
   ngOnInit(): void {
@@ -239,13 +241,13 @@ export class AdminRoomsComponent implements OnInit {
 
     this.adminService.updateRoom(id, payload).subscribe({
       next: () => {
-        alert('Room settings updated successfully.');
+        this.popupService.toastSuccess('Room settings updated successfully.');
         this.closeEditModal();
         this.loadRooms();
       },
       error: (err) => {
         console.error('Error updating room:', err);
-        alert('Failed to update room settings.');
+        this.popupService.toastError('Failed to update room settings.');
       }
     });
   }
@@ -254,17 +256,19 @@ export class AdminRoomsComponent implements OnInit {
     const id = room._id || room.id;
     if (!id) return;
 
-    if (confirm(`Are you sure you want to delete room "${room.title}"?`)) {
-      this.adminService.deleteRoom(id).subscribe({
-        next: () => {
-          alert('Room deleted successfully.');
-          this.loadRooms();
-        },
-        error: (err) => {
-          console.error('Error deleting room:', err);
-          alert('Failed to delete room.');
-        }
-      });
-    }
+    this.popupService.confirm(`Are you sure you want to delete room "${room.title}"?`).subscribe(confirmed => {
+      if (confirmed) {
+        this.adminService.deleteRoom(id).subscribe({
+          next: () => {
+            this.popupService.toastSuccess('Room deleted successfully.');
+            this.loadRooms();
+          },
+          error: (err) => {
+            console.error('Error deleting room:', err);
+            this.popupService.toastError('Failed to delete room.');
+          }
+        });
+      }
+    });
   }
 }

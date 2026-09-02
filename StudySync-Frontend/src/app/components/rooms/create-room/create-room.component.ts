@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { RoomService } from '../../../services/room.service';
 import { CategoryService } from '../../../services/category.service';
 import { Category } from '../../../models/category.model';
+import { PopupService } from '../../../core/services/popup.service';
 
 function dateValidator(control: AbstractControl): ValidationErrors | null {
   const startDate = control.get('startDate')?.value;
@@ -34,7 +35,8 @@ export class CreateRoomComponent implements OnInit {
     private fb: FormBuilder,
     private roomService: RoomService,
     private categoryService: CategoryService,
-    private router: Router
+    private router: Router,
+    private popupService: PopupService
   ) {}
 
   ngOnInit(): void {
@@ -89,7 +91,7 @@ export class CreateRoomComponent implements OnInit {
         this.newCategoryName = '';
         this.loadCategories();
       },
-      error: (err) => alert(err.error?.message || 'Error creating category')
+      error: (err) => this.popupService.toastError(err.error?.message || 'Error creating category')
     });
   }
 
@@ -107,7 +109,7 @@ export class CreateRoomComponent implements OnInit {
         this.editingCategoryId = null;
         this.loadCategories();
       },
-      error: (err) => alert(err.error?.message || 'Error updating category')
+      error: (err) => this.popupService.toastError(err.error?.message || 'Error updating category')
     });
   }
 
@@ -118,17 +120,21 @@ export class CreateRoomComponent implements OnInit {
 
   deleteCategory(id: string, event: Event): void {
     event.stopPropagation();
-    if (!confirm('Are you sure you want to delete this category?')) return;
-    this.categoryService.deleteCategory(id).subscribe({
-      next: () => {
-        // Remove from selected if deleted
-        const current = this.roomForm.get('categoryIds')?.value as string[];
-        if (current.includes(id)) {
-          this.roomForm.patchValue({ categoryIds: current.filter(cId => cId !== id) });
-        }
-        this.loadCategories();
-      },
-      error: (err) => alert(err.error?.message || 'Error deleting category')
+    
+    this.popupService.confirm('Are you sure you want to delete this category?').subscribe(confirmed => {
+      if (!confirmed) return;
+      this.categoryService.deleteCategory(id).subscribe({
+        next: () => {
+          // Remove from selected if deleted
+          const current = this.roomForm.get('categoryIds')?.value as string[];
+          if (current.includes(id)) {
+            this.roomForm.patchValue({ categoryIds: current.filter(cId => cId !== id) });
+          }
+          this.loadCategories();
+          this.popupService.toastSuccess('Category deleted successfully');
+        },
+        error: (err) => this.popupService.toastError(err.error?.message || 'Error deleting category')
+      });
     });
   }
 
@@ -142,13 +148,16 @@ export class CreateRoomComponent implements OnInit {
 
   submitRoom(): void {
     if (this.roomForm.invalid) {
-      alert('Please fill all required fields');
+      this.popupService.toastError('Please fill all required fields');
       return;
     }
 
     this.roomService.createRoom(this.roomForm.value).subscribe({
-      next: (res) => this.router.navigate(['/rooms', res.data._id]),
-      error: (err) => alert(err.error?.message || 'Error creating room')
+      next: (res) => {
+        this.popupService.toastSuccess('Room created successfully');
+        this.router.navigate(['/rooms', res.data._id]);
+      },
+      error: (err) => this.popupService.toastError(err.error?.message || 'Error creating room')
     });
   }
 }

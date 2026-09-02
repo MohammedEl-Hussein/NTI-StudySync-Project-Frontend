@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { Category } from '../../../core/models/admin.model';
+import { PopupService } from '../../../core/services/popup.service';
 
 @Component({
   selector: 'app-admin-categories',
@@ -15,7 +16,8 @@ export class AdminCategoriesComponent implements OnInit {
 
   constructor(
     private adminService: AdminService,
-    private router: Router
+    private router: Router,
+    private popupService: PopupService
   ) {}
 
   ngOnInit(): void {
@@ -59,17 +61,19 @@ export class AdminCategoriesComponent implements OnInit {
     const id = cat._id || cat.id;
     if (!id) return;
 
-    if (confirm(`Are you sure you want to delete category "${cat.name}"?`)) {
-      this.adminService.deleteCategory(id).subscribe({
-        next: () => {
-          alert('Category deleted successfully.');
-          this.loadCategories();
-        },
-        error: (err) => {
-          console.error('Error deleting category:', err);
-          alert('Failed to delete category.');
-        }
-      });
-    }
+    this.popupService.confirm(`Are you sure you want to delete category "${cat.name}"?`).subscribe(confirmed => {
+      if (confirmed) {
+        this.adminService.deleteCategory(id).subscribe({
+          next: () => {
+            this.popupService.toastSuccess('Category deleted successfully.');
+            this.loadCategories();
+          },
+          error: (err) => {
+            console.error('Error deleting category:', err);
+            this.popupService.toastError('Failed to delete category.');
+          }
+        });
+      }
+    });
   }
 }

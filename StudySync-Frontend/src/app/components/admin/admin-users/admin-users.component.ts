@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { User } from '../../../core/models/user.model';
+import { PopupService } from '../../../core/services/popup.service';
 
 @Component({
   selector: 'app-admin-users',
@@ -21,7 +22,8 @@ export class AdminUsersComponent implements OnInit {
 
   constructor(
     private adminService: AdminService,
-    private router: Router
+    private router: Router,
+    private popupService: PopupService
   ) {}
 
   ngOnInit(): void {
@@ -83,13 +85,13 @@ export class AdminUsersComponent implements OnInit {
 
     this.adminService.updateUser(id, this.editingUser).subscribe({
       next: () => {
-        alert('User updated successfully!');
+        this.popupService.toastSuccess('User updated successfully!');
         this.closeEditModal();
         this.loadUsers();
       },
       error: (err) => {
         console.error('Error updating user:', err);
-        alert('Failed to update user.');
+        this.popupService.toastError('Failed to update user.');
       }
     });
   }
@@ -98,17 +100,19 @@ export class AdminUsersComponent implements OnInit {
     const id = user._id || user.id;
     if (!id) return;
 
-    if (confirm(`Are you sure you want to delete user "${user.name || user.email}"?`)) {
-      this.adminService.deleteUser(id).subscribe({
-        next: () => {
-          alert('User deleted successfully.');
-          this.loadUsers();
-        },
-        error: (err) => {
-          console.error('Error deleting user:', err);
-          alert('Failed to delete user.');
-        }
-      });
-    }
+    this.popupService.confirm(`Are you sure you want to delete user "${user.name || user.email}"?`).subscribe(confirmed => {
+      if (confirmed) {
+        this.adminService.deleteUser(id).subscribe({
+          next: () => {
+            this.popupService.toastSuccess('User deleted successfully.');
+            this.loadUsers();
+          },
+          error: (err) => {
+            console.error('Error deleting user:', err);
+            this.popupService.toastError('Failed to delete user.');
+          }
+        });
+      }
+    });
   }
 }

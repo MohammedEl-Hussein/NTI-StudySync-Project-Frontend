@@ -8,6 +8,7 @@ import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { SearchService } from '../../../services/search.service';
 import { ProgressService } from '../../../core/services/progress.service';
+import { PopupService } from '../../../core/services/popup.service';
 
 @Component({
   selector: 'app-room-list',
@@ -38,7 +39,8 @@ export class RoomListComponent implements OnInit {
     private categoryService: CategoryService,
     private route: ActivatedRoute,
     private searchService: SearchService,
-    private progressService: ProgressService
+    private progressService: ProgressService,
+    private popupService: PopupService
   ) {}
 
   ngOnInit(): void {
@@ -217,26 +219,28 @@ export class RoomListComponent implements OnInit {
   joinRoom(room: Room): void {
     this.roomService.joinRoom(room._id).subscribe({
       next: () => {
-        alert('Successfully joined room!');
+        this.popupService.toastSuccess('Successfully joined room!');
         this.fetchData();
       },
       error: (err) => {
-        alert(err.error?.message || 'Failed to join room');
+        this.popupService.toastError(err.error?.message || 'Failed to join room');
       }
     });
   }
 
   leaveRoom(room: Room): void {
-    if (!confirm(`Are you sure you want to leave "${room.title}"?`)) return;
-    
-    this.roomService.leaveRoom(room._id).subscribe({
-      next: () => {
-        alert('Successfully left room!');
-        this.fetchData();
-      },
-      error: (err) => {
-        alert(err.error?.message || 'Failed to leave room');
-      }
+    this.popupService.confirm(`Are you sure you want to leave "${room.title}"?`).subscribe(confirmed => {
+      if (!confirmed) return;
+      
+      this.roomService.leaveRoom(room._id).subscribe({
+        next: () => {
+          this.popupService.toastSuccess('Successfully left room!');
+          this.fetchData();
+        },
+        error: (err) => {
+          this.popupService.toastError(err.error?.message || 'Failed to leave room');
+        }
+      });
     });
   }
 

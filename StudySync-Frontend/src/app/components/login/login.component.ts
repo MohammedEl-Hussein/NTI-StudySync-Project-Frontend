@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UsersService } from 'src/app/services/users.service';
-
 import { UserService } from 'src/app/core/services/user.service';
+import { PopupService } from 'src/app/core/services/popup.service';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +20,8 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private usersService: UsersService,
     private coreUserService: UserService,
-    private router: Router
+    private router: Router,
+    private popupService: PopupService
   ) { }
 
   ngOnInit(): void {
@@ -50,7 +51,7 @@ export class LoginComponent implements OnInit {
 
   login(): void {
     if (this.loginForm.invalid) {
-      alert('Please enter a valid email address and password.');
+      this.popupService.toastError('Please enter a valid email address and password.');
       return;
     }
 
@@ -77,7 +78,7 @@ export class LoginComponent implements OnInit {
           if (decodedUser) {
             localStorage.setItem('currentUser', JSON.stringify(decodedUser));
             this.coreUserService.reloadCurrentUser(); // Tell the layout components we logged in
-            alert('Login Successful! Welcome back.');
+            this.popupService.toastSuccess('Login Successful! Welcome back.');
             if (decodedUser.role === 'admin') {
               this.router.navigate(['/admin']);
             } else {
@@ -87,13 +88,13 @@ export class LoginComponent implements OnInit {
           }
         }
 
-        alert('Login Successful! Welcome back.');
+        this.popupService.toastSuccess('Login Successful! Welcome back.');
         this.router.navigate(['/rooms']);
       },
       error: (err) => {
         this.loading = false;
         console.error('Login error:', err);
-        alert(err.error?.message || 'Login failed! Please check your email and password.');
+        this.popupService.toastError(err.error?.message || 'Login failed! Please check your email and password.');
       }
     });
   }

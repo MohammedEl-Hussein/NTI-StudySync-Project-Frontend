@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { SupportMessage } from '../../../core/models/admin.model';
+import { PopupService } from '../../../core/services/popup.service';
 
 @Component({
   selector: 'app-admin-support-details',
@@ -17,7 +18,8 @@ export class AdminSupportDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private adminService: AdminService
+    private adminService: AdminService,
+    private popupService: PopupService
   ) {}
 
   ngOnInit(): void {
@@ -53,11 +55,11 @@ export class AdminSupportDetailsComponent implements OnInit {
           this.ticket.status = newStatus;
         }
         this.updatingStatus = false;
-        alert(`Ticket status updated to "${newStatus}".`);
+        this.popupService.toastSuccess(`Ticket status updated to "${newStatus}".`);
       },
       error: (err) => {
         console.error('Error updating status:', err);
-        alert('Failed to update ticket status.');
+        this.popupService.toastError('Failed to update ticket status.');
         this.updatingStatus = false;
       }
     });

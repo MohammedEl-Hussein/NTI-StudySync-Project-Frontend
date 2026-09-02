@@ -4,6 +4,7 @@ import { RoomService } from '../../../services/room.service';
 import { TaskService } from '../../../core/services/task.service';
 import { TaskCompletionService } from '../../../core/services/task-completion.service';
 import { Task, TaskCompletion } from '../../../core/models/task.model';
+import { PopupService } from '../../../core/services/popup.service';
 
 @Component({
   selector: 'app-room-details',
@@ -51,7 +52,8 @@ export class RoomDetailsComponent implements OnInit {
     private roomService: RoomService,
     private taskService: TaskService,
     private taskCompletionService: TaskCompletionService,
-    private router: Router
+    private router: Router,
+    private popupService: PopupService
   ) {}
 
   ngOnInit(): void {
@@ -249,12 +251,12 @@ export class RoomDetailsComponent implements OnInit {
 
   submitInlineAddTask(): void {
     if (!this.newTaskData.title || !this.newTaskData.title.trim()) {
-      alert('Please enter a task title.');
+      this.popupService.toastError('Please enter a task title.');
       return;
     }
 
     if (!this.newTaskData.section || !this.newTaskData.section.trim()) {
-      alert('Please enter a Phase / Section name.');
+      this.popupService.toastError('Please enter a Phase / Section name.');
       return;
     }
 
@@ -280,7 +282,7 @@ export class RoomDetailsComponent implements OnInit {
       },
       error: (err) => {
         this.isSavingTask = false;
-        alert(err.error?.message || 'Failed to create task in database.');
+        this.popupService.toastError(err.error?.message || 'Failed to create task in database.');
       }
     });
   }
@@ -313,7 +315,7 @@ export class RoomDetailsComponent implements OnInit {
     if (!this.editingTaskId) return;
 
     if (!this.editTaskData.title || !this.editTaskData.title.trim()) {
-      alert('Please enter a task title.');
+      this.popupService.toastError('Please enter a task title.');
       return;
     }
 
@@ -332,7 +334,7 @@ export class RoomDetailsComponent implements OnInit {
       },
       error: (err) => {
         this.isSavingTask = false;
-        alert(err.error?.message || 'Failed to update task in database.');
+        this.popupService.toastError(err.error?.message || 'Failed to update task in database.');
       }
     });
   }
@@ -341,19 +343,21 @@ export class RoomDetailsComponent implements OnInit {
     const id = this.getValidTaskId(task);
     if (!id) return;
 
-    if (confirm(`Are you sure you want to delete "${task.title}"?`)) {
-      this.isSavingTask = true;
-      this.taskService.deleteTask(id).subscribe({
-        next: () => {
-          this.isSavingTask = false;
-          this.editingTaskId = null;
-          this.loadRoomTasks(this.roomId);
-        },
-        error: (err) => {
-          this.isSavingTask = false;
-          alert('Failed to delete task: ' + (err.error?.message || err.message));
-        }
-      });
-    }
+    this.popupService.confirm(`Are you sure you want to delete "${task.title}"?`).subscribe(confirmed => {
+      if (confirmed) {
+        this.isSavingTask = true;
+        this.taskService.deleteTask(id).subscribe({
+          next: () => {
+            this.isSavingTask = false;
+            this.editingTaskId = null;
+            this.loadRoomTasks(this.roomId);
+          },
+          error: (err) => {
+            this.isSavingTask = false;
+            this.popupService.toastError('Failed to delete task: ' + (err.error?.message || err.message));
+          }
+        });
+      }
+    });
   }
 }

@@ -1,0 +1,31 @@
+<!-- Toasts Container -->
+<div class="toast-container">
+  <div *ngFor="let toast of toasts" class="toast-item" [ngClass]="toast.type">
+    <div class="toast-content">
+      <span class="toast-icon">
+        <i *ngIf="toast.type === 'success'" class="fas fa-check-circle"></i>
+        <i *ngIf="toast.type === 'error'" class="fas fa-exclamation-circle"></i>
+        <i *ngIf="toast.type === 'info'" class="fas fa-info-circle"></i>
+      </span>
+      <span class="toast-message">{{ toast.message }}</span>
+    </div>
+    <button class="toast-close" (click)="removeToast(toast.id)">×</button>
+  </div>
+</div>
+
+<!-- Confirm Dialog -->
+<div class="modal-backdrop" *ngIf="confirmRequest">
+  <div class="modal-content confirm-modal">
+    <div class="modal-head">
+      <h3>{{ confirmRequest.title }}</h3>
+      <button class="modal-close" (click)="onConfirm(false)">×</button>
+    </div>
+    <div class="modal-body">
+      <p>{{ confirmRequest.message }}</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="onConfirm(false)">Cancel</button>
+      <button class="btn btn-primary" (click)="onConfirm(true)">OK</button>
+    </div>
+  </div>
+</div>

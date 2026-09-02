@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AdminService } from '../../../core/services/admin.service';
+import { PopupService } from '../../../core/services/popup.service';
 
 @Component({
   selector: 'app-edit-category',
@@ -18,7 +19,8 @@ export class EditCategoryComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private fb: FormBuilder,
-    private adminService: AdminService
+    private adminService: AdminService,
+    private popupService: PopupService
   ) {}
 
   ngOnInit(): void {
@@ -66,12 +68,12 @@ export class EditCategoryComponent implements OnInit {
     this.submitting = true;
     this.adminService.updateCategory(this.categoryId, this.categoryForm.value).subscribe({
       next: () => {
-        alert('Category updated successfully!');
+        this.popupService.toastSuccess('Category updated successfully!');
         this.router.navigate(['/admin/categories']);
       },
       error: (err) => {
         console.error('Error updating category:', err);
-        alert('Failed to update category.');
+        this.popupService.toastError('Failed to update category.');
         this.submitting = false;
       }
     });

@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RoomService } from '../../../services/room.service';
 import { CategoryService } from '../../../services/category.service';
 import { Category } from '../../../models/category.model';
+import { PopupService } from '../../../core/services/popup.service';
 
 function dateValidator(control: AbstractControl): ValidationErrors | null {
   const startDate = control.get('startDate')?.value;
@@ -38,7 +39,8 @@ export class EditRoomComponent implements OnInit {
     private roomService: RoomService,
     private categoryService: CategoryService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private popupService: PopupService
   ) {}
 
   ngOnInit(): void {
@@ -128,7 +130,7 @@ export class EditRoomComponent implements OnInit {
         this.newCategoryName = '';
         this.loadCategories();
       },
-      error: (err) => alert(err.error?.message || 'Error creating category')
+      error: (err) => this.popupService.toastError(err.error?.message || 'Error creating category')
     });
   }
 
@@ -146,7 +148,7 @@ export class EditRoomComponent implements OnInit {
         this.editingCategoryId = null;
         this.loadCategories();
       },
-      error: (err) => alert(err.error?.message || 'Error updating category')
+      error: (err) => this.popupService.toastError(err.error?.message || 'Error updating category')
     });
   }
 
@@ -157,16 +159,19 @@ export class EditRoomComponent implements OnInit {
 
   deleteCategory(categoryId: string, event: Event): void {
     event.stopPropagation();
-    if (!confirm('Are you sure you want to delete this category?')) return;
-    this.categoryService.deleteCategory(categoryId).subscribe({
-      next: () => {
-        const current = this.editForm.get('categoryIds')?.value as string[] || [];
-        if (current.includes(categoryId)) {
-          this.editForm.patchValue({ categoryIds: current.filter(id => id !== categoryId) });
-        }
-        this.loadCategories();
-      },
-      error: (err) => alert(err.error?.message || 'Error deleting category')
+    this.popupService.confirm('Are you sure you want to delete this category?').subscribe(confirmed => {
+      if (!confirmed) return;
+      this.categoryService.deleteCategory(categoryId).subscribe({
+        next: () => {
+          const current = this.editForm.get('categoryIds')?.value as string[] || [];
+          if (current.includes(categoryId)) {
+            this.editForm.patchValue({ categoryIds: current.filter(id => id !== categoryId) });
+          }
+          this.loadCategories();
+          this.popupService.toastSuccess('Category deleted successfully');
+        },
+        error: (err) => this.popupService.toastError(err.error?.message || 'Error deleting category')
+      });
     });
   }
 
@@ -186,11 +191,16 @@ export class EditRoomComponent implements OnInit {
   }
 
   deleteRoom(): void {
-    if (confirm('Are you sure you want to delete this room? This will permanently delete all related chat messages, tasks, and member progress.')) {
-      this.roomService.deleteRoom(this.roomId).subscribe({
-        next: () => this.router.navigate(['/rooms']),
-        error: (err) => alert(err.error?.message || 'Failed to delete room')
-      });
-    }
+    this.popupService.confirm('Are you sure you want to delete this room? This will permanently delete all related chat messages, tasks, and member progress.').subscribe(confirmed => {
+      if (confirmed) {
+        this.roomService.deleteRoom(this.roomId).subscribe({
+          next: () => {
+            this.popupService.toastSuccess('Room deleted successfully');
+            this.router.navigate(['/rooms']);
+          },
+          error: (err) => this.popupService.toastError(err.error?.message || 'Failed to delete room')
+        });
+      }
+    });
   }
 }
