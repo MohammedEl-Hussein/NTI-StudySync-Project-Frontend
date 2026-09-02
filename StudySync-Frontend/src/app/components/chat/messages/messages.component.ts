@@ -6,6 +6,7 @@ import { Room } from '../../../models/room.model';
 import { RoomService } from '../../../services/room.service';
 import { ChatService } from '../../../services/chat.service';
 import { MessageService } from '../../../services/message.service';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-messages-page',
@@ -27,6 +28,7 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
     private roomService: RoomService,
     private chatService: ChatService,
     private messageService: MessageService,
+    private notificationService: NotificationService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
@@ -117,6 +119,15 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
             }
 
             this.isLoading = false;
+
+            // Listen for real-time notifications to update the list immediately
+            this.notificationService.incomingToast$.pipe(
+              takeUntil(this.destroy$)
+            ).subscribe(notification => {
+              if (notification && notification.type === 'chat') {
+                this.loadRoomLatestMessages();
+              }
+            });
           },
           error: () => {
             // Fallback: check room owner/admin if member request fails
@@ -194,6 +205,19 @@ export class MessagesPageComponent implements OnInit, OnDestroy {
           room.lastMessage = '';
           room.lastMessageTime = '';
           room.unreadCount = 0;
+          room.lastMessageRawDate = 0;
+        }
+
+        // Sort rooms by most recent message
+        this.rooms.sort((a, b) => {
+          const dateA = a.lastMessageRawDate || 0;
+          const dateB = b.lastMessageRawDate || 0;
+          return dateB - dateA;
+        });
+        
+        // Only resort filteredRooms if search is empty
+        if (!this.search.trim()) {
+          this.filteredRooms = [...this.rooms];
         }
       });
     });

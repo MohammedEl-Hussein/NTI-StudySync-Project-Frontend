@@ -20,6 +20,14 @@ export class ToastComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subscription = this.notificationService.incomingToast$.subscribe(notification => {
       if (notification) {
+        // If the user is already actively looking at the exact page this notification points to,
+        // don't bother showing a pop-up toast. (e.g., they are inside the chat room already)
+        const currentUrl = this.router.url;
+        if (notification.link && currentUrl.includes(notification.link)) {
+           // We can automatically mark it as read since they are looking right at it!
+           this.notificationService.markAsRead(notification._id);
+           return;
+        }
         this.showToast(notification);
       }
     });

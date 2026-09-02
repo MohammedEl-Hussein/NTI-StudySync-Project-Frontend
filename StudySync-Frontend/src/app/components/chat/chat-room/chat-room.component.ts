@@ -7,6 +7,7 @@ import { Message } from '../../../models/message.model';
 import { RoomService } from '../../../services/room.service';
 import { ChatService } from '../../../services/chat.service';
 import { MessageService } from '../../../services/message.service';
+import { NotificationService } from '../../../core/services/notification.service';
 import { MessageInputComponent } from '../message-input/message-input.component';
 
 @Component({
@@ -53,7 +54,8 @@ export class ChatRoomComponent implements OnInit, OnChanges, OnDestroy {
     private router: Router,
     private roomService: RoomService,
     private chatService: ChatService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -203,8 +205,25 @@ export class ChatRoomComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private startPeriodicRefresh(): void {
-    // Poll every 5 seconds for new messages in background
-    interval(5000).pipe(
+    // Listen for live socket notifications instead of heavy polling
+    this.notificationService.incomingToast$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe((notification) => {
+      // If the notification is a chat message for this exact room
+      if (notification && notification.type === 'chat' && notification.link?.includes(this.roomId || '')) {
+        const chatId = this.chat?._id || this.roomId;
+        if (chatId) {
+          this.messageService.getMessagesByChatId(chatId).subscribe(freshMessages => {
+            if (freshMessages && Array.isArray(freshMessages)) {
+              this.messages = freshMessages;
+            }
+          });
+        }
+      }
+    });
+
+    // Fallback slow poll just to keep state sync over very long periods
+    interval(15000).pipe(
       takeUntil(this.destroy$),
       switchMap(() => {
         const chatId = this.chat?._id || this.roomId;
