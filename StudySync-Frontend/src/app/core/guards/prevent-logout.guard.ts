@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
 import { CanDeactivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { MainLayoutComponent } from '../../components/layout/main-layout/main-layout.component';
 import { UserService } from '../services/user.service';
 
 @Injectable({ providedIn: 'root' })
-export class PreventLogoutGuard implements CanDeactivate<MainLayoutComponent> {
+export class PreventLogoutGuard implements CanDeactivate<any> {
   constructor(private userService: UserService) {}
 
   canDeactivate(
-    component: MainLayoutComponent,
+    component: any,
     currentRoute: ActivatedRouteSnapshot,
     currentState: RouterStateSnapshot,
     nextState?: RouterStateSnapshot

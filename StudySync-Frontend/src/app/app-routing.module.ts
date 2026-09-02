@@ -62,6 +62,7 @@ const routes: Routes = [
   {
     path: 'admin',
     component: AdminLayoutComponent,
+    canDeactivate: [PreventLogoutGuard],
     children: [
       { path: '', component: AdminDashboardComponent },
       { path: 'users', component: AdminUsersComponent },
