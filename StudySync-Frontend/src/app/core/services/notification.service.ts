@@ -48,12 +48,17 @@ export class NotificationService implements OnDestroy {
       this.socket.disconnect();
     }
     
-    this.socket.connect();
-    
     // Register the user on the socket server
+    this.socket.off('connect'); // Remove any existing listeners
     this.socket.on('connect', () => {
       this.socket.emit('register', userId);
     });
+    
+    this.socket.connect();
+    
+    if (this.socket.connected) {
+      this.socket.emit('register', userId);
+    }
 
     // Load initial notification history
     this.fetchNotifications();
