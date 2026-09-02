@@ -116,15 +116,15 @@
           
           <!-- Normal View Row -->
           <div class="task-row" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <input type="checkbox" [checked]="task.completed" (change)="toggleTask(task)" style="width: 18px; height: 18px; cursor: pointer; accent-color: #5146df;">
-              <div>
-                <strong [class.done]="task.completed" style="font-size: 14px; display: block; color: #1b2437;">{{ task.title }}</strong>
-                <small *ngIf="task.description" style="font-size: 11px; color: #7a8292; display: block; margin-top: 2px;">{{ task.description }}</small>
+            <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1;">
+              <input type="checkbox" [checked]="task.completed" (change)="toggleTask(task)" style="width: 18px; height: 18px; cursor: pointer; accent-color: #5146df; flex-shrink: 0;">
+              <div style="min-width: 0; flex: 1;">
+                <strong [class.done]="task.completed" style="font-size: 14px; display: block; color: #1b2437; word-break: break-word; overflow-wrap: anywhere;">{{ task.title }}</strong>
+                <small *ngIf="task.description" style="font-size: 11px; color: #7a8292; display: block; margin-top: 2px; word-break: break-word; overflow-wrap: anywhere;">{{ task.description }}</small>
               </div>
             </div>
             
-            <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0; margin-left: 12px;">
               <time *ngIf="task.dueDate" style="font-size: 11px; color: #7a8292;">Due: {{ task.dueDate | date:'MMM d' }}</time>
               <button 
                 *ngIf="isOwner" 
