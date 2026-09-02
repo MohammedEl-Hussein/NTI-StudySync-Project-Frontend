@@ -50,8 +50,11 @@ export class RoomProgressComponent implements OnInit, OnChanges {
     }).subscribe({
       next: (res: any) => {
         const allRooms = Array.isArray(res.rooms) ? res.rooms : (res.rooms?.data || []);
-        const myRoomIds = res.progresses.map((p: any) => p.roomId);
-        this.joinedRooms = allRooms.filter((r: Room) => myRoomIds.includes(r._id));
+        const myRoomIds = res.progresses.map((p: any) => {
+          if (p.roomId && typeof p.roomId === 'object') return p.roomId._id || p.roomId.id;
+          return p.roomId;
+        });
+        this.joinedRooms = allRooms.filter((r: Room) => myRoomIds.includes(r._id || (r as any).id));
         this.currentRoom = this.joinedRooms.find(r => r._id === this.selectedRoomId) || null;
       },
       error: (err) => console.error('Error fetching joined rooms for progress:', err)

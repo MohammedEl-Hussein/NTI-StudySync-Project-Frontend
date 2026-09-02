@@ -13,10 +13,10 @@ export class ProgressComponent implements OnInit {
   public activeTab: 'overview' | 'room' | 'sections' = 'overview';
 
   public overallStats: OverallProgressData = {
-    completedTasks: 44,
-    remainingTasks: 12,
-    totalTasks: 56,
-    percentage: 78
+    completedTasks: 0,
+    remainingTasks: 0,
+    totalTasks: 0,
+    percentage: 0
   };
 
   public sectionList: SectionProgressItem[] = [];
@@ -52,11 +52,14 @@ export class ProgressComponent implements OnInit {
       }).subscribe({
         next: (res: any) => {
           const allRooms = Array.isArray(res.rooms) ? res.rooms : (res.rooms?.data || []);
-          const myRoomIds = res.progresses.map((p: any) => p.roomId);
-          this.rooms = allRooms.filter((r: Room) => myRoomIds.includes(r._id));
+          const myRoomIds = res.progresses.map((p: any) => {
+            if (p.roomId && typeof p.roomId === 'object') return p.roomId._id || p.roomId.id;
+            return p.roomId;
+          });
+          this.rooms = allRooms.filter((r: Room) => myRoomIds.includes(r._id || (r as any).id));
 
           if (this.rooms.length > 0) {
-            this.selectedRoomId = this.rooms[0]._id || '';
+            this.selectedRoomId = this.rooms[0]._id || (this.rooms[0] as any).id || '';
           }
           this.loading = false;
         },

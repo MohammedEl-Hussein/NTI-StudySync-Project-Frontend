@@ -8,17 +8,23 @@
   </div>
 
   <div class="dashboard-content">
-    <!-- Component 6: Overall Progress (Tasks Completed, Remaining, Total, Percentage) -->
-    <app-overall-progress
-      [completedTasks]="overallStats.completedTasks"
-      [remainingTasks]="overallStats.remainingTasks"
-      [totalTasks]="overallStats.totalTasks"
-      [percentage]="overallStats.percentage"
-    ></app-overall-progress>
-
-    <!-- Component 8: RoomProgressComponent -->
-    <div style="margin-top: 32px;" *ngIf="selectedRoomId">
-      <app-room-progress [roomId]="selectedRoomId"></app-room-progress>
+    <div *ngIf="loading" style="text-align: center; padding: 3rem; color: #6b7280; font-weight: 500;">
+      <i class="bi bi-arrow-repeat" style="display: inline-block; animation: spin 1s linear infinite; margin-right: 8px;"></i> Loading dashboard data...
     </div>
+
+    <ng-container *ngIf="!loading">
+      <!-- Component 6: Overall Progress (Tasks Completed, Remaining, Total, Percentage) -->
+      <app-overall-progress
+        [completedTasks]="overallStats.completedTasks"
+        [remainingTasks]="overallStats.remainingTasks"
+        [totalTasks]="overallStats.totalTasks"
+        [percentage]="overallStats.percentage"
+      ></app-overall-progress>
+
+      <!-- Component 8: RoomProgressComponent -->
+      <div style="margin-top: 32px;" *ngIf="selectedRoomId">
+        <app-room-progress [roomId]="selectedRoomId"></app-room-progress>
+      </div>
+    </ng-container>
   </div>
 </main>

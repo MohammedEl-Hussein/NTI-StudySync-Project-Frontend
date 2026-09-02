@@ -109,7 +109,10 @@ export class RoomListComponent implements OnInit {
               (room as any).memberCount = membersData.length;
               (room as any).members = membersData.map((m: any) => m.userId?._id || m.userId);
               
-              const prog = progressRes.find((p: any) => p.roomId === room._id);
+              const prog = progressRes.find((p: any) => {
+                const pRoomId = typeof p.roomId === 'object' ? (p.roomId._id || p.roomId.id) : p.roomId;
+                return pRoomId === room._id;
+              });
               (room as any).progress = prog ? (prog.percentage || 0) : 0;
            });
 
