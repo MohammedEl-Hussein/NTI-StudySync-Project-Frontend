@@ -3,12 +3,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map, catchError, of, switchMap } from 'rxjs';
 import { Chat, ChatResponse, ChatListResponse, CreateChatDto } from '../models/chat.model';
 
+import { environment } from '../../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
-  private apiUrl = 'http://localhost:3001/chats';
-  private roomsUrl = 'http://localhost:3001/rooms';
+  private apiUrl = `${environment.apiUrl}/chats`;
+  private roomsUrl = `${environment.apiUrl}/rooms`;
 
   constructor(private http: HttpClient) {}
 

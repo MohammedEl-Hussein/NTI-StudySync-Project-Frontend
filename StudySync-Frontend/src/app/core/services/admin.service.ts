@@ -6,11 +6,13 @@ import { AdminStats, Category, SupportMessage } from '../models/admin.model';
 import { User } from '../models/user.model';
 import { Room } from '../models/room.model';
 
+import { environment } from '../../../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
 export class AdminService {
-  private baseApiUrl = 'http://localhost:3001';
+  private baseApiUrl = `${environment.apiUrl}`;
   private usersUrl = `${this.baseApiUrl}/users`;
   private roomsUrl = `${this.baseApiUrl}/rooms`;
   private categoriesUrl = `${this.baseApiUrl}/categories`;

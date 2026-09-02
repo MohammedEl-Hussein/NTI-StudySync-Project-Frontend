@@ -3,11 +3,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject, map, tap, catchError, of, throwError } from 'rxjs';
 import { Message, SendMessageDto, UpdateMessageDto, MessageResponse, MessageListResponse } from '../models/message.model';
 
+import { environment } from '../../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
 export class MessageService {
-  private apiUrl = 'http://localhost:3001/messages';
+  private apiUrl = `${environment.apiUrl}/messages`;
 
   private messagesSubject = new BehaviorSubject<Message[]>([]);
   public messages$ = this.messagesSubject.asObservable();

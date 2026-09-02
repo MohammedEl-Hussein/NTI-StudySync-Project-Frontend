@@ -4,11 +4,13 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SupportTicket, CreateSupportTicketDto } from '../models/support.model';
 
+import { environment } from '../../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
 export class SupportService {
-  private apiUrl = 'http://localhost:3001/support-messages';
+  private apiUrl = `${environment.apiUrl}/support-messages`;
 
   constructor(private http: HttpClient) {}
 

@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 
+import { environment } from '../../../environments/environment';
+
 export interface AppNotification {
   _id: string;
   recipient: string;
@@ -31,11 +33,11 @@ export class NotificationService implements OnDestroy {
   private incomingToastSubject = new BehaviorSubject<AppNotification | null>(null);
   public incomingToast$ = this.incomingToastSubject.asObservable();
 
-  private apiUrl = `http://localhost:3001/notifications`; // Adjust if your backend route differs
+  private apiUrl = `${environment.apiUrl}/notifications`; // Adjust if your backend route differs
 
   constructor(private http: HttpClient) {
     // Initialize socket connection
-    this.socket = io('http://localhost:3001', {
+    this.socket = io(`${environment.apiUrl}`, {
       autoConnect: false // Connect manually after login
     });
 

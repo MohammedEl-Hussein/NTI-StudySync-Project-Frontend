@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 import {
   Progress,
   CreateProgressDto,
@@ -16,7 +17,7 @@ import {
   providedIn: 'root'
 })
 export class ProgressService {
-  private apiUrl = 'http://localhost:3001/progresses'; // Backend URL for progresses
+  private apiUrl = `${environment.apiUrl}/progresses`; // Backend URL for progresses
 
   constructor(private http: HttpClient) {}
 

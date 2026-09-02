@@ -3,11 +3,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { RoomMember, InviteMemberDto } from '../models/room-member.model';
 
+import { environment } from '../../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
 export class RoomMembersService {
-  private apiUrl = 'http://localhost:3001/room-members';
+  private apiUrl = `${environment.apiUrl}/room-members`;
 
   constructor(private http: HttpClient) {}
 

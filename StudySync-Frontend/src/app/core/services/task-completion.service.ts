@@ -4,11 +4,13 @@ import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { TaskCompletion } from '../models/task.model';
 
+import { environment } from '../../../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
 export class TaskCompletionService {
-  private baseApiUrl = 'http://localhost:3001';
+  private baseApiUrl = `${environment.apiUrl}`;
   private apiUrl = `${this.baseApiUrl}/task-completion`;
 
   constructor(private http: HttpClient) {}

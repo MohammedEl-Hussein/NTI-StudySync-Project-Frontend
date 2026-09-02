@@ -4,11 +4,13 @@ import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Task } from '../models/task.model';
 
+import { environment } from '../../../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
 export class TaskService {
-  private baseApiUrl = 'http://localhost:3001';
+  private baseApiUrl = `${environment.apiUrl}`;
   private apiUrl = `${this.baseApiUrl}/tasks`;
 
   constructor(private http: HttpClient) {}
