@@ -72,12 +72,22 @@ export class NotificationService implements OnDestroy {
 
   private setupSocketListeners(): void {
     this.socket.on('new_notification', (notification: AppNotification) => {
-      // Add to state
       const current = this.notificationsSubject.value;
-      this.notificationsSubject.next([notification, ...current]);
       
-      // Update unread count
-      this.unreadCountSubject.next(this.unreadCountSubject.value + 1);
+      // Check if this notification already exists in our state
+      const existingIndex = current.findIndex(n => n._id === notification._id);
+      
+      if (existingIndex > -1) {
+        // Update the existing one and move it to top
+        const updated = [...current];
+        updated.splice(existingIndex, 1);
+        this.notificationsSubject.next([notification, ...updated]);
+        // Unread count doesn't change since we just updated an existing unread notification
+      } else {
+        // Add new to top
+        this.notificationsSubject.next([notification, ...current]);
+        this.unreadCountSubject.next(this.unreadCountSubject.value + 1);
+      }
       
       // Emit for toast popup
       this.incomingToastSubject.next(notification);
