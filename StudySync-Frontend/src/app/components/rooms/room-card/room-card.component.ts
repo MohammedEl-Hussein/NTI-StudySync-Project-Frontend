@@ -47,7 +47,7 @@ export class RoomCardComponent implements OnInit {
 
   get randomCover(): string {
     if (!this.room || !this.room._id) return 'assets/room-covers/cover_1.jpg';
-    const numCovers = 4;
+    const numCovers = 6;
     let hash = 0;
     for (let i = 0; i < this.room._id.length; i++) {
       hash += this.room._id.charCodeAt(i);

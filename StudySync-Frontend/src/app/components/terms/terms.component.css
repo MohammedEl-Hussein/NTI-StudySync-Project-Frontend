@@ -1,0 +1,80 @@
+.legal-page-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 40px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  font-family: 'Inter', sans-serif;
+  color: #333;
+}
+
+.legal-header {
+  text-align: center;
+  margin-bottom: 40px;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 20px;
+}
+
+.legal-header h1 {
+  font-size: 2rem;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.legal-header p {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.legal-content h2 {
+  font-size: 1.25rem;
+  color: #2980b9;
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
+.legal-content p {
+  line-height: 1.6;
+  margin-bottom: 15px;
+  color: #4a4a4a;
+}
+
+.legal-content ul {
+  padding-left: 20px;
+  margin-bottom: 20px;
+}
+
+.legal-content li {
+  line-height: 1.6;
+  margin-bottom: 8px;
+  color: #4a4a4a;
+}
+
+.back-link {
+  margin-top: 40px;
+  text-align: center;
+  border-top: 2px solid #f0f0f0;
+  padding-top: 30px;
+}
+
+.back-link .btn {
+  display: inline-block;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.back-link .btn.primary.outline {
+  background: transparent;
+  color: #007bff;
+  border: 2px solid #007bff;
+}
+
+.back-link .btn.primary.outline:hover {
+  background: #007bff;
+  color: white;
+}

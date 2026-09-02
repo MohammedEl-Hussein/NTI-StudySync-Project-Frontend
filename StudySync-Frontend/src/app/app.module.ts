@@ -79,6 +79,8 @@ import { MessagesPageComponent } from './components/chat/messages/messages.compo
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ToastComponent } from './components/shared/toast/toast.component';
 import { PopupContainerComponent } from './shared/components/popup-container/popup-container.component';
+import { TermsComponent } from './components/terms/terms.component';
+import { PrivacyComponent } from './components/privacy/privacy.component';
 
 @NgModule({
   declarations: [
@@ -137,7 +139,9 @@ import { PopupContainerComponent } from './shared/components/popup-container/pop
     TaskDetailsComponent,
     DashboardComponent,
     ToastComponent,
-    PopupContainerComponent
+    PopupContainerComponent,
+    TermsComponent,
+    PrivacyComponent
   ],
   imports: [
     BrowserModule,
