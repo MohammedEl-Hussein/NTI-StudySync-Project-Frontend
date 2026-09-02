@@ -18,11 +18,11 @@ export class CreateCategoryComponent implements OnInit {
     private adminService: AdminService,
     private router: Router,
     private popupService: PopupService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.categoryForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
+      name: ['', [Validators.required, Validators.minLength(2)]],
       description: ['', [Validators.required, Validators.minLength(10)]]
     });
   }

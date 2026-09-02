@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RoomMembersService } from '../../services/room-members.service';
 import { RoomService } from '../../services/room.service';
 import { ProgressService } from '../../core/services/progress.service';
+import { PopupService } from '../../core/services/popup.service';
 import { RoomMember } from '../../models/room-member.model';
 
 @Component({
@@ -36,7 +37,8 @@ export class RoomMembersComponent implements OnInit {
     private router: Router,
     private roomMembersService: RoomMembersService,
     private roomService: RoomService,
-    private progressService: ProgressService
+    private progressService: ProgressService,
+    private popupService: PopupService
   ) {}
 
   ngOnInit(): void {
@@ -302,40 +304,40 @@ export class RoomMembersComponent implements OnInit {
     const memberName = member.userId?.name || 'this member';
     if (!memberId || !this.roomId) return;
 
-    if (!confirm(`Are you sure you want to remove ${memberName} from this room?`)) {
-      return;
-    }
+    this.popupService.confirm(`Are you sure you want to remove ${memberName} from this room?`).subscribe(confirmed => {
+      if (!confirmed) return;
 
-    this.roomMembersService.removeMember(this.roomId, memberId).subscribe({
-      next: () => {
-        this.members = this.members.filter(m => (m.userId?._id || m.userId?.id) !== memberId);
-        this.showToast(`${memberName} has been removed.`);
-      },
-      error: (err) => {
-        console.error('Error removing member:', err);
-        this.members = this.members.filter(m => (m.userId?._id || m.userId?.id) !== memberId);
-        this.showToast(`${memberName} has been removed.`);
-      }
+      this.roomMembersService.removeMember(this.roomId!, memberId).subscribe({
+        next: () => {
+          this.members = this.members.filter(m => (m.userId?._id || m.userId?.id) !== memberId);
+          this.showToast(`${memberName} has been removed.`);
+        },
+        error: (err) => {
+          console.error('Error removing member:', err);
+          this.members = this.members.filter(m => (m.userId?._id || m.userId?.id) !== memberId);
+          this.showToast(`${memberName} has been removed.`);
+        }
+      });
     });
   }
 
   leaveRoom(): void {
     if (!this.roomId) return;
 
-    if (!confirm('Are you sure you want to leave this study room?')) {
-      return;
-    }
+    this.popupService.confirm('Are you sure you want to leave this study room?').subscribe(confirmed => {
+      if (!confirmed) return;
 
-    this.roomMembersService.leaveRoom(this.roomId).subscribe({
-      next: () => {
-        this.showToast('You have left the room.');
-        this.router.navigate(['/rooms']);
-      },
-      error: (err) => {
-        console.error('Error leaving room:', err);
-        this.showToast('You have left the room.');
-        this.router.navigate(['/rooms']);
-      }
+      this.roomMembersService.leaveRoom(this.roomId!).subscribe({
+        next: () => {
+          this.showToast('You have left the room.');
+          this.router.navigate(['/rooms']);
+        },
+        error: (err) => {
+          console.error('Error leaving room:', err);
+          this.showToast('You have left the room.');
+          this.router.navigate(['/rooms']);
+        }
+      });
     });
   }
 
@@ -356,12 +358,7 @@ export class RoomMembersComponent implements OnInit {
   }
 
   private showToast(msg: string): void {
-    this.successMsg = msg;
-    setTimeout(() => {
-      if (this.successMsg === msg) {
-        this.successMsg = '';
-      }
-    }, 3500);
+    this.popupService.toastSuccess(msg);
   }
 
   isMemberOwner(member: any): boolean {

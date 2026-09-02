@@ -26,36 +26,30 @@
     <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="category-form">
       <div class="form-group">
         <label for="name">Category Name <span class="required">*</span></label>
-        <input
-          id="name"
-          type="text"
-          formControlName="name"
-          placeholder="e.g., Artificial Intelligence & Robotics"
+        <input id="name" type="text" formControlName="name" placeholder="e.g., Artificial Intelligence & Robotics"
           class="form-input"
-          [class.input-error]="categoryForm.get('name')?.touched && categoryForm.get('name')?.invalid"
-        />
-        <span class="error-msg" *ngIf="categoryForm.get('name')?.touched && categoryForm.get('name')?.errors?.['required']">
+          [class.input-error]="categoryForm.get('name')?.touched && categoryForm.get('name')?.invalid" />
+        <span class="error-msg"
+          *ngIf="categoryForm.get('name')?.touched && categoryForm.get('name')?.errors?.['required']">
           Category name is required.
         </span>
-        <span class="error-msg" *ngIf="categoryForm.get('name')?.touched && categoryForm.get('name')?.errors?.['minlength']">
-          Must be at least 3 characters.
+        <span class="error-msg"
+          *ngIf="categoryForm.get('name')?.touched && categoryForm.get('name')?.errors?.['minlength']">
+          Must be at least 2 characters.
         </span>
       </div>
 
       <div class="form-group">
         <label for="description">Description <span class="required">*</span></label>
-        <textarea
-          id="description"
-          rows="4"
-          formControlName="description"
-          placeholder="Provide a clear description of topics, scope, and target domains..."
-          class="form-textarea"
-          [class.input-error]="categoryForm.get('description')?.touched && categoryForm.get('description')?.invalid"
-        ></textarea>
-        <span class="error-msg" *ngIf="categoryForm.get('description')?.touched && categoryForm.get('description')?.errors?.['required']">
+        <textarea id="description" rows="4" formControlName="description"
+          placeholder="Provide a clear description of topics, scope, and target domains..." class="form-textarea"
+          [class.input-error]="categoryForm.get('description')?.touched && categoryForm.get('description')?.invalid"></textarea>
+        <span class="error-msg"
+          *ngIf="categoryForm.get('description')?.touched && categoryForm.get('description')?.errors?.['required']">
           Description is required.
         </span>
-        <span class="error-msg" *ngIf="categoryForm.get('description')?.touched && categoryForm.get('description')?.errors?.['minlength']">
+        <span class="error-msg"
+          *ngIf="categoryForm.get('description')?.touched && categoryForm.get('description')?.errors?.['minlength']">
           Must be at least 10 characters.
         </span>
       </div>
